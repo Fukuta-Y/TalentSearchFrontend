@@ -6,6 +6,7 @@
         <td><input type="text" v-model="nentsuki" size="11" placeholder="例：202304"></td>
         <td>対象週： </td>
         <td><input type="text" v-model="shu" size="5" placeholder="例：3"></td>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color="red">※月と週はセットで必須入力</font></td>
       </tr>
       <tr>
         <td>タレント名： </td>
