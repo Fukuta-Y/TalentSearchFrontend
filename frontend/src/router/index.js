@@ -1,11 +1,11 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import SearchList from '../views/SearchList/SearchListBaseForm.vue'
-import SearchJokenBaseForm from '../views/SearchJoken/SearchJokenBaseForm.vue'
+import WeekTalentShutsuenBaseForm from '../views/SearchJoken/WeekTalentShutsuenBaseForm.vue'
 const routes = [
   {
     path: '/',
     name: 'main',
-    component: SearchJokenBaseForm
+    component: WeekTalentShutsuenBaseForm
   },
   {
     path: '/SearchListBaseForm/:name/:seibetsu/:address',

@@ -1,5 +1,5 @@
 <template>
-  <TitileMidashi
+  <ErrorMessage
   />
   <SearchJoken 
     @on-search-joken="onSearchJoken"
@@ -7,13 +7,13 @@
 </template>
 
 <script>
-import TitileMidashi from './components/TitileMidashi.vue'
+import ErrorMessage from './components/ErrorMessage.vue'
 import SearchJoken from './components/SearchJoken.vue'
 
 export default {
-  name: 'SearchJokenBaseForm',
+  name: 'WeekTalentShutsuenBaseForm',
   components: {
-    TitileMidashi,
+    ErrorMessage,
     SearchJoken,
   },
   data() {

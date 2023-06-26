@@ -6,12 +6,12 @@
 
 <script>
 export default {
-  name: 'TitileMidashi',
+  name: 'ErrorMessage',
   props: {
   },
   data() {
     return {
-      title: '検索条件を入力してください'
+      title: ''
     }
   },
 }
