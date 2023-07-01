@@ -3,14 +3,14 @@
     <table align="center">
       <tr>
         <td>対象年月： </td>
-        <td><input type="text" v-model="nentsuki" size="11" placeholder="例：202304"></td>
+        <td><input type="text" v-model="nentsuki" size="11" maxlength="6" placeholder="例：202304"></td>
         <td>対象週： </td>
-        <td><input type="text" v-model="shu" size="5" placeholder="例：3"></td>
+        <td><input type="text" v-model="shu" maxlength="1" size="5" placeholder="例：3"></td>
         <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color="red">※月と週はセットで必須入力</font></td>
       </tr>
       <tr>
         <td>タレント名： </td>
-        <td><input type="text" v-model="name" size="30" placeholder="○○太郎"></td>
+        <td><input type="text" v-model="name" size="30"  maxlength="30" placeholder="○○太郎"></td>
       </tr>
     </table>
     <br>
@@ -26,12 +26,12 @@
     </div>
     <br>
     <br>
-    <table align="center" v-if="countFlg === true">
+    <table align="center" v-if="countFlg">
       <tr>
         <td style="text-align: left;">対象週：   {{ this.result[0].shuFrom }}  ー   {{ this.result[0].shuTo }}</td>
       </tr>
     </table>
-    <table align="center" border="1" style="border-collapse: collapse;" v-if="countFlg===true">
+    <table align="center" border="1" style="border-collapse: collapse;" v-if="countFlg">
       <tr>
         <td style="background-color: greenyellow;">タレント名 </td>
         <td style="background-color: greenyellow;">週間出演番組本数 </td>
@@ -43,6 +43,11 @@
         <td>{{ item.shukanShutsuenProgramHonsu }} </td>
         <td>{{ item.shutsuenProgramChokin }} </td>
         <td>{{ item.onAirDayChokin }} </td>
+      </tr>
+    </table>
+    <table align="center" border="0" style="border-collapse: collapse;" v-if="countFlg==false">
+      <tr>
+        <font color="red">{{ this.msg }} </font>
       </tr>
     </table>
     <br>
@@ -62,6 +67,7 @@ export default {
       name: '',
       shuFrom: '',
       shuTo: '',
+      msg: '',
       countFlg: false,
       result: {}
     }
@@ -72,16 +78,19 @@ export default {
   methods: {
     async btnSearch() {
 
-      // ① 対象年月、対象週が必須で入力されていること。        
-      // ②対象年月がYYYY / MM形式であること。        
+      // ① 対象年月、対象週が必須で入力されていること。
+      if(this.nentsuki === "" || this.shu  === "") return alert("対象年月、対象週が必須です")
+
+      // ②対象年月がYYYY / MM形式であること。
       // ③対象週が数値かつ、1～5の数値のいずれかであること。        
       // ④タレントが30桁以内であること。
 
-      const url = "http://localhost:8080/api/shukanTalentJohoBFF?targetNentsuki=" + this.nentsuki + "&targetShu=" + this.shu + "&talentName=" + this.name;
+      const url = "http://localhost:8081/api/shukanTalentJohoBFF?targetNentsuki=" + this.nentsuki + "&targetShu=" + this.shu + "&talentName=" + this.name;
       this.result = await axios.get(url).then(response => (response.data))
       if(this.result[0].talentId !== null) {
           this.countFlg = true
       } else {
+          this.msg ="検索結果が0件です。"
           this.countFlg = false
       }
     },
@@ -95,6 +104,7 @@ export default {
       this.shuFrom = ''
       this.shuTo = ''
       this.countFlg = false
+      this.msg = ''
     }
   },
 }
