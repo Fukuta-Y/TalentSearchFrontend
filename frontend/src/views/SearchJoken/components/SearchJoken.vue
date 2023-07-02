@@ -85,7 +85,7 @@ export default {
       // ③対象週が数値かつ、1～5の数値のいずれかであること。        
       // ④タレントが30桁以内であること。
 
-      const url = "http://localhost:8081/api/shukanTalentJohoBFF?targetNentsuki=" + this.nentsuki + "&targetShu=" + this.shu + "&talentName=" + this.name;
+      const url = "http://localhost:8081/api/shukanTalentJohoBFF?nentsuki=" + this.nentsuki + "&shu=" + this.shu + "&talentName=" + this.name;
       this.result = await axios.get(url).then(response => (response.data))
       if(this.result[0].talentId !== null) {
           this.countFlg = true
