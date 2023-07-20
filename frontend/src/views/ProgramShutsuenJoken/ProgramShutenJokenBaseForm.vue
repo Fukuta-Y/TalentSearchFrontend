@@ -1,37 +1,40 @@
 <template>
   <ErrorMessage
   />
-  <SearchJoken 
-      v-bind:prop-nentsuki="nentsuki"
-      v-bind:prop-shu="shu"
-      v-bind:prop-talent-name="talentName"
+  <ProgramShutenJoken
+    v-bind:program-id="programId"
+    v-bind:onair-day="onairDay"
+    v-bind:nentsuki="nentsuki"
+    v-bind:shu="shu"
   />
 </template>
 
 <script>
 import ErrorMessage from './components/ErrorMessage.vue'
-import SearchJoken from './components/SearchJoken.vue'
+import ProgramShutenJoken from './components/ProgramShutsuenJoken.vue'
 
 export default {
-  name: 'WeekTalentShutsuenBaseForm',
+  name: 'ProgramShutenJokenBaseForm',
   props: {
+    programId: {
+      type: String,
+    },
+    onairDay: {
+      type: String,
+    },
     nentsuki: {
       type: String,
     },
     shu: {
       type: String,
     },
-    talentName: {
-      type: String,
-    },
   },
   components: {
     ErrorMessage,
-    SearchJoken,
+    ProgramShutenJoken,
   },
   data() {
     return {
-      searchJoken: {},
     }
   },
 methods: {

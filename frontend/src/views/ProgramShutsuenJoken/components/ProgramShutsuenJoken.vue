@@ -2,12 +2,16 @@
   <div>
     <table align="center">
       <tr>
-        <td>出演者： </td>
-        <td>{{ this.result[0].talentName }}</td>
+        <td>番組名(TODO)： </td>
+        <td>{{ this.programId }}</td>
       </tr>
       <tr>
-        <td>出演者ジャンル： </td>
-        <td>{{ this.result[0].shutsuenshaGenre }}</td>
+        <td>オンエア日： </td>
+        <td>{{ this.onairDay }}</td>
+      </tr>
+      <tr>
+        <td>番組ジャンル(TODO)： </td>
+        <td>{{ this.programId }}</td>
       </tr>
     </table>
     <br>
@@ -18,18 +22,10 @@
     </table>
     <table align="center" border="1" style="border-collapse: collapse;" v-if="countFlg">
       <tr>
-        <td style="background-color: greenyellow;">出演番組 </td>
-        <td style="background-color: greenyellow;">放送局（チャンネル） </td>
-        <td style="background-color: greenyellow;">オンエア日</td>
-        <td style="background-color: greenyellow;">放送時間</td>
-        <td style="background-color: greenyellow;">番組ジャンル</td>
+        <td style="background-color: greenyellow;">タレント名 </td>
       </tr>
       <tr v-for="(item, key) in result" :key="key">
-        <td><router-link :to="{ name: 'ProgramShutsuenJoken', params: { programId: item.programId, onairDay: item.onAirDay + ' ' + item.onAirTime, nentsuki: this.nentsuki, shu: this.shu } }">{{ item.shutsuenProgram }}</router-link></td>
-        <td>{{ item.hosokyokuChannel }} </td>
-        <td>{{ item.onAirDay }} </td>
-        <td>{{ item.onAirTime }} </td>
-        <td>{{ item.programGenre }} </td>
+        <td><router-link :to="{ path: 'WeekTalentShutsuenTalentName', query: { nentsuki: item.nentsuki, shu: item.shu, talentName: item.talentName }}">{{ item.talentName }}</router-link></td>
       </tr>
     </table>
     <table align="center" border="0" style="border-collapse: collapse;" v-if="countFlg==false">
@@ -44,17 +40,20 @@
 <script>
 import axios from 'axios'
 export default {
-  name: 'TalentProgramJoken',
+  name: 'ProgramShutsuenJoken',
   props: {
+    programId: {
+      type: String,
+    },
+    onairDay: {
+      type: String,
+    },
     nentsuki: {
       type: String,
     },
     shu: {
       type: String,
-    },
-    talentId: {
-      type: String,
-    },
+    }
   },
   data() {
     return {
@@ -70,9 +69,9 @@ export default {
   },
   methods: {
     async search() {
-      const url = "http://localhost:8081/api/talentShukanShutsuenJohoBFF?nentsuki=" + this.nentsuki + "&shu=" + this.shu + "&talentId=" + this.talentId;
+      const url = "http://localhost:8081/api/programShutsuenBFF?programId=" + this.programId + "&onairDay=" + this.onairDay +"&nentsuki=" + this.nentsuki + "&shu=" + this.shu +  "&talentId=" + this.talentId;
       this.result = await axios.get(url).then(response => (response.data))
-      if(this.result[0].talentName !== null) {
+      if(this.result[0].talentId !== null) {
           this.countFlg = true
       } else {
           this.msg ="検索結果が0件です。"

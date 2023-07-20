@@ -59,6 +59,15 @@ import axios from 'axios'
 export default {
   name: 'SearchJoken',
   props: {
+    propNentsuki: {
+      type: String,
+    },
+    propShu: {
+      type: String,
+    },
+    propTalentName: {
+      type: String,
+    },
   },
   data() {
     return {
@@ -74,6 +83,12 @@ export default {
   },
   mount() {
     this.init();
+    if(this.propNentsuki && this.propShu && this.propTalentName) {
+      this.nentsuki = this.propNentsuki
+      this.shu = this.propShu
+      this.name = this.propTalentName
+      this.btnSearch()
+    }
   },
   methods: {
     async btnSearch() {
