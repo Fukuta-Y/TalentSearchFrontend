@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import SearchList from '../views/SearchList/SearchListBaseForm.vue'
+//import SearchList from '../views/SearchList/SearchListBaseForm.vue'
+import TalentProgramJokenBaseForm from '../views/TalentProgramJoken/TalentProgramJokenBaseForm.vue'
 import WeekTalentShutsuenBaseForm from '../views/SearchJoken/WeekTalentShutsuenBaseForm.vue'
 const routes = [
   {
@@ -8,10 +9,10 @@ const routes = [
     component: WeekTalentShutsuenBaseForm
   },
   {
-    path: '/SearchListBaseForm/:name/:seibetsu/:address',
-    name: 'SearchListBaseForm',
-    component: SearchList,
-    props: route => ({ name: route.params.name, seibetsu: route.params.seibetsu, address: route.params.address })
+    path: '/TalentProgramJokenBaseForm/:nentsuki/:shu/:talentId',
+    name: 'TalentProgramJoken',
+    component: TalentProgramJokenBaseForm,
+    props: route => ({ nentsuki: route.params.nentsuki, shu: route.params.shu, talentId: route.params.talentId })
   },
 ]
 

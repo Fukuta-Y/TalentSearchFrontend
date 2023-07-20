@@ -24,7 +24,7 @@ export default {
 methods: {
     onSearchJoken(data) {
       this.searchJoken = data
-      this.$router.push({ name: 'SearchListBaseForm', params: { name: this.searchJoken.name, seibetsu: this.searchJoken.seibetsu, address: this.searchJoken.address, }, })
+      //this.$router.push({ name: 'TalentProgramJoken', params: { nentsuki: this.searchJoken.nentsuki, shu: this.searchJoken.shu, address: this.searchJoken.address, }, })
     }
   },
 }
