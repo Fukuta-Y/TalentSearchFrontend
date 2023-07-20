@@ -39,7 +39,7 @@
         <td style="background-color: greenyellow;">オンエア日（直近） </td>
       </tr>
       <tr v-for="(item, key) in result" :key="key">
-        <td><router-link :to="{ path: 'xxxx', query: { talentId: item.talentId }}">{{ item.talentName }}</router-link></td>
+        <td><router-link :to="{ name: 'TalentProgramJoken', params: { nentsuki: this.nentsuki, shu: this.shu, talentId: item.talentId } }">{{ item.talentName }}</router-link></td>
         <td>{{ item.shukanShutsuenProgramHonsu }} </td>
         <td>{{ item.shutsuenProgramChokin }} </td>
         <td>{{ item.onAirDayChokin }} </td>
@@ -105,6 +105,7 @@ export default {
       this.shuTo = ''
       this.countFlg = false
       this.msg = ''
+      this.result = {}
     }
   },
 }
