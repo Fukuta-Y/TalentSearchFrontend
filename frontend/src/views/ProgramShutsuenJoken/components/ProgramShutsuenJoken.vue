@@ -2,24 +2,19 @@
   <div>
     <table align="center">
       <tr>
-        <td>番組名(TODO)： </td>
-        <td>{{ this.programId }}</td>
+        <td>番組名： </td>
+         <td>{{ this.result[0].programName }}</td>
       </tr>
       <tr>
         <td>オンエア日： </td>
         <td>{{ this.onairDay }}</td>
       </tr>
       <tr>
-        <td>番組ジャンル(TODO)： </td>
-        <td>{{ this.programId }}</td>
+        <td>番組ジャンル： </td>
+        <td>{{ this.result[0].programGenre }}</td>
       </tr>
     </table>
     <br>
-    <table align="center" v-if="countFlg">
-      <tr>
-        <td style="text-align: left;">対象週：   {{ this.result[0].shuFrom }}  ー   {{ this.result[0].shuTo }}</td>
-      </tr>
-    </table>
     <table align="center" border="1" style="border-collapse: collapse;" v-if="countFlg">
       <tr>
         <td style="background-color: greenyellow;">タレント名 </td>
