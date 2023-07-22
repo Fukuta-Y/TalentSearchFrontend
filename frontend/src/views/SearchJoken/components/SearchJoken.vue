@@ -81,7 +81,7 @@ export default {
       result: {}
     }
   },
-  mount() {
+  async created() {
     this.init();
     if(this.propNentsuki && this.propShu && this.propTalentName) {
       this.nentsuki = this.propNentsuki

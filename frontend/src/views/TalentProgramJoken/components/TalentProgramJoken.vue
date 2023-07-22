@@ -1,6 +1,6 @@
 <template>
   <div>
-    <table align="center">
+    <table align="center" v-if="countFlg">
       <tr>
         <td>出演者： </td>
         <td>{{ this.result[0].talentName }}</td>

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <table align="center">
+    <table align="center" v-if="countFlg">
       <tr>
         <td>番組名： </td>
          <td>{{ this.result[0].programName }}</td>
@@ -20,7 +20,7 @@
         <td style="background-color: greenyellow;">タレント名 </td>
       </tr>
       <tr v-for="(item, key) in result" :key="key">
-        <td><router-link :to="{ path: 'WeekTalentShutsuenTalentName', query: { nentsuki: item.nentsuki, shu: item.shu, talentName: item.talentName }}">{{ item.talentName }}</router-link></td>
+        <td><router-link :to="{ name: 'WeekTalentShutsuenTalentName', params: { nentsuki: this.nentsuki, shu: this.shu, talentName: item.talentName }}">{{ item.talentName }}</router-link></td>
       </tr>
     </table>
     <table align="center" border="0" style="border-collapse: collapse;" v-if="countFlg==false">
