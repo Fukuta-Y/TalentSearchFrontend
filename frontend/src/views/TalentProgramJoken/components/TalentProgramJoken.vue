@@ -1,6 +1,6 @@
 <template>
   <div>
-    <table align="center">
+    <table align="center" v-if="countFlg">
       <tr>
         <td>出演者： </td>
         <td>{{ this.result[0].talentName }}</td>
@@ -25,7 +25,7 @@
         <td style="background-color: greenyellow;">番組ジャンル</td>
       </tr>
       <tr v-for="(item, key) in result" :key="key">
-        <td><router-link :to="{ path: 'TalentProgramJoken', query: { programId: item.programId }}">{{ item.shutsuenProgram }}</router-link></td>
+        <td><router-link :to="{ name: 'ProgramShutsuenJoken', params: { programId: item.programId, onairDay: item.onAirDay + ' ' + item.onAirTime, nentsuki: this.nentsuki, shu: this.shu } }">{{ item.shutsuenProgram }}</router-link></td>
         <td>{{ item.hosokyokuChannel }} </td>
         <td>{{ item.onAirDay }} </td>
         <td>{{ item.onAirTime }} </td>

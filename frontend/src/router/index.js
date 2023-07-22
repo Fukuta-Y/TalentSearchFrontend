@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
-//import SearchList from '../views/SearchList/SearchListBaseForm.vue'
 import TalentProgramJokenBaseForm from '../views/TalentProgramJoken/TalentProgramJokenBaseForm.vue'
 import WeekTalentShutsuenBaseForm from '../views/SearchJoken/WeekTalentShutsuenBaseForm.vue'
+import ProgramShutsuenJokenBaseForm from '../views/ProgramShutsuenJoken/ProgramShutsuenJokenBaseForm.vue'
 const routes = [
   {
     path: '/',
@@ -13,6 +13,18 @@ const routes = [
     name: 'TalentProgramJoken',
     component: TalentProgramJokenBaseForm,
     props: route => ({ nentsuki: route.params.nentsuki, shu: route.params.shu, talentId: route.params.talentId })
+  },
+  {
+    path: '/ProgramShutsuenJokenBaseForm/:programId/:onairDay/:nentsuki/:shu',
+    name: 'ProgramShutsuenJoken',
+    component: ProgramShutsuenJokenBaseForm,
+    props: route => ({ programId: route.params.programId, onairDay: route.params.onairDay, nentsuki: route.params.nentsuki, shu: route.params.shu })
+  },
+  {
+    path: '/WeekTalentShutsuenBaseForm/:nentsuki/:shu/:talentName',
+    name: 'WeekTalentShutsuenTalentName',
+    component: WeekTalentShutsuenBaseForm,
+    props: route => ({ nentsuki: route.params.nentsuki, shu: route.params.shu, talentName: route.params.talentName })
   },
 ]
 
