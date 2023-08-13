@@ -1,4 +1,6 @@
 <template>
+  <CommonHeader
+  />
   <ErrorMessage
   />
   <ProgramShutsuenJoken
@@ -10,7 +12,8 @@
 </template>
 
 <script>
-import ErrorMessage from './components/ErrorMessage.vue'
+import CommonHeader from '../common/CommonHeader.vue'
+import ErrorMessage from '../common/ErrorMessage.vue'
 import ProgramShutsuenJoken from './components/ProgramShutsuenJoken.vue'
 
 export default {
@@ -30,6 +33,7 @@ export default {
     },
   },
   components: {
+    CommonHeader,
     ErrorMessage,
     ProgramShutsuenJoken,
   },

@@ -1,4 +1,6 @@
 <template>
+  <CommonHeader
+    />
   <ErrorMessage
   />
   <SearchJoken 
@@ -9,7 +11,8 @@
 </template>
 
 <script>
-import ErrorMessage from './components/ErrorMessage.vue'
+import CommonHeader from '../common/CommonHeader.vue'
+import ErrorMessage from '../common/ErrorMessage.vue'
 import SearchJoken from './components/SearchJoken.vue'
 
 export default {
@@ -26,6 +29,7 @@ export default {
     },
   },
   components: {
+    CommonHeader,
     ErrorMessage,
     SearchJoken,
   },

@@ -1,12 +1,10 @@
 <template>
-  <div>
-    <h1>{{this.title}}</h1>
-  </div>
+  <div style='text-align:center;'><router-link :to="{ name: 'main' }">TOP</router-link></div>
 </template>
 
 <script>
 export default {
-  name: 'ErrorMessage',
+  name: 'CommonHeader',
   props: {
   },
   data() {

@@ -1,7 +1,5 @@
 <template>
-  <div>
-    <h1>{{this.title}}</h1>
-  </div>
+  <div>{{this.title}}</div>
 </template>
 
 <script>
@@ -11,7 +9,7 @@ export default {
   },
   data() {
     return {
-      title: ''
+      title: 'エラーメッセージ'
     }
   },
 }
