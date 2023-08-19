@@ -1,16 +1,28 @@
 <template>
+  <Form>
   <div>
     <table align="center">
       <tr>
         <td>対象年月： </td>
-        <td><input type="text" v-model="nentsuki" size="11" maxlength="6" placeholder="例：202304"></td>
+        <td>
+          <Field name="nentsuki" :rules="isRequired" v-model="nentsuki" size="11" maxlength="6" placeholder="例：202304"/>
+          <ErrorMessage name="nentsuki" />
+        </td>
+      </tr>
+      <tr>
         <td>対象週： </td>
-        <td><input type="text" v-model="shu" maxlength="1" size="5" placeholder="例：3"></td>
+        <td>
+          <Field name="shu" :rules="isRequired" v-model="shu" maxlength="1" size="5" placeholder="例：3"/>
+          <ErrorMessage name="shu" />
+        </td>
         <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color="red">※月と週はセットで必須入力</font></td>
       </tr>
       <tr>
         <td>タレント名： </td>
-        <td><input type="text" v-model="name" size="30"  maxlength="30" placeholder="○○太郎"></td>
+        <td>
+          <Field name="name" :rules="isRequired" v-model="name" size="30"  maxlength="30" placeholder="○○太郎"/>
+          <ErrorMessage name="name" />
+        </td>
       </tr>
     </table>
     <br>
@@ -52,9 +64,10 @@
     </table>
     <br>
   </div>
+  </Form>
 </template>
-
 <script>
+import { Form, Field, ErrorMessage } from 'vee-validate'
 import axios from 'axios'
 export default {
   name: 'SearchJoken',
@@ -68,6 +81,11 @@ export default {
     propTalentName: {
       type: String,
     },
+  },
+  components: {
+    Field,
+    Form,
+    ErrorMessage,
   },
   data() {
     return {
@@ -121,7 +139,13 @@ export default {
       this.countFlg = false
       this.msg = ''
       this.result = {}
-    }
+    },
+    isRequired(value) {
+      if (value && value.trim()) {
+        return true;
+      }
+      return 'This is required';
+    },
   },
 }
 </script>
