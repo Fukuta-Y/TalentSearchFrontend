@@ -5,24 +5,59 @@
       <tr>
         <td>対象年月： </td>
         <td>
-          <Field name="nentsuki" :rules="isRequired" v-model="nentsuki" size="11" maxlength="6" placeholder="例：202304"/>
-          <ErrorMessage name="nentsuki" />
+          <Field 
+            name="nentsuki" 
+            v-model="nentsuki"
+            size="11"
+            label="対象年月"
+            rules="required"
+            maxlength="6"
+            placeholder="例：202304"
+          />
         </td>
+      </tr>
+      <tr>
+        <td colspan="2"> 
+          <ErrorMessage name="nentsuki" /> 
+        </td> 
       </tr>
       <tr>
         <td>対象週： </td>
         <td>
-          <Field name="shu" :rules="isRequired" v-model="shu" maxlength="1" size="5" placeholder="例：3"/>
-          <ErrorMessage name="shu" />
+          <Field 
+            name="shu" 
+            rules="required"
+            v-model="shu"
+            label="対象週"
+            maxlength="1"
+            size="5"
+            placeholder="例：3"
+          />
         </td>
         <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color="red">※月と週はセットで必須入力</font></td>
       </tr>
       <tr>
+        <td colspan="2"> 
+          <ErrorMessage name="shu" /> 
+        </td> 
+      </tr>
+      <tr>
         <td>タレント名： </td>
         <td>
-          <Field name="name" :rules="isRequired" v-model="name" size="30"  maxlength="30" placeholder="○○太郎"/>
-          <ErrorMessage name="name" />
+          <Field 
+            name="name" 
+            v-model="name"
+            label="タレント名"
+            size="30"
+            maxlength="30"
+            placeholder="○○太郎"
+          />
         </td>
+      </tr>
+      <tr>
+        <td colspan="2"> 
+          <ErrorMessage name="name" />
+        </td> 
       </tr>
     </table>
     <br>
@@ -139,12 +174,6 @@ export default {
       this.countFlg = false
       this.msg = ''
       this.result = {}
-    },
-    isRequired(value) {
-      if (value && value.trim()) {
-        return true;
-      }
-      return 'This is required';
     },
   },
 }
