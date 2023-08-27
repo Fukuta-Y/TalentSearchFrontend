@@ -3,14 +3,60 @@
     <table align="center">
       <tr>
         <td>対象年月： </td>
-        <td><input type="text" v-model="nentsuki" size="11" maxlength="6" placeholder="例：202304"></td>
+        <td>
+          <Field 
+            name="nentsuki" 
+            v-model="nentsuki"
+            size="11"
+            label="対象年月"
+            rules="required"
+            maxlength="6"
+            placeholder="例：202304"
+          />
+        </td>
+      </tr>
+      <tr>
+        <td colspan="2"> 
+          <ErrorMessage style="font-size:12px;color:red;" name="nentsuki" /> 
+        </td> 
+      </tr>
+      <tr>
         <td>対象週： </td>
-        <td><input type="text" v-model="shu" maxlength="1" size="5" placeholder="例：3"></td>
-        <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color="red">※月と週はセットで必須入力</font></td>
+        <td>
+          <Field 
+            name="shu" 
+            rules="required"
+            v-model="shu"
+            label="対象週"
+            maxlength="1"
+            size="5"
+            placeholder="例：3"
+          />
+        </td>
+        <td style="font-size:11px;color:red;" >※月と週はセットで必須入力</td>
+      </tr>
+      <tr>
+        <td colspan="2"> 
+          <ErrorMessage style="font-size:12px;color:red;" name="shu" /> 
+        </td> 
       </tr>
       <tr>
         <td>タレント名： </td>
-        <td><input type="text" v-model="name" size="30"  maxlength="30" placeholder="○○太郎"></td>
+        <td>
+          <Field 
+            name="name" 
+            v-model="name"
+            label="タレント名"
+            size="30"
+            maxlength="30"
+            placeholder="○○太郎"
+          />
+        </td>
+      </tr>
+      <tr>
+        <td colspan="2"> 
+          <ErrorMessage name="name" />
+        </td> 
       </tr>
     </table>
     <br>
@@ -45,16 +91,11 @@
         <td>{{ item.onAirDayChokin }} </td>
       </tr>
     </table>
-    <table align="center" border="0" style="border-collapse: collapse;" v-if="countFlg==false">
-      <tr>
-        <font color="red">{{ this.msg }} </font>
-      </tr>
-    </table>
     <br>
   </div>
 </template>
-
 <script>
+import { Field, ErrorMessage } from 'vee-validate'
 import axios from 'axios'
 export default {
   name: 'SearchJoken',
@@ -69,6 +110,11 @@ export default {
       type: String,
     },
   },
+  components: {
+    Field,
+    ErrorMessage,
+  },
+  emits: ['on-message'],
   data() {
     return {
       nentsuki: '',
@@ -94,23 +140,31 @@ export default {
     async btnSearch() {
 
       // ① 対象年月、対象週が必須で入力されていること。
-      if(this.nentsuki === "" || this.shu  === "") return alert("対象年月、対象週が必須です")
-
+      if(this.nentsuki === "" || this.shu  === "") {
+        this.msg = "対象年月、対象週が必須です。"
+        this.$emit('on-message', this.msg)
+        return 
+      }
       // ②対象年月がYYYY / MM形式であること。
-      // ③対象週が数値かつ、1～5の数値のいずれかであること。        
+
+      // ③対象週が数値かつ、1～5の数値のいずれかであること。 
+
       // ④タレントが30桁以内であること。
 
       const url = "http://localhost:8081/api/shukanTalentJohoBFF?nentsuki=" + this.nentsuki + "&shu=" + this.shu + "&talentName=" + this.name;
       this.result = await axios.get(url).then(response => (response.data))
       if(this.result[0].talentId !== null) {
           this.countFlg = true
+        this.$emit('on-message', "")
       } else {
           this.msg ="検索結果が0件です。"
+          this.$emit('on-message', this.msg)
           this.countFlg = false
       }
     },
     btnClear() {
       this.init();
+      this.$emit('on-message', this.msg)
     },
     init(){
       this.nentsuki = ''
@@ -121,7 +175,7 @@ export default {
       this.countFlg = false
       this.msg = ''
       this.result = {}
-    }
+    },
   },
 }
 </script>
