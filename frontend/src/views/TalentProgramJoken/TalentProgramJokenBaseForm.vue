@@ -2,6 +2,7 @@
   <CommonHeader
     />
   <ErrorMessage
+        v-if="message"
   />
   <TalentProgramJoken
     v-bind:nentsuki="nentsuki"

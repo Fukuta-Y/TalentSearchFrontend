@@ -2,6 +2,7 @@
   <CommonHeader
   />
   <ErrorMessage
+        v-if="message"
   />
   <ProgramShutsuenJoken
     v-bind:program-id="programId"
