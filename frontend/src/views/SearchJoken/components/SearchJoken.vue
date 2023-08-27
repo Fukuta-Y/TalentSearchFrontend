@@ -1,99 +1,99 @@
 <template>
   <Form>
-  <div>
-    <table align="center">
-      <tr>
-        <td>対象年月： </td>
-        <td>
-          <Field 
-            name="nentsuki" 
-            v-model="nentsuki"
-            size="11"
-            label="対象年月"
-            rules="required"
-            maxlength="6"
-            placeholder="例：202304"
-          />
-        </td>
-      </tr>
-      <tr>
-        <td colspan="2"> 
-          <ErrorMessage name="nentsuki" /> 
-        </td> 
-      </tr>
-      <tr>
-        <td>対象週： </td>
-        <td>
-          <Field 
-            name="shu" 
-            rules="required"
-            v-model="shu"
-            label="対象週"
-            maxlength="1"
-            size="5"
-            placeholder="例：3"
-          />
-        </td>
-        <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color="red">※月と週はセットで必須入力</font></td>
-      </tr>
-      <tr>
-        <td colspan="2"> 
-          <ErrorMessage name="shu" /> 
-        </td> 
-      </tr>
-      <tr>
-        <td>タレント名： </td>
-        <td>
-          <Field 
-            name="name" 
-            v-model="name"
-            label="タレント名"
-            size="30"
-            maxlength="30"
-            placeholder="○○太郎"
-          />
-        </td>
-      </tr>
-      <tr>
-        <td colspan="2"> 
-          <ErrorMessage name="name" />
-        </td> 
-      </tr>
-    </table>
-    <br>
     <div>
-      <button v-on:click="btnSearch()">
-        検索
-      </button>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      <button 
-        v-on:click="btnClear()">
-        クリア
-      </button>
+      <table align="center">
+        <tr>
+          <td>対象年月： </td>
+          <td>
+            <Field 
+              name="nentsuki" 
+              v-model="nentsuki"
+              size="11"
+              label="対象年月"
+              rules="required"
+              maxlength="6"
+              placeholder="例：202304"
+            />
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2"> 
+            <ErrorMessage style="font-size:12px;color:red;" name="nentsuki" /> 
+          </td> 
+        </tr>
+        <tr>
+          <td>対象週： </td>
+          <td>
+            <Field 
+              name="shu" 
+              rules="required"
+              v-model="shu"
+              label="対象週"
+              maxlength="1"
+              size="5"
+              placeholder="例：3"
+            />
+          </td>
+          <td style="font-size:11px;color:red;" >※月と週はセットで必須入力</td>
+        </tr>
+        <tr>
+          <td colspan="2"> 
+            <ErrorMessage style="font-size:12px;color:red;" name="shu" /> 
+          </td> 
+        </tr>
+        <tr>
+          <td>タレント名： </td>
+          <td>
+            <Field 
+              name="name" 
+              v-model="name"
+              label="タレント名"
+              size="30"
+              maxlength="30"
+              placeholder="○○太郎"
+            />
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2"> 
+            <ErrorMessage name="name" />
+          </td> 
+        </tr>
+      </table>
+      <br>
+      <div>
+        <button v-on:click="btnSearch()">
+          検索
+        </button>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <button 
+          v-on:click="btnClear()">
+          クリア
+        </button>
+      </div>
+      <br>
+      <br>
+      <table align="center" v-if="countFlg">
+        <tr>
+          <td style="text-align: left;">対象週：   {{ this.result[0].shuFrom }}  ー   {{ this.result[0].shuTo }}</td>
+        </tr>
+      </table>
+      <table align="center" border="1" style="border-collapse: collapse;" v-if="countFlg">
+        <tr>
+          <td style="background-color: greenyellow;">タレント名 </td>
+          <td style="background-color: greenyellow;">週間出演番組本数 </td>
+          <td style="background-color: greenyellow;">出演番組（直近） </td>
+          <td style="background-color: greenyellow;">オンエア日（直近） </td>
+        </tr>
+        <tr v-for="(item, key) in result" :key="key">
+          <td><router-link :to="{ name: 'TalentProgramJoken', params: { nentsuki: this.nentsuki, shu: this.shu, talentId: item.talentId } }">{{ item.talentName }}</router-link></td>
+          <td>{{ item.shukanShutsuenProgramHonsu }} </td>
+          <td>{{ item.shutsuenProgramChokin }} </td>
+          <td>{{ item.onAirDayChokin }} </td>
+        </tr>
+      </table>
+      <br>
     </div>
-    <br>
-    <br>
-    <table align="center" v-if="countFlg">
-      <tr>
-        <td style="text-align: left;">対象週：   {{ this.result[0].shuFrom }}  ー   {{ this.result[0].shuTo }}</td>
-      </tr>
-    </table>
-    <table align="center" border="1" style="border-collapse: collapse;" v-if="countFlg">
-      <tr>
-        <td style="background-color: greenyellow;">タレント名 </td>
-        <td style="background-color: greenyellow;">週間出演番組本数 </td>
-        <td style="background-color: greenyellow;">出演番組（直近） </td>
-        <td style="background-color: greenyellow;">オンエア日（直近） </td>
-      </tr>
-      <tr v-for="(item, key) in result" :key="key">
-        <td><router-link :to="{ name: 'TalentProgramJoken', params: { nentsuki: this.nentsuki, shu: this.shu, talentId: item.talentId } }">{{ item.talentName }}</router-link></td>
-        <td>{{ item.shukanShutsuenProgramHonsu }} </td>
-        <td>{{ item.shutsuenProgramChokin }} </td>
-        <td>{{ item.onAirDayChokin }} </td>
-      </tr>
-    </table>
-    <br>
-  </div>
   </Form>
 </template>
 <script>
@@ -148,8 +148,6 @@ export default {
         this.$emit('on-message', this.msg)
         return 
       }
-
-
       // ②対象年月がYYYY / MM形式であること。
       // ③対象週が数値かつ、1～5の数値のいずれかであること。        
       // ④タレントが30桁以内であること。
@@ -157,7 +155,6 @@ export default {
       const url = "http://localhost:8081/api/shukanTalentJohoBFF?nentsuki=" + this.nentsuki + "&shu=" + this.shu + "&talentName=" + this.name;
       alert("url:" + url)
       this.result = await axios.get(url).then(response => (response.data))
-      await alert('result:' + this.result)
       if(this.result[0].talentId !== null) {
           this.countFlg = true
           alert("結果あり")

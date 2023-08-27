@@ -1,5 +1,5 @@
 <template>
-  <div style='text-align:center;'><router-link :to="{ name: 'main' }">TOP</router-link></div>
+  <div style='text-align:center;font-size:12px;'><router-link :to="{ name: 'main' }">TOP</router-link></div>
 </template>
 
 <script>
