@@ -92,11 +92,6 @@
         <td>{{ item.onAirDayChokin }} </td>
       </tr>
     </table>
-    <table align="center" border="0" style="border-collapse: collapse;" v-if="countFlg==false">
-      <tr>
-        <font color="red">{{ this.msg }} </font>
-      </tr>
-    </table>
     <br>
   </div>
   </Form>
@@ -122,6 +117,7 @@ export default {
     Form,
     ErrorMessage,
   },
+  emits: ['on-message'],
   data() {
     return {
       nentsuki: '',
@@ -147,18 +143,27 @@ export default {
     async btnSearch() {
 
       // ① 対象年月、対象週が必須で入力されていること。
-      if(this.nentsuki === "" || this.shu  === "") return alert("対象年月、対象週が必須です")
+      if(this.nentsuki === "" || this.shu  === "") {
+        this.msg = "対象年月、対象週が必須です。"
+        this.$emit('on-message', this.msg)
+        return 
+      }
+
 
       // ②対象年月がYYYY / MM形式であること。
       // ③対象週が数値かつ、1～5の数値のいずれかであること。        
       // ④タレントが30桁以内であること。
-
+      alert("結果前")
       const url = "http://localhost:8081/api/shukanTalentJohoBFF?nentsuki=" + this.nentsuki + "&shu=" + this.shu + "&talentName=" + this.name;
+      alert("url:" + url)
       this.result = await axios.get(url).then(response => (response.data))
+      await alert('result:' + this.result)
       if(this.result[0].talentId !== null) {
           this.countFlg = true
+          alert("結果あり")
       } else {
           this.msg ="検索結果が0件です。"
+          this.$emit('on-message', this.msg)
           this.countFlg = false
       }
     },

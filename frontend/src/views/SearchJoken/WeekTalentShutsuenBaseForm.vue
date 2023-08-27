@@ -2,11 +2,14 @@
   <CommonHeader
     />
   <ErrorMessage
+      v-if="message"
+      v-bind:prop-message="message"
   />
   <SearchJoken 
       v-bind:prop-nentsuki="nentsuki"
       v-bind:prop-shu="shu"
       v-bind:prop-talent-name="talentName"
+      v-on:on-message="receiveMessage"
   />
 </template>
 
@@ -36,9 +39,13 @@ export default {
   data() {
     return {
       searchJoken: {},
+      message:'',
     }
   },
 methods: {
+    receiveMessage(value) {
+      this.message = value
+    },
   },
 }
 </script>
