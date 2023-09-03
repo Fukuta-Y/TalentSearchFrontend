@@ -1,7 +1,7 @@
 <template>
   <CommonHeader
     />
-  <ErrorMessage
+  <HeaderMessage
         v-if="message"
   />
   <TalentProgramJoken
@@ -13,7 +13,7 @@
 
 <script>
 import CommonHeader from '../common/CommonHeader.vue'
-import ErrorMessage from '../common/ErrorMessage.vue'
+import HeaderMessage from '../common/HeaderMessage.vue'
 import TalentProgramJoken from './components/TalentProgramJoken.vue'
 
 export default {
@@ -31,7 +31,7 @@ export default {
   },
   components: {
     CommonHeader,
-    ErrorMessage,
+    HeaderMessage,
     TalentProgramJoken,
   },
   data() {

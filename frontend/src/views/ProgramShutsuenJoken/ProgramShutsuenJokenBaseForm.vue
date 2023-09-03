@@ -1,7 +1,7 @@
 <template>
   <CommonHeader
   />
-  <ErrorMessage
+  <HeaderMessage
         v-if="message"
   />
   <ProgramShutsuenJoken
@@ -14,7 +14,7 @@
 
 <script>
 import CommonHeader from '../common/CommonHeader.vue'
-import ErrorMessage from '../common/ErrorMessage.vue'
+import HeaderMessage from '../common/HeaderMessage.vue'
 import ProgramShutsuenJoken from './components/ProgramShutsuenJoken.vue'
 
 export default {
@@ -35,7 +35,7 @@ export default {
   },
   components: {
     CommonHeader,
-    ErrorMessage,
+    HeaderMessage,
     ProgramShutsuenJoken,
   },
   data() {
