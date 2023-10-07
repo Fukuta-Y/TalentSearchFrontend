@@ -1,7 +1,7 @@
 <template>
   <CommonHeader
     />
-  <HeaderMessage
+  <ErrorMessage
       v-if="message"
       v-bind:prop-message="message"
   />
@@ -15,7 +15,7 @@
 
 <script>
 import CommonHeader from '../common/CommonHeader.vue'
-import HeaderMessage from '../common/HeaderMessage.vue'
+import ErrorMessage from '../common/ErrorMessage.vue'
 import SearchJoken from './components/SearchJoken.vue'
 
 export default {
@@ -33,7 +33,7 @@ export default {
   },
   components: {
     CommonHeader,
-    HeaderMessage,
+    ErrorMessage,
     SearchJoken,
   },
   data() {
