@@ -71,7 +71,7 @@ export default {
   methods: {
     async search() {
       const url = "http://localhost:8081/api/talentShukanShutsuenJohoBFF?nentsuki=" + this.nentsuki + "&shu=" + this.shu + "&talentId=" + this.talentId;
-      this.result = await axios.get(url).then(response => (response.data))
+      this.result = await axios.get(url).then(response => (response.data.talentShukanShutsuen))
       if(this.result[0].talentName !== null) {
           this.countFlg = true
       } else {

@@ -152,7 +152,7 @@ export default {
       // ④タレントが30桁以内であること。
 
       const url = "http://localhost:8081/api/shukanTalentJohoBFF?nentsuki=" + this.nentsuki + "&shu=" + this.shu + "&talentName=" + this.name;
-      this.result = await axios.get(url).then(response => (response.data))
+      this.result = await axios.get(url).then(response => (response.data.shukanTalent))
       if(this.result[0].talentId !== null) {
           this.countFlg = true
         this.$emit('on-message', "")

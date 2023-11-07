@@ -65,7 +65,7 @@ export default {
   methods: {
     async search() {
       const url = "http://localhost:8081/api/programShutsuenBFF?programId=" + this.programId + "&onairDay=" + this.onairDay +"&nentsuki=" + this.nentsuki + "&shu=" + this.shu +  "&talentId=" + this.talentId;
-      this.result = await axios.get(url).then(response => (response.data))
+      this.result = await axios.get(url).then(response => (response.data.programShutsuen))
       if(this.result[0].talentId !== null) {
           this.countFlg = true
       } else {
