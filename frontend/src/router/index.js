@@ -1,11 +1,17 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import TalentProgramJokenBaseForm from '../views/TalentProgramJoken/TalentProgramJokenBaseForm.vue'
 import WeekTalentShutsuenBaseForm from '../views/SearchJoken/WeekTalentShutsuenBaseForm.vue'
+import MenuBaseForm from '../views/MainMenu/MenuBaseForm.vue'
 import ProgramShutsuenJokenBaseForm from '../views/ProgramShutsuenJoken/ProgramShutsuenJokenBaseForm.vue'
 const routes = [
   {
     path: '/',
     name: 'main',
+    component: MenuBaseForm
+  },
+  {
+    path: '/WeekTalentShutsuenBaseForm',
+    name: 'WeekTalentShutsuenTop',
     component: WeekTalentShutsuenBaseForm
   },
   {
