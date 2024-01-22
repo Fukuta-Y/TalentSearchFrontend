@@ -105,6 +105,7 @@ export default {
       programName: '',
       channelInfo: [],
       channelId: null, // チャンネルID
+      channelName: '',
       genreInfo: [],
       jyunjyo: null, //ジャンルID
     };
@@ -121,8 +122,8 @@ export default {
       // 更新時の場合
       if (this.programId !== undefined) {
         // 番組情報BFF（更新時のみ）※
-        const programInfo = "http://localhost:8081/api/programInfoBFF/" + this.programId;
-        this.result = await axios.get(programInfo).then(response => (response.data))
+        const programInfoUrl = "http://localhost:8081/api/programInfoBFF/" + this.programId;
+        this.result = await axios.get(programInfoUrl).then(response => (response.data))
         if (this.result.talentId !== null) {
           this.programName = this.result.programName;
           this.channelId = this.result.channelId;
@@ -144,13 +145,23 @@ export default {
       this.init();
     },
     // 登録・更新ボタン
-    btnToroku() {
+    async btnToroku() {
       // 全項目入力済みでない場合は止める
       if (this.channelId === null || this.jyunjyo === null) {
         this.msg = "全項目入力必須"
         this.$emit('on-message', this.msg)
         return;
       }
+
+      // チャンネル局IDに紐づく、チャンネルIDを取得
+      this.channel = this.channelInfo.find(item => item.channelId === this.channelId);
+      const kbnMasterChannelUrl = "http://localhost:8081/api/kbnMasterBFF/3";
+      this.kbnMasterChannel = await axios.get(kbnMasterChannelUrl).then(response => response.data.mKbnGenre);
+
+      // チャンネル名と同一のジャンルを取得し、順序をチャンネルIDに設定
+      const matchingGenre = this.kbnMasterChannel.find(item => item.genre === this.channelName);
+      this.channelId = matchingGenre.jyunjyo;
+
       // データオブジェクトを作成
       const postData = {
         programId: this.programId !== undefined ? this.programId : '00000000',
@@ -185,7 +196,8 @@ export default {
     // チャンネル名の表示
     getChannelName(channelId) {
       const selectedChannel = this.channelInfo.find(channel => channel.channelId === channelId);
-      return selectedChannel ? selectedChannel.channelName : '未選択';
+      this.channelName = selectedChannel ? selectedChannel.channelName : '未選択';
+      return this.channelName;
     },
     // ジャンル名の表示
     getGenreName(jyunjyo) {
