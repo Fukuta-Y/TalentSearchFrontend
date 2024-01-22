@@ -22,10 +22,10 @@ const routes = [
     props: route => ({ nentsuki: route.params.nentsuki, shu: route.params.shu, talentId: route.params.talentId })
   },
   {
-    path: '/ProgramShutsuenJokenBaseForm/:programId/:onairDay/:nentsuki/:shu',
+    path: '/ProgramShutsuenJokenBaseForm/:programId/:onAirDay/:nentsuki/:shu',
     name: 'ProgramShutsuenJoken',
     component: ProgramShutsuenJokenBaseForm,
-    props: route => ({ programId: route.params.programId, onairDay: route.params.onairDay, nentsuki: route.params.nentsuki, shu: route.params.shu })
+    props: route => ({ programId: route.params.programId, onAirDay: route.params.onAirDay, nentsuki: route.params.nentsuki, shu: route.params.shu })
   },
   {
     path: '/WeekTalentShutsuenBaseForm/:nentsuki/:shu/:talentName',

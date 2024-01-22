@@ -3,9 +3,11 @@
   />
   <ErrorMessage
     v-if="message"
+    v-bind:prop-message="message"
   />
   <ProgramTorokuKoshin
     v-bind:program-id="programId"
+    v-on:on-message="receiveMessage"
   />
 </template>
 
@@ -28,9 +30,13 @@ export default {
   },
   data() {
     return {
+      message: '',
     }
   },
 methods: {
+    receiveMessage(value) {
+      this.message = value
+    },
   },
 }
 </script>
