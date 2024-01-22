@@ -65,7 +65,7 @@
     <br/>
     <div>
       <button v-on:click="btnToroku()">
-        登録・更新
+        <label>{{ getTorokuKoshinName }}</label>
       </button>
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
       <button 
@@ -90,13 +90,17 @@ export default {
       // this.programIdが空文字の場合とそうでない場合でラベルを変更
       return this.programId === undefined ? '（新規登録）' : this.programId;
     },
+    // ラベルの木切り替え
+    getTorokuKoshinName() {
+      // this.programIdが空文字の場合とそうでない場合でラベルを変更
+      return this.programId === undefined ? '登録' : '更新';
+    },
   },
   components: {
     Field,
   },
   data() {
     return {
-      tmpId: '',
       programName: '',
       channelInfo: [],
       channelId: null, // チャンネルID
@@ -134,23 +138,20 @@ export default {
       this.genreInfo = await axios.get(genreInfoUrl).then(response => response.data.mKbnGenre);
 
     },
+    // 初期化ボタン
     btnClear() {
       this.init();
     },
+    // 登録・更新ボタン
     btnToroku() {
-      this.tmpId = '';
-      // 更新時の場合
-      if (this.programId !== undefined) {
-        this.tmpId = this.programId;
-
-      } else {
-        // 登録時
-        this.tmpId = '00000000';
+      // 全項目入力済みでない場合は止める
+      if (this.channelId === null || this.jyunjyo === null) {
+        alert('全項目入力必須です')
+        return;
       }
-
       // データオブジェクトを作成
       const postData = {
-        programId: this.tmpId,
+        programId: this.programId !== undefined ? this.programId : '00000000',
         programName: this.programName,
         channelId: this.channelId,
         genreId: this.jyunjyo,
@@ -164,23 +165,27 @@ export default {
 
       // POSTリクエストを行う
       axios.post(programToroku, postData).then(response => {
-          // 成功時の処理
-          console.log(response.data);
+          console.log("成功時の戻り値:" + JSON.stringify(response));
+          this.$router.push({ name: 'main', })
         })
         .catch(error => {
           // エラー時の処理
-          console.error('POSTリクエストエラー:', error);
+          console.log("失敗パラメータ:" + JSON.stringify(postData));
+          alert("登録失敗しました！", error);
         });
     },
+    // 初期化
     init(){
       this.programName = ''
       this.jyunjyo = ''
       this.channelId = ''
     },
+    // チャンネル名の表示
     getChannelName(channelId) {
       const selectedChannel = this.channelInfo.find(channel => channel.channelId === channelId);
       return selectedChannel ? selectedChannel.channelName : '未選択';
     },
+    // ジャンル名の表示
     getGenreName(jyunjyo) {
       const selectedGenre = this.genreInfo.find(genre => genre.jyunjyo === jyunjyo);
       return selectedGenre ? selectedGenre.genre : '未選択';

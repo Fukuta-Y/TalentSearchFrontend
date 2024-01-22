@@ -1,36 +1,32 @@
 <template>
-  <div id="app">
-      <table>
-          <tr colspan="3">
-            <!-- ハンバーガーメニュー -->
-            <div class="burger-menu" @click="toggleSidebar">
-              <div :class="{ 'bar': !isSidebarCollapsed, 'plus': isSidebarCollapsed }"></div>
-              <div :class="{ 'bar': !isSidebarCollapsed, 'plus': isSidebarCollapsed }"></div>
-              <div :class="{ 'bar': !isSidebarCollapsed, 'plus': isSidebarCollapsed }"></div>
-            </div>
-          </tr>
-        <tr colspan="3">
-          <td>
-           <!-- サイドバー -->
-          <SidebarMenu :isSidebarCollapsed="isSidebarCollapsed" :sidebarLinks="sidebarLinks" :expandedSubmenus="expandedSubmenus"
-            @toggleSubmenu="toggleSubmenu" />
-          </td>
-          <td>
-            <table align="center" border="1" style="border-collapse: collapse;">
-              <tr>
-                <td>
-                  <GyomuList />
-                </td>
-                <td>
-                  <MasterList />
-                </td>
-              </tr>
-            </table>
-          </td>
-        </tr>
-      </table>
+  <div id="app" style="display: flex; flex-direction: column; height: 100vh;">
+    <div>
+      <!-- ハンバーガーメニュー -->
+      <div class="burger-menu" @click="toggleSidebar">
+        <div :class="{ 'bar': !isSidebarCollapsed, 'plus': isSidebarCollapsed }"></div>
+        <div :class="{ 'bar': !isSidebarCollapsed, 'plus': isSidebarCollapsed }"></div>
+        <div :class="{ 'bar': !isSidebarCollapsed, 'plus': isSidebarCollapsed }"></div>
+      </div>
+    </div>
+    <div style="display: flex; flex: 1;">
+      <div style="width: 200px;">
+        <!-- サイドバー -->
+        <SidebarMenu :isSidebarCollapsed="isSidebarCollapsed" :sidebarLinks="sidebarLinks"
+          :expandedSubmenus="expandedSubmenus" @toggleSubmenu="toggleSubmenu" />
+      </div>
+      <div style="flex: 1; display: flex; justify-content: space-between; padding: 20px;">
+        <!-- space-between を使用して要素間に隙間を開けます -->
+        <div style="width: 48%; border: 1px solid black; padding: 10px; box-sizing: border-box;"> <!-- 適切な割合に調整 -->
+          <GyomuList />
+        </div>
+        <div style="width: 48%; border: 1px solid black; padding: 10px; box-sizing: border-box;"> <!-- 適切な割合に調整 -->
+          <MasterList />
+        </div>
+      </div>
+    </div>
   </div>
 </template>
+
 
 <script>
 import GyomuList from './components/GyomuList.vue';
