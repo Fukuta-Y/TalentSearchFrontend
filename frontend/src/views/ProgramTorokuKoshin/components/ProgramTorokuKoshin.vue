@@ -99,6 +99,7 @@ export default {
   components: {
     Field,
   },
+  emits: ['on-message'],
   data() {
     return {
       programName: '',
@@ -146,7 +147,8 @@ export default {
     btnToroku() {
       // 全項目入力済みでない場合は止める
       if (this.channelId === null || this.jyunjyo === null) {
-        alert('全項目入力必須です')
+        this.msg = "全項目入力必須"
+        this.$emit('on-message', this.msg)
         return;
       }
       // データオブジェクトを作成

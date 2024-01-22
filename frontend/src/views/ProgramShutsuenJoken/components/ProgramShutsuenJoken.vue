@@ -3,11 +3,11 @@
     <table align="center" v-if="countFlg">
       <tr>
         <td>番組名： </td>
-         <td>{{ this.result[0].programName }}</td>
+        <td><router-link :to="{ name: 'ProgramTorokuKoshin', params: { programId: this.programId } }">{{ this.result[0].programName }}</router-link></td>
       </tr>
       <tr>
         <td>オンエア日： </td>
-        <td>{{ this.onairDay }}</td>
+        <td>{{ this.onAirDay }}</td>
       </tr>
       <tr>
         <td>番組ジャンル： </td>
@@ -40,7 +40,7 @@ export default {
     programId: {
       type: String,
     },
-    onairDay: {
+    onAirDay: {
       type: String,
     },
     nentsuki: {
@@ -64,7 +64,7 @@ export default {
   },
   methods: {
     async search() {
-      const url = "http://localhost:8081/api/programShutsuenBFF?programId=" + this.programId + "&onairDay=" + this.onairDay +"&nentsuki=" + this.nentsuki + "&shu=" + this.shu +  "&talentId=" + this.talentId;
+      const url = "http://localhost:8081/api/programShutsuenBFF?programId=" + this.programId + "&onAirDay=" + this.onAirDay +"&nentsuki=" + this.nentsuki + "&shu=" + this.shu;
       this.result = await axios.get(url).then(response => (response.data.programShutsuen))
       if(this.result[0].talentId !== null) {
           this.countFlg = true

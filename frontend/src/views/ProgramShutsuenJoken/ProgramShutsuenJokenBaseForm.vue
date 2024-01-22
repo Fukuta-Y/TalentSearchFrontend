@@ -6,7 +6,7 @@
   />
   <ProgramShutsuenJoken
     v-bind:program-id="programId"
-    v-bind:onair-day="onairDay"
+    v-bind:on-air-day="onAirDay"
     v-bind:nentsuki="nentsuki"
     v-bind:shu="shu"
   />
@@ -23,7 +23,7 @@ export default {
     programId: {
       type: String,
     },
-    onairDay: {
+    onAirDay: {
       type: String,
     },
     nentsuki: {

@@ -27,7 +27,6 @@
   </div>
 </template>
 
-
 <script>
 import GyomuList from './components/GyomuList.vue';
 import MasterList from './components/MasterList.vue';
