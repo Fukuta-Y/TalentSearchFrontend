@@ -1,7 +1,5 @@
 <template>
-    <div style='text-align:center;font-size:12px;'>
-        <router-link
-            :to="{ name: '' }">番組登録</router-link></div>
+    <div style='text-align:center;font-size:12px;'><router-link :to="{ name: 'ProgramTorokuKoshinTop' }">番組登録</router-link></div>
     <div style='text-align:center;font-size:12px;'>
         <router-link
             :to="{ name: '' }">タレント登録</router-link></div>
