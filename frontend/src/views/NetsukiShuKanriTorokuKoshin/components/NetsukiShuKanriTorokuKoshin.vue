@@ -1,6 +1,6 @@
 <template>
-    <div v-if="mode === '1'"><router-link :to="{ name: 'NetsukiShuKanriTorokuKoshin', params: { mode: '2' } }">更新モード</router-link></div>
-    <div v-if="mode !== '1'" ><router-link :to="{ name: 'NetsukiShuKanriTorokuKoshin', params: { mode: '1' } }">新規登録モード</router-link></div>
+    <div v-if="mode === '1'"><router-link :to="{ name: 'NetsukiShuKanriTorokuKoshin', params: { mode: '2' } }">【更新】</router-link></div>
+    <div v-if="mode !== '1'" ><router-link :to="{ name: 'NetsukiShuKanriTorokuKoshin', params: { mode: '1' } }">【新規登録】</router-link></div>
     <table align="center">
       <tr>
           <td>年月： </td>
