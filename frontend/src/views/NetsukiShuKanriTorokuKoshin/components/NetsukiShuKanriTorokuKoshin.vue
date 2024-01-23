@@ -1,7 +1,8 @@
 <template>
-  <div>
+    <div v-if="mode === '1'"><router-link :to="{ name: 'NetsukiShuKanriTorokuKoshin', params: { mode: '2' } }">更新モード</router-link></div>
+    <div v-if="mode !== '1'" ><router-link :to="{ name: 'NetsukiShuKanriTorokuKoshin', params: { mode: '1' } }">新規登録モード</router-link></div>
     <table align="center">
-        <tr>
+      <tr>
           <td>年月： </td>
           <td>
             <Field 
@@ -25,7 +26,7 @@
               placeholder="例：4"
             />月
           </td>
-        <button v-on:click="btnRefDialog()">
+        <button v-on:click="btnRefDialog()" v-if="mode !== '1'">
           <label>参照</label>
         </button>
         </tr>
@@ -56,12 +57,11 @@
           </td>
         </tr>
     </table>
-    </div>
     <br/>
     <br/>
     <div>
       <button v-on:click="btnToroku()">
-        <label>登録/更新</label>
+        <label>{{ getTorokuKoshinName }}</label>
       </button>
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
       <button 
@@ -82,8 +82,17 @@ import { format } from 'date-fns';
 export default {
   name: 'NetsukiShuKanriTorokuKoshin',
   props: {
+    mode: {
+      type: String,
+    },
   },
   computed: {
+      // ラベルの木切り替え
+    getTorokuKoshinName() {
+      // this.modeが1の時は新規登録/2の時は更新モード
+      return this.mode === '1' ? '登録' : '更新';
+    },
+
   },
   components: {
     Field,
@@ -98,14 +107,17 @@ export default {
       shuFrom: null, 
       shuTo: null,
       formattedDate: null,
-      editMode: false, // 更新モードかどうかのフラグ
     };
   },
+
   watch: {
     selectedDate: function (newDate) {
       // 日付をフォーマットして表示用の変数にセット
       this.formattedDate = this.formatDate(newDate);
     },
+  },
+  mounted() {
+    console.log('this.mode:' + this.mode)
   },
   methods: {
     updateFormattedDate() {

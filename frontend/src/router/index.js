@@ -58,10 +58,11 @@ const routes = [
     props: route => ({ talentId: route.params.talentId })
   },
   {
-    path: '/NetsukiShuKanriTorokuKoshinBaseForm',
+    path: '/NetsukiShuKanriTorokuKoshinBaseForm/:mode?',  // パラメータがオプショナルになるように変更
     name: 'NetsukiShuKanriTorokuKoshin',
-    component: NetsukiShuKanriTorokuKoshinBaseForm
-  },
+    component: NetsukiShuKanriTorokuKoshinBaseForm,
+    props: route => ({ mode: route.params.mode || '1' })
+  }
 ]
 
 const router = createRouter({

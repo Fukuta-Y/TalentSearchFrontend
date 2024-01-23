@@ -6,6 +6,7 @@
     v-bind:prop-message="message"
   />
   <NetsukiShuKanriTorokuKoshin
+    v-bind:mode="mode"
     v-on:on-message="receiveMessage"
   />
 </template>
@@ -18,7 +19,7 @@ import NetsukiShuKanriTorokuKoshin from './components/NetsukiShuKanriTorokuKoshi
 export default {
   name: 'NetsukiShuKanriTorokuKoshinBaseForm',
   props: {
-    talentId: {
+    mode: {
       type: String,
     },
   },
