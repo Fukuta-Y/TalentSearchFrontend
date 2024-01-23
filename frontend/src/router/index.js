@@ -6,6 +6,8 @@ import ProgramShutsuenJokenBaseForm from '../views/ProgramShutsuenJoken/ProgramS
 import ProgramTorokuKoshinBaseForm from '../views/ProgramTorokuKoshin/ProgramTorokuKoshinBaseForm.vue'
 import TalentTorokuKoshinBaseForm from '../views/TalentTorokuKoshin/TalentTorokuKoshinBaseForm.vue'
 import NetsukiShuKanriTorokuKoshinBaseForm from '../views/NetsukiShuKanriTorokuKoshin/NetsukiShuKanriTorokuKoshinBaseForm.vue'
+import OnAirKanriTorokuKoshinBaseForm from '../views/OnAirKanriTorokuKoshin/OnAirKanriTorokuKoshinBaseForm.vue'
+
 const routes = [
   {
     path: '/',
@@ -61,6 +63,12 @@ const routes = [
     path: '/NetsukiShuKanriTorokuKoshinBaseForm/:mode?',  // パラメータがオプショナルになるように変更
     name: 'NetsukiShuKanriTorokuKoshin',
     component: NetsukiShuKanriTorokuKoshinBaseForm,
+    props: route => ({ mode: route.params.mode || '1' })
+  },
+  {
+    path: '/OnAirKanriTorokuKoshinBaseForm/:mode?',  // パラメータがオプショナルになるように変更
+    name: 'OnAirKanriTorokuKoshin',
+    component: OnAirKanriTorokuKoshinBaseForm,
     props: route => ({ mode: route.params.mode || '1' })
   }
 ]

@@ -9,7 +9,7 @@
       </div>
     </div>
     <div style="display: flex; flex: 1;">
-      <div style="width: 200px;">
+      <div :style="{ width: isSidebarCollapsed ? '60px' : '200px' }" class="sidebar">
         <!-- サイドバー -->
         <SidebarMenu :isSidebarCollapsed="isSidebarCollapsed" :sidebarLinks="sidebarLinks"
           :expandedSubmenus="expandedSubmenus" @toggleSubmenu="toggleSubmenu" />
