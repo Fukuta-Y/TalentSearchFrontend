@@ -76,7 +76,7 @@
 </template>
 
 <script>
-import { Field} from 'vee-validate'
+import { Field } from 'vee-validate'
 import axios from 'axios'
 export default {
   name: 'ProgramTorokuKoshin',
@@ -102,7 +102,7 @@ export default {
   emits: ['on-message'],
   data() {
     return {
-      programName: '',
+      programName: null,
       channelInfo: [],
       channelId: null, // チャンネルID
       channelName: '',
@@ -144,7 +144,7 @@ export default {
     // 登録・更新ボタン
     async btnToroku() {
       // 全項目入力済みでない場合は止める
-      if (this.channelId === null || this.jyunjyo === null) {
+      if (this.programName === null || this.channelId === null || this.jyunjyo === null) {
         this.msg = "全項目入力必須"
         this.$emit('on-message', this.msg)
         return;
@@ -186,9 +186,9 @@ export default {
     },
     // 初期化
     init(){
-      this.programName = ''
-      this.jyunjyo = ''
-      this.channelId = ''
+      this.programName = null
+      this.jyunjyo = null
+      this.channelId = null
     },
     // チャンネル名の表示
     getChannelName(channelId) {

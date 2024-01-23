@@ -57,7 +57,7 @@
 </template>
 
 <script>
-import { Field} from 'vee-validate'
+import { Field } from 'vee-validate'
 import axios from 'axios'
 export default {
   name: 'talentTorokuKoshin',
@@ -83,7 +83,7 @@ export default {
   emits: ['on-message'],
   data() {
     return {
-      talentName: '',
+      talentName: null,
       genreInfo: [],
       jyunjyo: null, //ジャンルID
     };
@@ -99,7 +99,6 @@ export default {
         // タレント情報BFF（更新時のみ）※
         const talentInfoUrl = "http://localhost:8081/api/talentInfoBFF/" + this.talentId;
         const talentInfo = await axios.get(talentInfoUrl).then(response => (response.data))
-        console.log('更新:' + JSON.stringify(talentInfo))
         if (talentInfo.talentId !== null) {
           this.talentName = talentInfo.talentName;
           this.jyunjyo = talentInfo.genreId;
@@ -117,8 +116,9 @@ export default {
     },
     // 登録・更新ボタン
     async btnToroku() {
+      console.log('this.talentName:' + this.talentName)
       // 全項目入力済みでない場合は止める
-      if (this.jyunjyo === null) {
+      if (this.talentName == null || this.jyunjyo === null) {
         this.msg = "全項目入力必須"
         this.$emit('on-message', this.msg)
         return;
@@ -150,9 +150,9 @@ export default {
     },
     // 初期化
     init(){
-      this.talentName = ''
-      this.jyunjyo = ''
-      this.channelId = ''
+      this.talentName = null
+      this.jyunjyo = null
+      this.channelId = null
     },
     // ジャンル名の表示
     getGenreName(jyunjyo) {

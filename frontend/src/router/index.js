@@ -5,6 +5,7 @@ import MenuBaseForm from '../views/MainMenu/MenuBaseForm.vue'
 import ProgramShutsuenJokenBaseForm from '../views/ProgramShutsuenJoken/ProgramShutsuenJokenBaseForm.vue'
 import ProgramTorokuKoshinBaseForm from '../views/ProgramTorokuKoshin/ProgramTorokuKoshinBaseForm.vue'
 import TalentTorokuKoshinBaseForm from '../views/TalentTorokuKoshin/TalentTorokuKoshinBaseForm.vue'
+import NetsukiShuKanriTorokuKoshinBaseForm from '../views/NetsukiShuKanriTorokuKoshin/NetsukiShuKanriTorokuKoshinBaseForm.vue'
 const routes = [
   {
     path: '/',
@@ -55,6 +56,11 @@ const routes = [
     name: 'TalentTorokuKoshin',
     component: TalentTorokuKoshinBaseForm,
     props: route => ({ talentId: route.params.talentId })
+  },
+  {
+    path: '/NetsukiShuKanriTorokuKoshinBaseForm',
+    name: 'NetsukiShuKanriTorokuKoshin',
+    component: NetsukiShuKanriTorokuKoshinBaseForm
   },
 ]
 
