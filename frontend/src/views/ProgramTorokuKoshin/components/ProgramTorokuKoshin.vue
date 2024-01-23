@@ -76,7 +76,7 @@
 </template>
 
 <script>
-import { Field} from 'vee-validate'
+import { Field } from 'vee-validate'
 import axios from 'axios'
 export default {
   name: 'ProgramTorokuKoshin',
