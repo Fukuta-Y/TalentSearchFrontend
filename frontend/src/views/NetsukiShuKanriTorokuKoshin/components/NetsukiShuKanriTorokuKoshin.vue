@@ -25,6 +25,9 @@
               placeholder="例：4"
             />月
           </td>
+        <button v-on:click="btnRefDialog()">
+          <label>参照</label>
+        </button>
         </tr>
         <tr>
           <td>週： </td>
@@ -58,7 +61,7 @@
     <br/>
     <div>
       <button v-on:click="btnToroku()">
-        <label>{{ getTorokuKoshinName }}</label>
+        <label>登録/更新</label>
       </button>
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
       <button 
@@ -79,16 +82,8 @@ import { format } from 'date-fns';
 export default {
   name: 'NetsukiShuKanriTorokuKoshin',
   props: {
-    talentId: {
-      type: String,
-    },
   },
   computed: {
-    // ラベルの木切り替え
-    getTorokuKoshinName() {
-      // this.talentIdが空文字の場合とそうでない場合でラベルを変更
-      return this.talentId === undefined ? '登録' : '更新';
-    },
   },
   components: {
     Field,
@@ -103,6 +98,7 @@ export default {
       shuFrom: null, 
       shuTo: null,
       formattedDate: null,
+      editMode: false, // 更新モードかどうかのフラグ
     };
   },
   watch: {
@@ -122,6 +118,10 @@ export default {
     btnClear() {
       this.init();
     },
+    // 参照ボタン
+    btnRefDialog() {
+      // ダイアログができたら作成
+    },
     // 登録・更新ボタン
     async btnToroku() {
       // 全項目入力済みでない場合は止める
@@ -131,18 +131,16 @@ export default {
         return;
       }
 
-      // FROMをyyyy-mm-ddに形式変換
-      const fromDate = new Date(this.shuFrom);
-      const fromYear = fromDate.getFullYear();
-      const fromMonth = String(fromDate.getMonth() + 1).padStart(2, "0");
-      const fromDay = String(fromDate.getDate()).padStart(2, "0");
-      const fromData = `${fromYear}-${fromMonth}-${fromDay}`;
-      // TOをyyyy-mm-ddに形式変換
-      const toDate = new Date(this.shuTo);
-      const toYear = toDate.getFullYear();
-      const toMonth = String(toDate.getMonth() + 1).padStart(2, "0");
-      const toDay = String(toDate.getDate()).padStart(2, "0");
-      const toData = `${toYear}-${toMonth}-${toDay}`;
+      // FROMとTOをyyyy-mm-ddに形式変換
+      const formatDate = (date) => {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+      };
+
+      const fromData = formatDate(new Date(this.shuFrom));
+      const toData = formatDate(new Date(this.shuTo));
 
       // データオブジェクトを作成
       const postData = {
