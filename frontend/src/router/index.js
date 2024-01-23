@@ -4,6 +4,7 @@ import WeekTalentShutsuenBaseForm from '../views/SearchJoken/WeekTalentShutsuenB
 import MenuBaseForm from '../views/MainMenu/MenuBaseForm.vue'
 import ProgramShutsuenJokenBaseForm from '../views/ProgramShutsuenJoken/ProgramShutsuenJokenBaseForm.vue'
 import ProgramTorokuKoshinBaseForm from '../views/ProgramTorokuKoshin/ProgramTorokuKoshinBaseForm.vue'
+import TalentTorokuKoshinBaseForm from '../views/TalentTorokuKoshin/TalentTorokuKoshinBaseForm.vue'
 const routes = [
   {
     path: '/',
@@ -43,6 +44,17 @@ const routes = [
     name: 'ProgramTorokuKoshin',
     component: ProgramTorokuKoshinBaseForm,
     props: route => ({ programId: route.params.programId })
+  },
+  {
+    path: '/TalentTorokuKoshinBaseForm',
+    name: 'TalentTorokuKoshinTop',
+    component: TalentTorokuKoshinBaseForm
+  },
+  {
+    path: '/TalentTorokuKoshinBaseForm/:talentId',
+    name: 'TalentTorokuKoshin',
+    component: TalentTorokuKoshinBaseForm,
+    props: route => ({ talentId: route.params.talentId })
   },
 ]
 
