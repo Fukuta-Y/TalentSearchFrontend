@@ -3,7 +3,7 @@
     <table align="center" v-if="countFlg">
       <tr>
         <td>出演者： </td>
-        <td>{{ this.result[0].talentName }}</td>
+        <td><router-link :to="{ name: 'TalentTorokuKoshin', params: { talentId: this.talentId } }">{{ this.result[0].talentName }}</router-link></td>
       </tr>
       <tr>
         <td>出演者ジャンル： </td>

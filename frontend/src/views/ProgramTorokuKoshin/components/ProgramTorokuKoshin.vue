@@ -114,20 +114,17 @@ export default {
     // APIからデータを取得するメソッドを呼び出す
     this.fetchData();
   },
-  async created() {
-    return this.programId === '' ? this.countToroku = true : this.countToroku=  false;
-  },
   methods: {
     async fetchData() {
       // 更新時の場合
       if (this.programId !== undefined) {
         // 番組情報BFF（更新時のみ）※
         const programInfoUrl = "http://localhost:8081/api/programInfoBFF/" + this.programId;
-        this.result = await axios.get(programInfoUrl).then(response => (response.data))
-        if (this.result.talentId !== null) {
-          this.programName = this.result.programName;
-          this.channelId = this.result.channelId;
-          this.jyunjyo = this.result.genreId;
+        const programInfo = await axios.get(programInfoUrl).then(response => (response.data))
+        if (programInfo.talentId !== null) {
+          this.programName = programInfo.programName;
+          this.channelId = programInfo.channelId;
+          this.jyunjyo = programInfo.genreId;
         }
       }
 
