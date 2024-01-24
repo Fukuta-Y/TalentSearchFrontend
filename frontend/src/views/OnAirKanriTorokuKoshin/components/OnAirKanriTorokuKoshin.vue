@@ -41,9 +41,16 @@
                 :disabled="true" 
               />
             </td>
-          <button v-on:click="btnProgramRefDialog()">
-            <label>参照</label>
-          </button>
+            <button v-on:click="btnProgramRefDialogOpen()">
+              <label>参照</label>
+            </button>
+            <ProgramRefDialog 
+              v-bind:prop-program-id="programId"
+              v-bind:prop-program-name="programName"
+              :is-open="programRefDialogComponent" 
+              @close="btnProgramRefDialogClose()" 
+              @on-select-program="handleSelectProgram" 
+            />
         </tr>
         <tr>
           <td>番組名： </td>
@@ -105,7 +112,7 @@
 <script>
 import { Field } from 'vee-validate'
 import axios from 'axios'
-
+import ProgramRefDialog from '../../ProgramRefDialog/ProgramRefDialogBaseForm.vue';
 import Datepicker from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
 import { format } from 'date-fns';
@@ -125,29 +132,33 @@ export default {
     },
     getProgramName() {
       // TODO
-      return 'NEWニューヨーク'
+      return this.programName
     },
     getTalentName() {
       // TODO
-      return '香取慎吾'
+      return this.talentName
     },
   },
   components: {
     Field,
     Datepicker,
+    ProgramRefDialog,
   },
   emits: ['on-message'],
   data() {
     return {
       id: '', //TOOD
       onAirDay: null,
-      programId: '00000002', //TOOD
+      programId: null,
+      programName: null,
       talentId: '00000003',  //TOOD
+      talentName: '香取慎吾', //TOOD
       nentsukiShu: null,
       nentsuki: null,
       shu: null,
       formattedDate: null,
       nentsukiShuKanri: [],
+      programRefDialogComponent: false,
     };
   },
   watch: {
@@ -164,6 +175,11 @@ export default {
     }
   },
   methods: {
+    // 番組IDの参照時の戻り
+    handleSelectProgram(selectedData) {
+      this.programId =  selectedData.programId
+      this.programName = selectedData.programName
+    },
      getId() {
       // this.idが空文字の場合とそうでない場合でラベルを変更
       return this.id === undefined ? '（新規登録）' : this.id;
@@ -212,8 +228,14 @@ export default {
       this.init();
     },
     // 番組参照ボタン
-    btnProgramRefDialog() {
+    btnProgramRefDialogOpen() {
       // ダイアログができたら作成
+      this.programRefDialogComponent = true;
+    },
+    // 番組参照ボタン
+    btnProgramRefDialogClose() {
+      // ダイアログができたら作成
+      this.programRefDialogComponent = false;
     },
     // タレント参照ボタン
     btnTalentRefDialog() {
@@ -273,7 +295,9 @@ export default {
       this.id = null
       this.onAirDay = null
       this.programId = null
+      this.programName = null
       this.talentId = null
+      this.talentName = null
       this.nentsukiShu = null
     },
   },

@@ -70,7 +70,7 @@ const routes = [
     name: 'OnAirKanriTorokuKoshin',
     component: OnAirKanriTorokuKoshinBaseForm,
     props: route => ({ mode: route.params.mode || '1' })
-  }
+  },
 ]
 
 const router = createRouter({
