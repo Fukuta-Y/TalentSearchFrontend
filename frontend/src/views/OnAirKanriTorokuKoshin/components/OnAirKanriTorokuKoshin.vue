@@ -41,9 +41,10 @@
                 :disabled="true" 
               />
             </td>
-          <button v-on:click="btnProgramRefDialog()">
-            <label>参照</label>
-          </button>
+            <button v-on:click="btnProgramRefDialogOpen()">
+              <label>参照</label>
+            </button>
+            <ProgramRefDialog v-if="programRefDialogComponent" @close="btnProgramRefDialogClose()" />
         </tr>
         <tr>
           <td>番組名： </td>
@@ -105,7 +106,7 @@
 <script>
 import { Field } from 'vee-validate'
 import axios from 'axios'
-
+import ProgramRefDialog from '../../ProgramRefDialog/ProgramRefDialogBaseForm.vue';
 import Datepicker from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
 import { format } from 'date-fns';
@@ -125,16 +126,17 @@ export default {
     },
     getProgramName() {
       // TODO
-      return 'NEWニューヨーク'
+      return this.programName
     },
     getTalentName() {
       // TODO
-      return '香取慎吾'
+      return this.talentName
     },
   },
   components: {
     Field,
     Datepicker,
+    ProgramRefDialog,
   },
   emits: ['on-message'],
   data() {
@@ -142,12 +144,15 @@ export default {
       id: '', //TOOD
       onAirDay: null,
       programId: '00000002', //TOOD
+      programName: 'NEWニューヨーク', //TOOD
       talentId: '00000003',  //TOOD
+      talentName: '香取慎吾', //TOOD
       nentsukiShu: null,
       nentsuki: null,
       shu: null,
       formattedDate: null,
       nentsukiShuKanri: [],
+      programRefDialogComponent: false,
     };
   },
   watch: {
@@ -212,8 +217,14 @@ export default {
       this.init();
     },
     // 番組参照ボタン
-    btnProgramRefDialog() {
+    btnProgramRefDialogOpen() {
       // ダイアログができたら作成
+      this.programRefDialogComponent = true;
+    },
+    // 番組参照ボタン
+    btnProgramRefDialogClose() {
+      // ダイアログができたら作成
+      this.programRefDialogComponent = false;
     },
     // タレント参照ボタン
     btnTalentRefDialog() {
@@ -273,7 +284,9 @@ export default {
       this.id = null
       this.onAirDay = null
       this.programId = null
+      this.programName = null
       this.talentId = null
+      this.talentName = null
       this.nentsukiShu = null
     },
   },
