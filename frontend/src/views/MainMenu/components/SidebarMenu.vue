@@ -36,4 +36,11 @@ export default {
 };
 </script>
 <style scoped>
+  .sidebar a {
+    font-size: 12px; /* 適切なサイズに調整 */
+  }
+  .sidebar ul {
+    list-style-type: none; /* デフォルトのバレットポイントを削除 */
+    padding-left: 0; /* デフォルトのパディングを削除 */
+  }
 </style>

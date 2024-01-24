@@ -3,9 +3,9 @@
     <div>
       <!-- ハンバーガーメニュー -->
       <div class="burger-menu" @click="toggleSidebar">
-        <div :class="{ 'bar': !isSidebarCollapsed, 'plus': isSidebarCollapsed }"></div>
-        <div :class="{ 'bar': !isSidebarCollapsed, 'plus': isSidebarCollapsed }"></div>
-        <div :class="{ 'bar': !isSidebarCollapsed, 'plus': isSidebarCollapsed }"></div>
+        <div :class="{ 'bar': isSidebarCollapsed, 'plus': !isSidebarCollapsed }"></div>
+        <div :class="{ 'bar': isSidebarCollapsed, 'plus': !isSidebarCollapsed }"></div>
+        <div :class="{ 'bar': isSidebarCollapsed, 'plus': !isSidebarCollapsed }"></div>
       </div>
     </div>
     <div style="display: flex; flex: 1;">
@@ -16,17 +16,28 @@
       </div>
       <div style="flex: 1; display: flex; justify-content: space-between; padding: 20px;">
         <!-- space-between を使用して要素間に隙間を開けます -->
-        <div style="width: 48%; border: 1px solid black; padding: 10px; box-sizing: border-box;"> <!-- 適切な割合に調整 -->
-          <GyomuList />
+        <div style="width: 48%; border: 1px solid black; padding: 4px; box-sizing: border-box;" class="sidebar-link">
+          <!-- 適切な割合に調整 -->
+          <div class="boxed">
+            <p>業務</p>
+          </div>
+          <div class="gyoumuMenu">
+            <GyomuList />
+          </div>
         </div>
-        <div style="width: 48%; border: 1px solid black; padding: 10px; box-sizing: border-box;"> <!-- 適切な割合に調整 -->
-          <MasterList />
+        <div style="width: 48%; border: 1px solid black; padding: 10px; box-sizing: border-box;" class="sidebar-link">
+          <!-- 適切な割合に調整 -->
+          <div class="boxed">
+            <p>マスタ</p>
+          </div>
+          <div class="masterMenu">
+            <MasterList />
+          </div>
         </div>
       </div>
     </div>
   </div>
 </template>
-
 <script>
 import GyomuList from './components/GyomuList.vue';
 import MasterList from './components/MasterList.vue';
@@ -40,24 +51,24 @@ export default {
   },
   data() {
     return {
-      isSidebarCollapsed: false,
+      isSidebarCollapsed: true, // サイドメニューがデフォルトで閉じている
       expandedSubmenus: [],
       sidebarLinks: [
-        { id: 1, text: 'Dashboard', url: '#' },
         {
-          id: 2,
-          text: 'Profile',
+          id: 1,
+          text: '業務',
           children: [
-            { id: 3, text: 'Overview', url: '#' },
-            { id: 4, text: 'Settings', url: '#' }
+            { id: 2, text: '週間タレント出演検索', url: 'http://localhost:8080/WeekTalentShutsuenBaseForm' },
           ]
         },
         {
-          id: 5,
-          text: 'Projects',
+          id: 10,
+          text: 'マスタ',
           children: [
-            { id: 6, text: 'Project A', url: '#' },
-            { id: 7, text: 'Project B', url: '#' }
+            { id: 11, text: '番組登録', url: 'http://localhost:8080/ProgramTorokuKoshinBaseForm' },
+            { id: 12, text: 'タレント登録', url: 'http://localhost:8080/TalentTorokuKoshinBaseForm' },
+            { id: 13, text: '年月週管理登録', url: 'http://localhost:8080/NetsukiShuKanriTorokuKoshinBaseForm' },
+            { id: 14, text: 'オンエア管理登録', url: 'http://localhost:8080/OnAirKanriTorokuKoshinBaseForm' },
           ]
         }
       ],
@@ -105,8 +116,8 @@ export default {
   .burger-menu {
     cursor: pointer;
     padding: 10px;
-    background-color: #333;
-    color: #fff;
+    background-color:#696969;
+    color: #020000e8;
   }
 
   .bar, .plus {
@@ -123,7 +134,7 @@ export default {
 
   .sidebar {
     width: 200px;
-    background-color: #333;
+    background-color: #696969;
     color: #fff;
     padding: 20px;
     height: 100vh;
@@ -135,17 +146,6 @@ export default {
     width: 60px;
     overflow: hidden;
   }
-
-  .main-container {
-    display: flex;
-    width: 100%;
-  }
-
-  .main-content {
-    flex: 1;
-    padding: 20px;
-  }
-
   ul {
     list-style: none;
     padding: 0;
@@ -164,9 +164,24 @@ export default {
   ul ul {
     margin-top: 5px;
   }
+  /* ボックスのスタイル */
+  .boxed {
+    border: 1px solid #333;
+    padding: 5px;
+    margin: 20px;
+    border-radius: 8px;
+    background-color: #f0f8ff;
+  }
 
-  .expanded {
-    transform: rotate(-90deg);
-    transition: transform 0.3s ease;
+  /* ボックスのスタイル */
+  .gyoumuMenu, .masterMenu {
+    border: 1px solid #333;
+    padding: 10px;
+    margin: 20px;
+    min-height: 70%; /* 画面の下の方まで伸ばす */
+    box-sizing: border-box;
+  }
+  .sidebar-link {
+    margin-bottom: 10px; /* 適切なマージンを指定 */
   }
 </style>
