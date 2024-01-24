@@ -44,7 +44,7 @@
             <button v-on:click="btnProgramRefDialogOpen()">
               <label>参照</label>
             </button>
-            <ProgramRefDialog v-if="programRefDialogComponent" @close="btnProgramRefDialogClose()" />
+            <ProgramRefDialog :isOpen="programRefDialogComponent" @close="btnProgramRefDialogClose()" />
         </tr>
         <tr>
           <td>番組名： </td>

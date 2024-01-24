@@ -56,22 +56,24 @@
     </div>
     <br>
     <br>
+    <div style="overflow-y: auto;">
     <table align="center" border="1" style="border-collapse: collapse;" v-if="countFlg">
       <tr>
-        <td style="background-color: greenyellow;"> </td>
+        <td style="background-color: greenyellow;"></td>
         <td style="background-color: greenyellow;">番組ID </td>
         <td style="background-color: greenyellow;">番組名 </td>
         <td style="background-color: greenyellow;">チャンネルID</td>
         <td style="background-color: greenyellow;">ジャンルID </td>
       </tr>
       <tr v-for="(item, key) in result" :key="key">
-        <td>「選択」</td>
+        <td><button v-on:click="selectProgram(item.programId, item.programName)">選択</button></td>
         <td>{{ item.programId }} </td>
         <td>{{ item.programName }} </td>
         <td>{{ item.channelId }} </td>
         <td>{{ item.genreId }} </td>
       </tr>
     </table>
+    </div>
     <br>
   </div>
 </template>
@@ -92,7 +94,7 @@ export default {
     Field,
     ErrorMessage,
   },
-  emits: ['on-message'],
+  emits: ['on-message', 'on-select-program'],
   data() {
     return {
       programId: this.propProgramId,
@@ -112,8 +114,8 @@ export default {
   },
   methods: {
     async btnSearch() {
-      const url = "http://localhost:8081/api/programRefBFF?programId=" + this.programId +"?programName=" + this.programName;
-      this.result = await axios.get(url).then(response => (response.data.mProgram))
+      const url = "http://localhost:8081/api/programRefBFF?programId=" + this.programId +"&programName=" + this.programName;
+      this.result = await axios.get(url).then(response => (response.data.mProgram));
       if(this.result[0].programId !== null) {
           this.countFlg = true
           this.$emit('on-message', "")
@@ -122,6 +124,11 @@ export default {
           this.$emit('on-message', this.msg)
           this.countFlg = false
       }
+    },
+    selectProgram(programId, programName) {
+      // 「選択」ボタンがクリックされたときに呼ばれるメソッド
+      // programId と programName を親コンポーネントに渡す
+      this.$emit('on-select-program', { programId, programName });
     },
     btnClear() {
       this.init();
