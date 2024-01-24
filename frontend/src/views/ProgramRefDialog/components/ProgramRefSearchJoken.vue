@@ -7,7 +7,7 @@
           <Field 
             name="programId" 
             v-model="programId"
-            size="11"
+            size="15"
             label="番組ID"
             maxlength="8"
             placeholder="例：00000001"
@@ -27,7 +27,7 @@
             v-model="programName"
             label="番組名"
             maxlength="30"
-            size="5"
+            size="20"
             placeholder="例：ぽかぽか"
           />
         </td>
@@ -62,10 +62,10 @@
         <td style="background-color: greenyellow;"></td>
         <td style="background-color: greenyellow;">番組ID </td>
         <td style="background-color: greenyellow;">番組名 </td>
-        <td style="background-color: greenyellow;">チャンネルID</td>
+        <td style="background-color: greenyellow;">チャンネル局ID</td>
         <td style="background-color: greenyellow;">ジャンルID </td>
       </tr>
-      <tr v-for="(item, key) in result" :key="key">
+      <tr v-for="(item, key) in paginatedResult" :key="key">
         <td><button v-on:click="selectProgram(item.programId, item.programName)">選択</button></td>
         <td>{{ item.programId }} </td>
         <td>{{ item.programName }} </td>
@@ -73,6 +73,11 @@
         <td>{{ item.genreId }} </td>
       </tr>
     </table>
+    <div>
+      <button v-for="pageNumber in totalPages" :key="pageNumber" @click="changePage(pageNumber)">
+        {{ pageNumber }}
+      </button>
+    </div>
     </div>
     <br>
   </div>
@@ -101,7 +106,10 @@ export default {
       programName: this.propProgramName,
       msg: '',
       countFlg: false,
-      result: {}
+      result: {},
+      currentPage: 1,
+      pageSize: 10, // 1ページあたりのアイテム数
+      totalPages: 0,
     }
   },
   async created() {
@@ -112,10 +120,18 @@ export default {
       this.btnSearch()
     }
   },
+  computed: {
+    paginatedResult() {
+      const startIndex = (this.currentPage - 1) * this.pageSize;
+      const endIndex = startIndex + this.pageSize;
+      return this.result.slice(startIndex, endIndex);
+    },
+  },
   methods: {
     async btnSearch() {
       const url = "http://localhost:8081/api/programRefBFF?programId=" + this.programId +"&programName=" + this.programName;
       this.result = await axios.get(url).then(response => (response.data.mProgram));
+      this.resultCount = this.result.length; // 件数を更新
       if(this.result[0].programId !== null) {
           this.countFlg = true
           this.$emit('on-message', "")
@@ -124,6 +140,10 @@ export default {
           this.$emit('on-message', this.msg)
           this.countFlg = false
       }
+    },
+    changePage(pageNumber) {
+      this.currentPage = pageNumber;
+      this.fetchData(); // ページ変更時にデータを再取得するなどの処理を追加
     },
     selectProgram(programId, programName) {
       // 「選択」ボタンがクリックされたときに呼ばれるメソッド

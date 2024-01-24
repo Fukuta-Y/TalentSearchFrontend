@@ -44,7 +44,13 @@
             <button v-on:click="btnProgramRefDialogOpen()">
               <label>参照</label>
             </button>
-            <ProgramRefDialog :isOpen="programRefDialogComponent" @close="btnProgramRefDialogClose()" />
+            <ProgramRefDialog 
+              v-bind:prop-program-id="programId"
+              v-bind:prop-program-name="programName"
+              :is-open="programRefDialogComponent" 
+              @close="btnProgramRefDialogClose()" 
+              @on-select-program="handleSelectProgram" 
+            />
         </tr>
         <tr>
           <td>番組名： </td>
@@ -143,8 +149,8 @@ export default {
     return {
       id: '', //TOOD
       onAirDay: null,
-      programId: '00000002', //TOOD
-      programName: 'NEWニューヨーク', //TOOD
+      programId: null,
+      programName: null,
       talentId: '00000003',  //TOOD
       talentName: '香取慎吾', //TOOD
       nentsukiShu: null,
@@ -169,6 +175,11 @@ export default {
     }
   },
   methods: {
+    // 番組IDの参照時の戻り
+    handleSelectProgram(selectedData) {
+      this.programId =  selectedData.programId
+      this.programName = selectedData.programName
+    },
      getId() {
       // this.idが空文字の場合とそうでない場合でラベルを変更
       return this.id === undefined ? '（新規登録）' : this.id;

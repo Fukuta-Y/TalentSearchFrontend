@@ -7,7 +7,6 @@ import ProgramTorokuKoshinBaseForm from '../views/ProgramTorokuKoshin/ProgramTor
 import TalentTorokuKoshinBaseForm from '../views/TalentTorokuKoshin/TalentTorokuKoshinBaseForm.vue'
 import NetsukiShuKanriTorokuKoshinBaseForm from '../views/NetsukiShuKanriTorokuKoshin/NetsukiShuKanriTorokuKoshinBaseForm.vue'
 import OnAirKanriTorokuKoshinBaseForm from '../views/OnAirKanriTorokuKoshin/OnAirKanriTorokuKoshinBaseForm.vue'
-import ProgramRefDialogBaseForm from '../views/ProgramRefDialog/ProgramRefDialogBaseForm.vue'
 
 const routes = [
   {
@@ -71,12 +70,6 @@ const routes = [
     name: 'OnAirKanriTorokuKoshin',
     component: OnAirKanriTorokuKoshinBaseForm,
     props: route => ({ mode: route.params.mode || '1' })
-  },
-  {
-    path: '/ProgramRefDialogBaseForm/:talentId?:talentName',  // パラメータがオプショナルになるように変更
-    name: 'ProgramRefDialog',
-    component: ProgramRefDialogBaseForm,
-    props: route => ({ talentId: route.params.talentId, talentName: route.params.talentName })
   },
 ]
 

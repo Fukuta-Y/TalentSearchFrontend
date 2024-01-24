@@ -1,68 +1,9 @@
-<!-- <template>
-  <CommonHeader
-    />
-  <ErrorMessage
-      v-if="message"
-      v-bind:prop-message="message"
-  />
-  <ProgramRefSearchJoken 
-      v-bind:prop-program-id-="programId"
-      v-bind:prop-program-name-="programName"
-      v-on:on-message="receiveMessage"
-  />
-</template>
-
-<script>
-import CommonHeader from '../common/CommonHeader.vue'
-import ErrorMessage from '../common/ErrorMessage.vue'
-import ProgramRefSearchJoken from './components/ProgramRefSearchJoken.vue'
-
-export default {
-  name: 'ProgramRefDialogBaseForm',
-  props: {
-    programId: {
-      type: String,
-    },
-    programName: {
-      type: String,
-    },
-  },
-  components: {
-    CommonHeader,
-    ErrorMessage,
-    ProgramRefSearchJoken,
-  },
-  data() {
-    return {
-      searchJoken: {},
-      message:'',
-    }
-  },
-methods: {
-    receiveMessage(value) {
-      this.message = value
-    },
-  },
-}
-</script>
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style> -->
-
-
 <template>
-  <div class="modal-container" v-if="isOpen">
-    <div class="modal-content">
+  <div class="modal-container dialog-overlay" v-if="isOpen">
+    <div class="modal-content dialog-content">
     <ProgramRefSearchJoken 
-        v-bind:prop-program-id-="programId"
-        v-bind:prop-program-name-="programName"
+        v-bind:prop-program-id="propProgramId"
+        v-bind:prop-program-name="propProgramName"
         v-on:on-select-program="reciveSelectProgram"
         v-on:on-message="receiveMessage"
       />
@@ -77,12 +18,15 @@ methods: {
 import ProgramRefSearchJoken from './components/ProgramRefSearchJoken.vue'
 export default {
   props: {
-    isOpen: Boolean,
-    programId: {
+    propProgramId: {
       type: String,
     },
-    programName: {
+    propProgramName: {
       type: String,
+    },
+    isOpen: {
+      type: Boolean,
+      required: true,
     },
   },
   components: {
@@ -90,17 +34,17 @@ export default {
     // ErrorMessage,
     ProgramRefSearchJoken,
   },
+  emits: ['on-select-program'],
   data() {
     return {
       searchJoken: {},
       message: '',
-      returnValue: '',
     }
   },
   methods: {
     reciveSelectProgram(value) {
-      console.log('value:' + JSON.stringify(value));
-      this.returnValue = value
+      this.$emit('on-select-program', value);
+      this.$emit('close');
     },
     closeDialog() {
       this.$emit('close');
@@ -128,5 +72,10 @@ export default {
   background-color: #fff;
   padding: 20px;
   border-radius: 8px;
+}
+.dialog-content {
+  width: 40%; /* 任意の幅を指定してください */
+  height: 70%; /* 任意の幅を指定してください */
+  margin: 0 auto;
 }
 </style>
