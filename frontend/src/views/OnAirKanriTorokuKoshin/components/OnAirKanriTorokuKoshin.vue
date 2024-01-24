@@ -1,13 +1,13 @@
 <template>
-    <div v-if="mode === '1'"><router-link :to="{ name: 'OnAirKanriTorokuKoshin', params: { mode: '2' } }">更新モード</router-link></div>
-    <div v-if="mode !== '1'" ><router-link :to="{ name: 'OnAirKanriTorokuKoshin', params: { mode: '1' } }">新規登録モード</router-link></div>
+    <div v-if="mode === '1'"><router-link :to="{ name: 'OnAirKanriTorokuKoshin', params: { mode: '2' } }">【更新】</router-link></div>
+    <div v-if="mode !== '1'" ><router-link :to="{ name: 'OnAirKanriTorokuKoshin', params: { mode: '1' } }">【新規登録】</router-link></div>
     <table align="center">
        <tr>
           <td>ID： </td>
-          <td v-if="mode !== '2'">
-             <label>{{ getOnAirKanriId() }}</label>
+          <td v-if="mode === '1'">
+              <label>{{ getOnAirKanriId() }}</label>
           </td>
-          <td v-if="mode !== '1'">
+          <td v-else>
             <Field 
               name="id" 
               v-model="id"
@@ -17,15 +17,15 @@
               maxlength="8"
               :disabled="true" 
             />
-        </td>
+            </td>
         <button v-on:click="btnRefDialog()" v-if="mode !== '1'">
-          <label>参照</label>
+        <label>参照</label>
         </button>
         </tr>
         <tr>
            <td>オンエア日： </td>
            <td class="date-picker">
-              <Datepicker v-model="shuFrom" @input="updateFormattedDate" :style="{ width: '250px' }"  language="ja"></Datepicker>
+              <Datepicker v-model="onAirDay" @input="updateFormattedDate" :style="{ width: '250px' }"  language="ja"></Datepicker>
            </td>
         </tr>
         <tr>
@@ -41,7 +41,7 @@
                 :disabled="true" 
               />
             </td>
-          <button v-on:click="btnRefDialog()">
+          <button v-on:click="btnProgramRefDialog()">
             <label>参照</label>
           </button>
         </tr>
@@ -64,7 +64,7 @@
               :disabled="true" 
             />
           </td>
-          <button v-on:click="btnRefDialog()">
+          <button v-on:click="btnTalentRefDialog()">
             <label>参照</label>
           </button>
         </tr>
@@ -78,10 +78,10 @@
           <td>対象年月・週： </td>
           <td>
             <div>
-                <select id="genreDropdown" v-model="jyunjyo" class="custom-select">
+                <select id="nentsukiShuDropDownList" v-model="nentsukiShu" class="custom-select">
                   <option value="" disabled style="display: none;"></option>
-                  <option v-for="genre in this.genreInfo" :key="genre.jyunjyo" :value="genre.jyunjyo">
-                    {{ genre.jyunjyo }}
+                  <option v-for="nentsukiShu in this.nentsukiShuKanri" :key="nentsukiShu" :value="nentsukiShu">
+                    {{ nentsukiShu }}
                   </option>
                 </select>
             </div>
@@ -123,7 +123,14 @@ export default {
       // this.modeが1の時は新規登録/2の時は更新モード
       return this.mode === '1' ? '登録' : '更新';
     },
-
+    getProgramName() {
+      // TODO
+      return 'NEWニューヨーク'
+    },
+    getTalentName() {
+      // TODO
+      return '香取慎吾'
+    },
   },
   components: {
     Field,
@@ -132,25 +139,64 @@ export default {
   emits: ['on-message'],
   data() {
     return {
-      nen: null,
-      tsuki: null,
+      id: '', //TOOD
+      onAirDay: null,
+      programId: '00000002', //TOOD
+      talentId: '00000003',  //TOOD
+      nentsukiShu: null,
+      nentsuki: null,
       shu: null,
-      shuFrom: null, 
-      shuTo: null,
       formattedDate: null,
+      nentsukiShuKanri: [],
     };
   },
-
   watch: {
     selectedDate: function (newDate) {
       // 日付をフォーマットして表示用の変数にセット
       this.formattedDate = this.formatDate(newDate);
     },
   },
-  mounted() {
-    console.log('this.mode:' + this.mode)
+  async mounted() {
+    // APIからデータを取得するメソッドを呼び出す
+    this.fetchData();
+    if(this.mode !== '1') {
+      this.getOnAirInfo(); // TODO（更新モードの時だけ）
+    }
   },
   methods: {
+     getId() {
+      // this.idが空文字の場合とそうでない場合でラベルを変更
+      return this.id === undefined ? '（新規登録）' : this.id;
+    },
+    // IDの参照後
+    async getOnAirInfo() {
+      // オンエア管理情報BFF（更新時のみ）
+      const onAirKanriInfoUrl = "http://localhost:8081/api/onAirKanriInfoBFF/" + this.id;
+      const onAirKanriInfo = await axios.get(onAirKanriInfoUrl).then(response => response.data.tOnAirKanri[0]);
+      if (onAirKanriInfo.id !== null) {
+        this.id = onAirKanriInfo.id
+        this.onAirDay = onAirKanriInfo.onAirDay
+        this.programId = onAirKanriInfo.programId
+        this.talentId = onAirKanriInfo.talentId
+        this.nentsuki = onAirKanriInfo.nentsuki
+        this.shu = onAirKanriInfo.shu
+        this.nentsukiShu = `${String(this.nentsuki).substring(0, 4)}/${String(this.nentsuki).substring(4, 6)} ${this.shu}週`;
+      }
+    },
+    // 初期表示時
+    async fetchData() {
+      // 年月週管理マスタ検索BFF
+      const nentsukiShuKanriUrl = "http://localhost:8081/api/nentsukiShuKanriBFF";
+      this.nentsukiShuKanriTmp = await axios.get(nentsukiShuKanriUrl).then(response => response.data.mNentsukiShuKanri);
+      this.nentsukiShuKanriTmp = this.nentsukiShuKanriTmp.map(item => ({ nentsuki: item.nentsuki, shu: item.shu }));
+       // nentsukiの前の４文字を○年、後ろの２文字を△月、shuを□週として結合
+      this.nentsukiShuKanri =  this.nentsukiShuKanriTmp.map(item => {
+        const year = String(item.nentsuki).substring(0, 4);
+        const month = String(item.nentsuki).substring(4, 6);
+        const week = item.shu;
+        return `${year}/${month} ${week}週`;
+      });
+    },
     getOnAirKanriId() {
       // this.modeが空文字の場合とそうでない場合でラベルを変更
       return this.mode === '1' ? '（新規登録）' : '';
@@ -165,45 +211,54 @@ export default {
     btnClear() {
       this.init();
     },
-    // 参照ボタン
-    btnRefDialog() {
+    // 番組参照ボタン
+    btnProgramRefDialog() {
+      // ダイアログができたら作成
+    },
+    // タレント参照ボタン
+    btnTalentRefDialog() {
       // ダイアログができたら作成
     },
     // 登録・更新ボタン
     async btnToroku() {
       // 全項目入力済みでない場合は止める
-      if (this.nen == null || this.tsuki === null || this.shu === null || this.shuFrom === null || this.shuTo === null) {
+      if (this.onAirDay === null || this.programId === null || this.talentId === null || this.nentsukiShu === null) {
         this.msg = "全項目入力必須"
         this.$emit('on-message', this.msg)
         return;
       }
 
-      // FROMとTOをyyyy-mm-ddに形式変換
-      const formatDate = (date) => {
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const day = String(date.getDate()).padStart(2, '0');
-        return `${year}-${month}-${day}`;
-      };
+      // Dateオブジェクトを作成
+      const dateObject = new Date(this.onAirDay);
 
-      const fromData = formatDate(new Date(this.shuFrom));
-      const toData = formatDate(new Date(this.shuTo));
+      // 年月日時分秒の各部分を取得
+      const year = dateObject.getFullYear();
+      const month = ('0' + (dateObject.getMonth() + 1)).slice(-2);
+      const day = ('0' + dateObject.getDate()).slice(-2);
+      const hours = ('0' + dateObject.getHours()).slice(-2);
+      const minutes = ('0' + dateObject.getMinutes()).slice(-2);
+      const seconds = ('0' + dateObject.getSeconds()).slice(-2);
+
+      // フォーマットされた日付文字列を返す
+      this.onAirDay = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 
       // データオブジェクトを作成
       const postData = {
-        nentsuki: this.nen + this.tsuki.toString().padStart(2, '0'),
-        shu: this.shu,
-        shuFrom: fromData,
-        shuTo: toData,
+        id: this.id !== undefined && this.id != null ? this.id : '00000000',
+        onAirDay: this.onAirDay,
+        programId: this.programId,
+        talentId: this.talentId,
+        nentsuki: this.nentsukiShu.toString().slice(0, 4) + this.nentsukiShu.toString().slice(5, 7),
+        shu: this.nentsukiShu.toString().slice(-2, -1),
+        deleteFlg: "0",
         torokuDay: "",
         koushinDay: ""
       };
-
       // 年月週管理登録・更新BFF（登録・更新モード共通）
-      const nentsukiShuKanriUrl = "http://localhost:8081/api/nentsukiShuKanriBFF";
+      const onAirKanriInfoUrl = "http://localhost:8081/api/onAirKanriInfoBFF";
 
       // POSTリクエストを行う
-      axios.post(nentsukiShuKanriUrl, postData).then(response => {
+      axios.post(onAirKanriInfoUrl, postData).then(response => {
           console.log("成功時の戻り値:" + JSON.stringify(response.data));
           this.$router.push({ name: 'main', })
         })
@@ -215,11 +270,11 @@ export default {
     },
     // 初期化
     init(){
-      this.nen = null
-      this.tsuki = null
-      this.shu = null
-      this.shuFrom = null
-      this.shuTo = null
+      this.id = null
+      this.onAirDay = null
+      this.programId = null
+      this.talentId = null
+      this.nentsukiShu = null
     },
   },
 }

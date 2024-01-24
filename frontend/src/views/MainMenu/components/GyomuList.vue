@@ -8,9 +8,6 @@ export default {
     },
     data() {
         return {
-            nentsuki: '202304',
-            shu: '3',
-            talentId: '000001'
         }
     },
 }
