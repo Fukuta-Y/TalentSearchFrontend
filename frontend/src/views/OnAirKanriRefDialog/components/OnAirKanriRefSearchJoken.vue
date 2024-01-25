@@ -54,13 +54,13 @@
       <tr>
         <td style="background-color: greenyellow;"></td>
         <td style="background-color: greenyellow;">ID </td>
-        <td style="background-color: greenyellow;">オンエア日 </td>
+        <td style="background-color: greenyellow;width:170px;">オンエア日</td>
         <td style="background-color: greenyellow;">番組ID</td>
         <td style="background-color: greenyellow; width:100px;">番組名</td>
         <td style="background-color: greenyellow;">タレントID</td>
         <td style="background-color: greenyellow; width:100px;">タレント名</td>
         <td style="background-color: greenyellow; width:70px;">年月</td>
-        <td style="background-color: greenyellow; width:50px;">週</td>
+        <td style="background-color: greenyellow; width:45px;">週</td>
       </tr>
       <tr v-for="(item, key) in paginatedResult" :key="key">
         <td><button v-on:click="selectId(item.id, item.onAirDay, item.programId, item.talentId, item.nentsuki, item.shu)">選択</button></td>
@@ -141,8 +141,17 @@ export default {
   },
   methods: {
     async btnSearch() {
+      if (this.onAirDay !== '') {
+        const dateObject = new Date(this.onAirDay);
+        const year = dateObject.getFullYear();
+        const month = `0${dateObject.getMonth() + 1}`.slice(-2);
+        const day = `0${dateObject.getDate()}`.slice(-2);
+        const hours = `0${dateObject.getHours()}`.slice(-2);
+        const minutes = `0${dateObject.getMinutes()}`.slice(-2);
+        const seconds = `0${dateObject.getSeconds()}`.slice(-2);
+        this.onAirDay = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+      }
       const url = "http://localhost:8081/api/onAirKanriRefBFF?id=" + this.id +"&onAirDay=" + this.onAirDay;
-      console.log('url:' + url)
       this.result = await axios.get(url).then(response => (response.data.tOnAirKanri));
       this.resultCount = this.result.length; // 件数を更新
       if(this.result[0].id !== null) {
