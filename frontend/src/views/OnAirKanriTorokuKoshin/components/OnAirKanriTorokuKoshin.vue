@@ -49,7 +49,7 @@
               v-bind:prop-program-name="programName"
               :is-open="programRefDialogComponent" 
               @close="btnProgramRefDialogClose()" 
-              @on-select-program="handleSelectProgram" 
+              v-on:on-select-program="handleSelectProgram" 
             />
         </tr>
         <tr>
@@ -71,9 +71,16 @@
               :disabled="true" 
             />
           </td>
-          <button v-on:click="btnTalentRefDialog()">
+          <button v-on:click="btnTalentRefDialogOpen()">
             <label>参照</label>
           </button>
+          <TalentRefDialog 
+            v-bind:prop-talent-id="talentId"
+            v-bind:prop-talent-name="talentName"
+            :is-open="talentRefDialogComponent" 
+            @close="btnTalentRefDialogClose()" 
+            v-on:on-select-talent="handleSelectTalent" 
+          />
         </tr>
         <tr>
           <td>タレント名： </td>
@@ -113,6 +120,7 @@
 import { Field } from 'vee-validate'
 import axios from 'axios'
 import ProgramRefDialog from '../../ProgramRefDialog/ProgramRefDialogBaseForm.vue';
+import TalentRefDialog from '../../TalentRefDialog/TalentRefDialogBaseForm.vue';
 import Datepicker from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
 import { format } from 'date-fns';
@@ -143,6 +151,7 @@ export default {
     Field,
     Datepicker,
     ProgramRefDialog,
+    TalentRefDialog,
   },
   emits: ['on-message'],
   data() {
@@ -151,14 +160,15 @@ export default {
       onAirDay: null,
       programId: null,
       programName: null,
-      talentId: '00000003',  //TOOD
-      talentName: '香取慎吾', //TOOD
+      talentId: null,
+      talentName: null,
       nentsukiShu: null,
       nentsuki: null,
       shu: null,
       formattedDate: null,
       nentsukiShuKanri: [],
       programRefDialogComponent: false,
+      talentRefDialogComponent: false,
     };
   },
   watch: {
@@ -179,6 +189,11 @@ export default {
     handleSelectProgram(selectedData) {
       this.programId =  selectedData.programId
       this.programName = selectedData.programName
+    },
+    // タレントIDの参照時の戻り
+    handleSelectTalent(selectedData) {
+      this.talentId = selectedData.talentId
+      this.talentName = selectedData.talentName
     },
      getId() {
       // this.idが空文字の場合とそうでない場合でラベルを変更
@@ -238,8 +253,14 @@ export default {
       this.programRefDialogComponent = false;
     },
     // タレント参照ボタン
-    btnTalentRefDialog() {
+    btnTalentRefDialogOpen() {
       // ダイアログができたら作成
+      this.talentRefDialogComponent = true;
+    },
+    // 番組参照ボタン
+    btnTalentRefDialogClose() {
+      // ダイアログができたら作成
+      this.talentRefDialogComponent = false;
     },
     // 登録・更新ボタン
     async btnToroku() {
