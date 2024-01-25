@@ -23,7 +23,7 @@
               label="対象月"
               rules="required"
               maxlength="2"
-              placeholder="例：4"
+              placeholder="例：04"
             />月
           <button v-on:click="btnNentsukiRefDialogOpen()"  v-if="mode !== '1'">
             <label>参照</label>
