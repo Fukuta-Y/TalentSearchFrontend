@@ -1,10 +1,11 @@
 <template>
   <div class="modal-container dialog-overlay" v-if="isOpen">
     <div class="modal-content dialog-content">
-    <ProgramRefSearchJoken 
-        v-bind:prop-program-id="propProgramId"
-        v-bind:prop-program-name="propProgramName"
-        v-on:on-select-program="reciveSelectProgram"
+    <NetsukiShuKanriRefSearchJoken 
+        v-bind:prop-nen="propNen"
+        v-bind:prop-tsuki="propTsuki"
+        v-bind:prop-shu="propShu"
+        v-on:on-select-nentsuki-shu="receiveSelectNentsukiShu"
         v-on:on-message="receiveMessage"
       />
       <button @click="closeDialog">閉じる</button>
@@ -15,14 +16,17 @@
 <script>
 // import CommonHeader from '../common/CommonHeader.vue'
 // import ErrorMessage from '../common/ErrorMessage.vue'
-import ProgramRefSearchJoken from './components/ProgramRefSearchJoken.vue'
+import NetsukiShuKanriRefSearchJoken from './components/NetsukiShuKanriRefSearchJoken.vue'
 export default {
-  name: 'ProgramRefDialogBaseForm',
+  name: 'NetsukiShuKanriRefDialogBaseForm',
   props: {
-    propProgramId: {
+    propNen: {
       type: String,
     },
-    propProgramName: {
+    propTsuki: {
+      type: String,
+    },
+    propShu: {
       type: String,
     },
     isOpen: {
@@ -33,9 +37,9 @@ export default {
   components: {
     // CommonHeader,
     // ErrorMessage,
-    ProgramRefSearchJoken,
+    NetsukiShuKanriRefSearchJoken,
   },
-  emits: ['on-select-program', 'close'],
+  emits: ['on-select-nentsuki-shu', 'close'],
   data() {
     return {
       searchJoken: {},
@@ -43,8 +47,8 @@ export default {
     }
   },
   methods: {
-    reciveSelectProgram(value) {
-      this.$emit('on-select-program', value);
+    receiveSelectNentsukiShu(value) {
+      this.$emit('on-select-nentsuki-shu', value);
       this.$emit('close');
     },
     closeDialog() {
@@ -75,8 +79,8 @@ export default {
   border-radius: 8px;
 }
 .dialog-content {
-  width: 40%; /* 任意の幅を指定してください */
-  height: 70%; /* 任意の幅を指定してください */
+  width: 55%; /* 任意の幅を指定してください */
+  height: 60%; /* 任意の幅を指定してください */
   margin: 0 auto;
 }
 </style>

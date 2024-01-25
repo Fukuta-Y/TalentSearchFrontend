@@ -17,6 +17,7 @@
 // import ErrorMessage from '../common/ErrorMessage.vue'
 import OnAirKanriRefSearchJoken from './components/OnAirKanriRefSearchJoken.vue'
 export default {
+  name: 'OnAirKanriRefDialogBaseForm',
   props: {
     propId: {
       type: String,

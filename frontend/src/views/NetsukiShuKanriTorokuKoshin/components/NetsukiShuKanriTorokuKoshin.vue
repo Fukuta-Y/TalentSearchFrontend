@@ -25,10 +25,18 @@
               maxlength="2"
               placeholder="例：4"
             />月
-          </td>
-        <button v-on:click="btnRefDialog()" v-if="mode !== '1'">
-          <label>参照</label>
-        </button>
+          <button v-on:click="btnNentsukiRefDialogOpen()"  v-if="mode !== '1'">
+            <label>参照</label>
+          </button>
+          <NetsukiShuKanriRefDialog 
+            v-bind:prop-nen="nen"
+            v-bind:prop-tsuki="tsuki"
+            v-bind:prop-shu="shu"
+            :is-open="nentsukiShuRefDialogComponent" 
+            @close="btnNentsukiRefDialogClose()" 
+            v-on:on-select-nentsuki-shu="handleSelectNentsuki" 
+          />
+        </td>
         </tr>
         <tr>
           <td>週： </td>
@@ -44,13 +52,13 @@
             /> 週目
           </td>
         </tr>
-        <tr>
-           <td>週の開始日（日曜日）： </td>
-           <td class="date-picker">
-              <Datepicker v-model="shuFrom" @input="updateFormattedDate" :style="{ width: '250px' }"  language="ja"></Datepicker>
+        <tr v-if="!nentsukiShuRefDialogComponent">
+          <td>週の開始日（日曜日）： </td>
+          <td class="date-picker">
+            <Datepicker v-model="shuFrom" @input="updateFormattedDate" :style="{ width: '250px' }"  language="ja"></Datepicker>
           </td>
         </tr>
-        <tr>
+        <tr v-if="!nentsukiShuRefDialogComponent">
           <td>週の終了日（土曜日）： </td>
           <td class="date-picker">
             <Datepicker v-model="shuTo" @input="updateFormattedDate" :style="{ width: '250px' }"  language="ja"></Datepicker>
@@ -75,6 +83,7 @@
 import { Field } from 'vee-validate'
 import axios from 'axios'
 
+import NetsukiShuKanriRefDialog from '../../NetsukiShuKanriRefDialog/NetsukiShuKanriRefDialogBaseForm.vue'
 import Datepicker from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
 import { format } from 'date-fns';
@@ -97,6 +106,7 @@ export default {
   components: {
     Field,
     Datepicker,
+    NetsukiShuKanriRefDialog,
   },
   emits: ['on-message'],
   data() {
@@ -107,6 +117,7 @@ export default {
       shuFrom: null, 
       shuTo: null,
       formattedDate: null,
+      nentsukiShuRefDialogComponent: false,
     };
   },
 
@@ -119,6 +130,14 @@ export default {
   mounted() {
   },
   methods: {
+       // 年月週の参照時の戻り
+    handleSelectNentsuki(selectedData) {
+      this.nen = selectedData.nentsuki.toString().substring(0, 4);
+      this.tsuki = selectedData.nentsuki.toString().substring(4);
+      this.shu = selectedData.shu
+      this.shuFrom = selectedData.shuFrom
+      this.shuTo = selectedData.shuTo
+    },
     updateFormattedDate() {
       this.formattedDate = this.formatDate(this.selectedDate);
     },
@@ -129,9 +148,15 @@ export default {
     btnClear() {
       this.init();
     },
-    // 参照ボタン
-    btnRefDialog() {
+    // 年月週参照ボタン
+    btnNentsukiRefDialogOpen() {
       // ダイアログができたら作成
+      this.nentsukiShuRefDialogComponent = true;
+    },
+    // 年月週参照ボタン
+    btnNentsukiRefDialogClose() {
+      // ダイアログができたら作成
+      this.nentsukiShuRefDialogComponent = false;
     },
     // 登録・更新ボタン
     async btnToroku() {
