@@ -14,24 +14,28 @@
         <SidebarMenu :isSidebarCollapsed="isSidebarCollapsed" :sidebarLinks="sidebarLinks"
           :expandedSubmenus="expandedSubmenus" @toggleSubmenu="toggleSubmenu" />
       </div>
-      <div style="flex: 1; display: flex; justify-content: space-between; padding: 20px;">
-        <!-- space-between を使用して要素間に隙間を開けます -->
-        <div style="width: 48%; border: 1px solid black; padding: 4px; box-sizing: border-box;" class="sidebar-link">
-          <!-- 適切な割合に調整 -->
-          <div class="boxed">
-            <p>業務</p>
-          </div>
-          <div class="gyoumuMenu">
-            <GyomuList />
-          </div>
+      <div style="flex: 1; display: flex; flex-direction: column; padding: 20px;">
+        <!-- メインメニュータイトルブロック -->
+        <div style="width: 95%; text-align: center; margin-bottom: 20px;" class="boxed-title">
+          <p>メインメニュー</p>
         </div>
-        <div style="width: 48%; border: 1px solid black; padding: 10px; box-sizing: border-box;" class="sidebar-link">
-          <!-- 適切な割合に調整 -->
-          <div class="boxed">
-            <p>マスタ</p>
+        <!-- 業務とマスタのコンテンツ -->
+        <div style="display: flex; justify-content: space-between;">
+          <div style="width: 48%; padding: 4px; box-sizing: border-box;" class="sidebar-link">
+            <div class="boxed">
+              <p>業務</p>
+            </div>
+            <div class="gyoumuMenu">
+              <GyomuList />
+            </div>
           </div>
-          <div class="masterMenu">
-            <MasterList />
+          <div style="width: 48%; padding: 10px; box-sizing: border-box;" class="sidebar-link">
+            <div class="boxed">
+              <p>マスタ</p>
+            </div>
+            <div class="masterMenu">
+              <MasterList />
+            </div>
           </div>
         </div>
       </div>
@@ -167,18 +171,23 @@ export default {
   /* ボックスのスタイル */
   .boxed {
     border: 1px solid #333;
-    padding: 5px;
+    padding: 3px;
     margin: 20px;
     border-radius: 8px;
     background-color: #f0f8ff;
   }
-
+  .boxed-title {
+    border: 1px solid #333;
+    padding: 5px;
+    margin: 5px; /* 低い値に変更 */
+    background-color: #CCFF99;
+  }
   /* ボックスのスタイル */
   .gyoumuMenu, .masterMenu {
     border: 1px solid #333;
     padding: 10px;
     margin: 20px;
-    min-height: 70%; /* 画面の下の方まで伸ばす */
+    min-height: 90%; /* 画面の下の方まで伸ばす */
     box-sizing: border-box;
   }
   .sidebar-link {

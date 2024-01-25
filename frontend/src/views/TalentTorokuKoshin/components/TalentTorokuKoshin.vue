@@ -116,7 +116,6 @@ export default {
     },
     // 登録・更新ボタン
     async btnToroku() {
-      console.log('this.talentName:' + this.talentName)
       // 全項目入力済みでない場合は止める
       if (this.talentName == null || this.jyunjyo === null) {
         this.msg = "全項目入力必須"

@@ -2,15 +2,15 @@
   <div>
     <table align="center">
       <tr>
-        <td>番組ID： </td>
+        <td>タレントID： </td>
         <td>
           <Field 
-            name="programId" 
-            v-model="programId"
+            name="talentId" 
+            v-model="talentId"
             size="15"
-            label="番組ID"
+            label="タレントID"
             maxlength="8"
-            placeholder="例：00000001"
+            placeholder="例：10000001"
           />
         </td>
       </tr>
@@ -20,15 +20,15 @@
         </td> 
       </tr>
       <tr>
-        <td>番組名： </td>
+        <td>タレント名： </td>
         <td>
           <Field 
-            name="programName" 
-            v-model="programName"
-            label="番組名"
+            name="talentName" 
+            v-model="talentName"
+            label="タレント名"
             maxlength="30"
             size="20"
-            placeholder="例：ぽかぽか"
+            placeholder="例：タモリ"
           />
         </td>
       </tr>
@@ -60,16 +60,14 @@
     <table align="center" border="1" style="border-collapse: collapse;" v-if="countFlg">
       <tr>
         <td style="background-color: greenyellow;"></td>
-        <td style="background-color: greenyellow;">番組ID </td>
-        <td style="background-color: greenyellow;">番組名 </td>
-        <td style="background-color: greenyellow;">チャンネル局ID</td>
-        <td style="background-color: greenyellow;">ジャンルID </td>
+        <td style="background-color: greenyellow;">タレントID </td>
+        <td style="background-color: greenyellow;">タレント名 </td>
+        <td style="background-color: greenyellow;">ジャンルID</td>
       </tr>
       <tr v-for="(item, key) in paginatedResult" :key="key">
-        <td><button v-on:click="selectProgram(item.programId, item.programName)">選択</button></td>
-        <td>{{ item.programId }} </td>
-        <td>{{ item.programName }} </td>
-        <td>{{ item.channelId }} </td>
+        <td><button v-on:click="selectTalent(item.talentId, item.talentName)">選択</button></td>
+        <td>{{ item.talentId }} </td>
+        <td>{{ item.talentName }} </td>
         <td>{{ item.genreId }} </td>
       </tr>
     </table>
@@ -86,12 +84,12 @@
 import { Field, ErrorMessage } from 'vee-validate'
 import axios from 'axios'
 export default {
-  name: 'ProgramRefSearchJoken',
+  name: 'TalentRefSearchJoken',
   props: {
-    propProgramId: {
+    propTalentId: {
       type: String,
     },
-    propProgramName: {
+    propTalentName: {
       type: String,
     },
   },
@@ -99,11 +97,11 @@ export default {
     Field,
     ErrorMessage,
   },
-  emits: ['on-message', 'on-select-program'],
+  emits: ['on-message', 'on-select-talent'],
   data() {
     return {
-      programId: '',
-      programName: '',
+      talentId: '',
+      talentName: '',
       msg: '',
       countFlg: false,
       result: {},
@@ -114,9 +112,9 @@ export default {
   },
   async created() {
     this.init();
-    if(this.propProgramId && this.propProgramName) {
-      this.programId = this.propProgramId
-      this.programName = this.propProgramName
+    if(this.propTalentId && this.propTalentName) {
+      this.talentId = this.propTalentId
+      this.talentName = this.propTalentName
       this.btnSearch()
     }
   },
@@ -129,10 +127,10 @@ export default {
   },
   methods: {
     async btnSearch() {
-      const url = "http://localhost:8081/api/programRefBFF?programId=" + this.programId +"&programName=" + this.programName;
-      this.result = await axios.get(url).then(response => (response.data.mProgram));
+      const url = "http://localhost:8081/api/talentRefBFF?talentId=" + this.talentId +"&talentName=" + this.talentName;
+      this.result = await axios.get(url).then(response => (response.data.mTalent));
       this.resultCount = this.result.length; // 件数を更新
-      if(this.result[0].programId !== null) {
+      if(this.result[0].talentId !== null) {
           this.countFlg = true
           this.$emit('on-message', "")
       } else {
@@ -145,18 +143,18 @@ export default {
       this.currentPage = pageNumber;
       this.fetchData(); // ページ変更時にデータを再取得するなどの処理を追加
     },
-    selectProgram(programId, programName) {
+    selectTalent(talentId, talentName) {
       // 「選択」ボタンがクリックされたときに呼ばれるメソッド
-      // programId と programName を親コンポーネントに渡す
-      this.$emit('on-select-program', { programId, programName });
+      // talentId と talentName を親コンポーネントに渡す
+      this.$emit('on-select-talent', { talentId, talentName });
     },
     btnClear() {
       this.init();
       this.$emit('on-message', this.msg)
     },
     init(){
-      this.programId = ''
-      this.programName = ''
+      this.talentId = ''
+      this.talentName = ''
       this.countFlg = false
       this.msg = ''
       this.result = {}

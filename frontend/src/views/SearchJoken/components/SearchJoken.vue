@@ -131,7 +131,7 @@ export default {
     this.init();
     if(this.propNentsuki && this.propShu && this.propTalentName) {
       this.nentsuki = this.propNentsuki
-      this.shu = this.propShu
+      this.shu = this.propShu.toString()
       this.name = this.propTalentName
       this.btnSearch()
     }

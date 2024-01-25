@@ -3,10 +3,10 @@
         <ul v-show="!isSidebarCollapsed">
             <li v-for="item in sidebarLinks" :key="item.id">
                 <span v-if="item.children" @click="toggleSubmenu(item.id)">
-                    {{ item.text }}
+                    <span class="menu-text">{{ item.text }}</span>
                     <span :class="{ 'expanded': isSubmenuExpanded(item.id) }">&#9660;</span>
                 </span>
-                <a v-else :href="item.url">{{ item.text }}</a>
+                <a v-else :href="item.url"><span class="menu-text">{{ item.text }}</span></a>
 
                 <ul v-if="item.children && isSubmenuExpanded(item.id)">
                     <li v-for="child in item.children" :key="child.id">
@@ -35,12 +35,29 @@ export default {
     },
 };
 </script>
+
 <style scoped>
-  .sidebar a {
-    font-size: 12px; /* 適切なサイズに調整 */
-  }
-  .sidebar ul {
-    list-style-type: none; /* デフォルトのバレットポイントを削除 */
-    padding-left: 0; /* デフォルトのパディングを削除 */
-  }
-</style>
+.sidebar a,
+.menu-text {
+    font-size: 15px;
+    /* 適切なサイズに調整 */
+    display: block;
+    /* テキストをブロック要素として表示 */
+}
+
+.sidebar ul {
+    list-style-type: none;
+    /* デフォルトのバレットポイントを削除 */
+    padding-left: 0;
+    /* デフォルトのパディングを削除 */
+}
+
+.sidebar li {
+    margin-bottom: 15px;
+    /* マージンを増やして項目を離す */
+}
+
+.expanded {
+    transform: rotate(180deg);
+    /* 開いたサブメニューの矢印を反転させる */
+}</style>

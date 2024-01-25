@@ -1,10 +1,10 @@
 <template>
   <div class="modal-container dialog-overlay" v-if="isOpen">
     <div class="modal-content dialog-content">
-    <ProgramRefSearchJoken 
-        v-bind:prop-program-id="propProgramId"
-        v-bind:prop-program-name="propProgramName"
-        v-on:on-select-program="reciveSelectProgram"
+    <TalentRefSearchJoken 
+        v-bind:prop-talent-id="propTalentId"
+        v-bind:prop-talent-name="propTalentName"
+        v-on:on-select-talent="reciveSelectTalent"
         v-on:on-message="receiveMessage"
       />
       <button @click="closeDialog">閉じる</button>
@@ -15,14 +15,13 @@
 <script>
 // import CommonHeader from '../common/CommonHeader.vue'
 // import ErrorMessage from '../common/ErrorMessage.vue'
-import ProgramRefSearchJoken from './components/ProgramRefSearchJoken.vue'
+import TalentRefSearchJoken from './components/TalentRefSearchJoken.vue'
 export default {
-  name: 'ProgramRefDialogBaseForm',
   props: {
-    propProgramId: {
+    propTalentId: {
       type: String,
     },
-    propProgramName: {
+    propTalentName: {
       type: String,
     },
     isOpen: {
@@ -33,9 +32,9 @@ export default {
   components: {
     // CommonHeader,
     // ErrorMessage,
-    ProgramRefSearchJoken,
+    TalentRefSearchJoken,
   },
-  emits: ['on-select-program', 'close'],
+  emits: ['on-select-talent', 'close'],
   data() {
     return {
       searchJoken: {},
@@ -43,8 +42,8 @@ export default {
     }
   },
   methods: {
-    reciveSelectProgram(value) {
-      this.$emit('on-select-program', value);
+    reciveSelectTalent(value) {
+      this.$emit('on-select-talent', value);
       this.$emit('close');
     },
     closeDialog() {

@@ -1,10 +1,10 @@
 <template>
   <div class="modal-container dialog-overlay" v-if="isOpen">
     <div class="modal-content dialog-content">
-    <ProgramRefSearchJoken 
-        v-bind:prop-program-id="propProgramId"
-        v-bind:prop-program-name="propProgramName"
-        v-on:on-select-program="reciveSelectProgram"
+    <OnAirKanriRefSearchJoken 
+        v-bind:prop-id="propId"
+        v-bind:prop-on-air-day="propOnAirDay"
+        v-on:on-select-id="receiveSelectId"
         v-on:on-message="receiveMessage"
       />
       <button @click="closeDialog">閉じる</button>
@@ -15,14 +15,14 @@
 <script>
 // import CommonHeader from '../common/CommonHeader.vue'
 // import ErrorMessage from '../common/ErrorMessage.vue'
-import ProgramRefSearchJoken from './components/ProgramRefSearchJoken.vue'
+import OnAirKanriRefSearchJoken from './components/OnAirKanriRefSearchJoken.vue'
 export default {
-  name: 'ProgramRefDialogBaseForm',
+  name: 'OnAirKanriRefDialogBaseForm',
   props: {
-    propProgramId: {
+    propId: {
       type: String,
     },
-    propProgramName: {
+    propOnAirDay: {
       type: String,
     },
     isOpen: {
@@ -33,9 +33,9 @@ export default {
   components: {
     // CommonHeader,
     // ErrorMessage,
-    ProgramRefSearchJoken,
+    OnAirKanriRefSearchJoken,
   },
-  emits: ['on-select-program', 'close'],
+  emits: ['on-select-id', 'close'],
   data() {
     return {
       searchJoken: {},
@@ -43,8 +43,8 @@ export default {
     }
   },
   methods: {
-    reciveSelectProgram(value) {
-      this.$emit('on-select-program', value);
+    receiveSelectId(value) {
+      this.$emit('on-select-id', value);
       this.$emit('close');
     },
     closeDialog() {
@@ -75,8 +75,8 @@ export default {
   border-radius: 8px;
 }
 .dialog-content {
-  width: 40%; /* 任意の幅を指定してください */
-  height: 70%; /* 任意の幅を指定してください */
+  width: 55%; /* 任意の幅を指定してください */
+  height: 60%; /* 任意の幅を指定してください */
   margin: 0 auto;
 }
 </style>

@@ -18,9 +18,16 @@
               :disabled="true" 
             />
             </td>
-        <button v-on:click="btnRefDialog()" v-if="mode !== '1'">
-        <label>参照</label>
-        </button>
+            <button v-on:click="btnIdRefDialogOpen()"  v-if="mode !== '1'">
+              <label>参照</label>
+            </button>
+            <OnAirKanriRefDialog 
+              v-bind:prop-id="id"
+              v-bind:prop-on-air-day="onAirDay"
+              :is-open="idRefDialogComponent" 
+              @close="btnIdRefDialogClose()" 
+              v-on:on-select-id="handleSelectId" 
+            />
         </tr>
         <tr>
            <td>オンエア日： </td>
@@ -49,13 +56,13 @@
               v-bind:prop-program-name="programName"
               :is-open="programRefDialogComponent" 
               @close="btnProgramRefDialogClose()" 
-              @on-select-program="handleSelectProgram" 
+              v-on:on-select-program="handleSelectProgram" 
             />
         </tr>
         <tr>
           <td>番組名： </td>
             <td>
-            <label>{{ getProgramName }}</label>
+            <label>{{ this.programName }}</label>
           </td>
         </tr>
         <tr>
@@ -71,14 +78,21 @@
               :disabled="true" 
             />
           </td>
-          <button v-on:click="btnTalentRefDialog()">
+          <button v-on:click="btnTalentRefDialogOpen()">
             <label>参照</label>
           </button>
+          <TalentRefDialog 
+            v-bind:prop-talent-id="talentId"
+            v-bind:prop-talent-name="talentName"
+            :is-open="talentRefDialogComponent" 
+            @close="btnTalentRefDialogClose()" 
+            v-on:on-select-talent="handleSelectTalent" 
+          />
         </tr>
         <tr>
           <td>タレント名： </td>
             <td>
-            <label>{{ getTalentName }}</label>
+            <label>{{ this.talentName }}</label>
           </td>
         </tr>
         <tr>
@@ -112,7 +126,9 @@
 <script>
 import { Field } from 'vee-validate'
 import axios from 'axios'
+import OnAirKanriRefDialog from '../../OnAirKanriRefDialog/OnAirKanriRefDialogBaseForm.vue';
 import ProgramRefDialog from '../../ProgramRefDialog/ProgramRefDialogBaseForm.vue';
+import TalentRefDialog from '../../TalentRefDialog/TalentRefDialogBaseForm.vue';
 import Datepicker from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
 import { format } from 'date-fns';
@@ -130,19 +146,13 @@ export default {
       // this.modeが1の時は新規登録/2の時は更新モード
       return this.mode === '1' ? '登録' : '更新';
     },
-    getProgramName() {
-      // TODO
-      return this.programName
-    },
-    getTalentName() {
-      // TODO
-      return this.talentName
-    },
   },
   components: {
     Field,
     Datepicker,
+    OnAirKanriRefDialog,
     ProgramRefDialog,
+    TalentRefDialog,
   },
   emits: ['on-message'],
   data() {
@@ -151,14 +161,16 @@ export default {
       onAirDay: null,
       programId: null,
       programName: null,
-      talentId: '00000003',  //TOOD
-      talentName: '香取慎吾', //TOOD
+      talentId: null,
+      talentName: null,
       nentsukiShu: null,
       nentsuki: null,
       shu: null,
       formattedDate: null,
       nentsukiShuKanri: [],
       programRefDialogComponent: false,
+      talentRefDialogComponent: false,
+      idRefDialogComponent: false,
     };
   },
   watch: {
@@ -170,34 +182,33 @@ export default {
   async mounted() {
     // APIからデータを取得するメソッドを呼び出す
     this.fetchData();
-    if(this.mode !== '1') {
-      this.getOnAirInfo(); // TODO（更新モードの時だけ）
-    }
   },
   methods: {
+    // IDの参照時の戻り
+    handleSelectId(selectedData) {
+      this.id = selectedData.id
+      this.onAirDay = selectedData.onAirDay
+      this.programId = selectedData.programId
+      this.programName = selectedData.programName
+      this.talentId = selectedData.talentId
+      this.talentName = selectedData.talentName
+      this.nentsuki = selectedData.nentsuki
+      this.shu = selectedData.shu
+      this.nentsukiShu = `${String(this.nentsuki).substring(0, 4)}/${String(this.nentsuki).substring(4, 6)} ${this.shu}週`;
+    },
     // 番組IDの参照時の戻り
     handleSelectProgram(selectedData) {
       this.programId =  selectedData.programId
       this.programName = selectedData.programName
     },
+    // タレントIDの参照時の戻り
+    handleSelectTalent(selectedData) {
+      this.talentId = selectedData.talentId
+      this.talentName = selectedData.talentName
+    },
      getId() {
       // this.idが空文字の場合とそうでない場合でラベルを変更
       return this.id === undefined ? '（新規登録）' : this.id;
-    },
-    // IDの参照後
-    async getOnAirInfo() {
-      // オンエア管理情報BFF（更新時のみ）
-      const onAirKanriInfoUrl = "http://localhost:8081/api/onAirKanriInfoBFF/" + this.id;
-      const onAirKanriInfo = await axios.get(onAirKanriInfoUrl).then(response => response.data.tOnAirKanri[0]);
-      if (onAirKanriInfo.id !== null) {
-        this.id = onAirKanriInfo.id
-        this.onAirDay = onAirKanriInfo.onAirDay
-        this.programId = onAirKanriInfo.programId
-        this.talentId = onAirKanriInfo.talentId
-        this.nentsuki = onAirKanriInfo.nentsuki
-        this.shu = onAirKanriInfo.shu
-        this.nentsukiShu = `${String(this.nentsuki).substring(0, 4)}/${String(this.nentsuki).substring(4, 6)} ${this.shu}週`;
-      }
     },
     // 初期表示時
     async fetchData() {
@@ -227,6 +238,16 @@ export default {
     btnClear() {
       this.init();
     },
+    // ID参照ボタン
+    btnIdRefDialogOpen() {
+      // ダイアログができたら作成
+      this.idRefDialogComponent = true;
+    },
+    // ID参照ボタン
+    btnIdRefDialogClose() {
+      // ダイアログができたら作成
+      this.idRefDialogComponent = false;
+    },
     // 番組参照ボタン
     btnProgramRefDialogOpen() {
       // ダイアログができたら作成
@@ -238,8 +259,14 @@ export default {
       this.programRefDialogComponent = false;
     },
     // タレント参照ボタン
-    btnTalentRefDialog() {
+    btnTalentRefDialogOpen() {
       // ダイアログができたら作成
+      this.talentRefDialogComponent = true;
+    },
+    // 番組参照ボタン
+    btnTalentRefDialogClose() {
+      // ダイアログができたら作成
+      this.talentRefDialogComponent = false;
     },
     // 登録・更新ボタン
     async btnToroku() {
