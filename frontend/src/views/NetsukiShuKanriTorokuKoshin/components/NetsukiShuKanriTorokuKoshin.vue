@@ -117,7 +117,6 @@ export default {
     },
   },
   mounted() {
-    console.log('this.mode:' + this.mode)
   },
   methods: {
     updateFormattedDate() {

@@ -102,8 +102,8 @@ export default {
   emits: ['on-message', 'on-select-program'],
   data() {
     return {
-      programId: this.propProgramId,
-      programName: this.propProgramName,
+      programId: '',
+      programName: '',
       msg: '',
       countFlg: false,
       result: {},
