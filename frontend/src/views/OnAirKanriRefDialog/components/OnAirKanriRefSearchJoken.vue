@@ -5,8 +5,8 @@
         <td>ID： </td>
         <td>
           <Field 
-            name="Id" 
-            v-model="Id"
+            name="id" 
+            v-model="id"
             size="15"
             label="ID"
             maxlength="8"
@@ -127,7 +127,7 @@ export default {
   async created() {
     this.init();
     if(this.propId && this.propOnAirDay) {
-      this.Id = this.propId
+      this.id = this.propId
       this.onAirDay = this.propOnAirDay
       this.btnSearch()
     }
@@ -141,11 +141,11 @@ export default {
   },
   methods: {
     async btnSearch() {
-      const url = "http://localhost:8081/api/onAirKanriRefBFF?id=" + this.Id +"&onAirDay=" + this.onAirDay;
+      const url = "http://localhost:8081/api/onAirKanriRefBFF?id=" + this.id +"&onAirDay=" + this.onAirDay;
       console.log('url:' + url)
       this.result = await axios.get(url).then(response => (response.data.tOnAirKanri));
       this.resultCount = this.result.length; // 件数を更新
-      if(this.result[0].Id !== null) {
+      if(this.result[0].id !== null) {
           this.countFlg = true
           this.$emit('on-message', "")
       } else {
@@ -174,8 +174,8 @@ export default {
       this.$emit('on-message', this.msg)
     },
     init(){
-      this.Id = ''
-      this.talentName = ''
+      this.id = '',
+      this.onAirDay = '',
       this.countFlg = false
       this.msg = ''
       this.result = {}
