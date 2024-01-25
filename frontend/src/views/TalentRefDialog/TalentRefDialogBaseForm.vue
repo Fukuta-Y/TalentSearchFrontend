@@ -34,7 +34,7 @@ export default {
     // ErrorMessage,
     TalentRefSearchJoken,
   },
-  emits: ['on-select-talent'],
+  emits: ['on-select-talent', 'close'],
   data() {
     return {
       searchJoken: {},

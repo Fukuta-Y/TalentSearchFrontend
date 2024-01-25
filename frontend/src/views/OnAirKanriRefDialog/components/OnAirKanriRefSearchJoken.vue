@@ -56,20 +56,20 @@
         <td style="background-color: greenyellow;">ID </td>
         <td style="background-color: greenyellow;width:170px;">オンエア日</td>
         <td style="background-color: greenyellow;">番組ID</td>
-        <td style="background-color: greenyellow; width:100px;">番組名</td>
+        <td style="background-color: greenyellow; width:130px;">番組名</td>
         <td style="background-color: greenyellow;">タレントID</td>
-        <td style="background-color: greenyellow; width:100px;">タレント名</td>
+        <td style="background-color: greenyellow; width:130px;">タレント名</td>
         <td style="background-color: greenyellow; width:70px;">年月</td>
         <td style="background-color: greenyellow; width:45px;">週</td>
       </tr>
       <tr v-for="(item, key) in paginatedResult" :key="key">
-        <td><button v-on:click="selectId(item.id, item.onAirDay, item.programId, item.talentId, item.nentsuki, item.shu)">選択</button></td>
+        <td><button v-on:click="selectId(item.id, item.onAirDay, item.programId, item.programName, item.talentId, item.talentName, item.nentsuki, item.shu)">選択</button></td>
         <td>{{ item.id }} </td>
         <td>{{ item.onAirDay }} </td>
         <td>{{ item.programId }} </td>
-        <td>ぽか</td>
+        <td>{{ item.programName }} </td>
         <td>{{ item.talentId }} </td>
-        <td>松本人志 </td>
+        <td>{{ item.talentName }} </td>
         <td>{{ item.nentsuki }} </td>
         <td>{{ item.shu }} </td>
       </tr>
@@ -152,7 +152,7 @@ export default {
         this.onAirDay = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
       }
       const url = "http://localhost:8081/api/onAirKanriRefBFF?id=" + this.id +"&onAirDay=" + this.onAirDay;
-      this.result = await axios.get(url).then(response => (response.data.tOnAirKanri));
+      this.result = await axios.get(url).then(response => (response.data.tOnAirKanriRef));
       this.resultCount = this.result.length; // 件数を更新
       if(this.result[0].id !== null) {
           this.countFlg = true
@@ -173,10 +173,10 @@ export default {
       this.currentPage = pageNumber;
       this.fetchData(); // ページ変更時にデータを再取得するなどの処理を追加
     },
-    selectId(id, onAirDay, programId, talentId, nentsuki, shu) {
+    selectId(id, onAirDay, programId, programName, talentId,talentName, nentsuki, shu) {
       // 「選択」ボタンがクリックされたときに呼ばれるメソッド
       // idとonAirDayとprogramIdとtalentIdとnentsukiとshuを親コンポーネントに渡す
-      this.$emit('on-select-id', { id, onAirDay, programId, talentId, nentsuki, shu });
+      this.$emit('on-select-id', { id, onAirDay, programId, programName, talentId, talentName, nentsuki, shu });
     },
     btnClear() {
       this.init();

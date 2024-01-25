@@ -34,7 +34,7 @@ export default {
     // ErrorMessage,
     OnAirKanriRefSearchJoken,
   },
-  emits: ['on-select-id'],
+  emits: ['on-select-id', 'close'],
   data() {
     return {
       searchJoken: {},

@@ -34,7 +34,7 @@ export default {
     // ErrorMessage,
     ProgramRefSearchJoken,
   },
-  emits: ['on-select-program'],
+  emits: ['on-select-program', 'close'],
   data() {
     return {
       searchJoken: {},
