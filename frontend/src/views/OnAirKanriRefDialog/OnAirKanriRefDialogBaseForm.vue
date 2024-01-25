@@ -1,17 +1,16 @@
 <template>
   <div class="modal-container dialog-overlay" v-if="isOpen">
     <div class="modal-content dialog-content">
-    <OnAirKanriRefSearchJoken 
-        v-bind:prop-id="propId"
-        v-bind:prop-on-air-day="propOnAirDay"
-        v-on:on-select-id="receiveSelectId"
-        v-on:on-message="receiveMessage"
-      />
+      <OnAirKanriRefSearchJoken 
+          v-bind:prop-id="propId"
+          v-bind:prop-on-air-day="propOnAirDay"
+          v-on:on-select-id="receiveSelectId"
+          v-on:on-message="receiveMessage"
+        />
       <button @click="closeDialog">閉じる</button>
     </div>
   </div>
 </template>
-
 <script>
 // import CommonHeader from '../common/CommonHeader.vue'
 // import ErrorMessage from '../common/ErrorMessage.vue'
@@ -76,7 +75,7 @@ export default {
 }
 .dialog-content {
   width: 55%; /* 任意の幅を指定してください */
-  height: 60%; /* 任意の幅を指定してください */
+  height: 75%; /* 任意の幅を指定してください */
   margin: 0 auto;
 }
 </style>

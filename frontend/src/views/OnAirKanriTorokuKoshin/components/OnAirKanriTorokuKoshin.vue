@@ -30,10 +30,10 @@
             />
         </tr>
         <tr>
-           <td>オンエア日： </td>
-           <td class="date-picker">
-              <Datepicker v-model="onAirDay" @input="updateFormattedDate" :style="{ width: '250px' }"  language="ja"></Datepicker>
-           </td>
+          <td>オンエア日： </td>
+          <td class="date-picker">
+            <Datepicker v-model="onAirDay" @input="updateFormattedDate" :style="{ width: '250px' }" language="ja" v-show="mode === '1' || !idRefDialogComponent"></Datepicker>
+          </td>
         </tr>
         <tr>
             <td>番組ID： </td>
