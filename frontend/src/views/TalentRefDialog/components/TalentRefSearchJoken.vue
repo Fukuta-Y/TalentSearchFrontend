@@ -100,8 +100,8 @@ export default {
   emits: ['on-message', 'on-select-talent'],
   data() {
     return {
-      talentId: this.propTalentId,
-      talentName: this.propTalentName,
+      talentId: '',
+      talentName: '',
       msg: '',
       countFlg: false,
       result: {},
