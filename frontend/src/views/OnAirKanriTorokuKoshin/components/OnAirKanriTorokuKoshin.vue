@@ -18,9 +18,16 @@
               :disabled="true" 
             />
             </td>
-        <button v-on:click="btnRefDialog()" v-if="mode !== '1'">
-        <label>参照</label>
-        </button>
+            <button v-on:click="btnIdRefDialogOpen()"  v-if="mode !== '1'">
+              <label>参照</label>
+            </button>
+            <OnAirKanriRefDialog 
+              v-bind:prop-id="id"
+              v-bind:prop-on-air-day="onAirDay"
+              :is-open="idRefDialogComponent" 
+              @close="btnIdRefDialogClose()" 
+              v-on:on-select-id="handleSelectId" 
+            />
         </tr>
         <tr>
            <td>オンエア日： </td>
@@ -119,6 +126,7 @@
 <script>
 import { Field } from 'vee-validate'
 import axios from 'axios'
+import OnAirKanriRefDialog from '../../OnAirKanriRefDialog/OnAirKanriRefDialogBaseForm.vue';
 import ProgramRefDialog from '../../ProgramRefDialog/ProgramRefDialogBaseForm.vue';
 import TalentRefDialog from '../../TalentRefDialog/TalentRefDialogBaseForm.vue';
 import Datepicker from '@vuepic/vue-datepicker'
@@ -150,6 +158,7 @@ export default {
   components: {
     Field,
     Datepicker,
+    OnAirKanriRefDialog,
     ProgramRefDialog,
     TalentRefDialog,
   },
@@ -169,6 +178,7 @@ export default {
       nentsukiShuKanri: [],
       programRefDialogComponent: false,
       talentRefDialogComponent: false,
+      idRefDialogComponent: false,
     };
   },
   watch: {
@@ -185,6 +195,17 @@ export default {
     }
   },
   methods: {
+    // IDの参照時の戻り
+    handleSelectId(selectedData) {
+      this.id = selectedData.id
+      this.onAirDay = selectedData.onAirDay
+      this.programId = selectedData.programId
+      this.programName = selectedData.programName
+      this.talentId = selectedData.talentId
+      this.talentName = selectedData.talentName
+      this.nentsuki = selectedData.nentsuki
+      this.shu = selectedData.shu
+    },
     // 番組IDの参照時の戻り
     handleSelectProgram(selectedData) {
       this.programId =  selectedData.programId
@@ -241,6 +262,16 @@ export default {
     // 初期化ボタン
     btnClear() {
       this.init();
+    },
+    // ID参照ボタン
+    btnIdRefDialogOpen() {
+      // ダイアログができたら作成
+      this.idRefDialogComponent = true;
+    },
+    // ID参照ボタン
+    btnIdRefDialogClose() {
+      // ダイアログができたら作成
+      this.idRefDialogComponent = false;
     },
     // 番組参照ボタン
     btnProgramRefDialogOpen() {
