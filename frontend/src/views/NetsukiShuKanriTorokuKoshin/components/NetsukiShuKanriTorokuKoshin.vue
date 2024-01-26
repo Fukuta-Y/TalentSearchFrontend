@@ -1,6 +1,4 @@
 <template>
-    <div v-if="mode === '1'"><router-link :to="{ name: 'NetsukiShuKanriTorokuKoshin', params: { mode: '2' } }">【更新】</router-link></div>
-    <div v-if="mode !== '1'" ><router-link :to="{ name: 'NetsukiShuKanriTorokuKoshin', params: { mode: '1' } }">【新規登録】</router-link></div>
     <table align="center">
       <tr>
           <td>年月： </td>
@@ -94,6 +92,12 @@ export default {
     mode: {
       type: String,
     },
+    propNentsuki: {
+      type: String,
+    },
+    propShu: {
+      type: String,
+    },
   },
   computed: {
       // ラベルの木切り替え
@@ -128,9 +132,24 @@ export default {
     },
   },
   mounted() {
+    this.fetchData();
   },
   methods: {
-       // 年月週の参照時の戻り
+    async fetchData() {
+      // 更新時の場合
+      if (this.mode !== '1' && this.propNentsuki !== '' && this.propShu != '')  {
+        const url = "http://localhost:8081/api/nentsukiShuKanrRefBFF?nentsuki=" + this.propNentsuki + "&shu=" + this.propShu;
+        const result = await axios.get(url).then(response => (response.data.mNentsukiShuKanri[0]));
+        if (result && result.nentsuki !== null) {
+          this.nen = result.nentsuki.toString().substring(0, 4);
+          this.tsuki = result.nentsuki.toString().substring(4);
+          this.shu = result.shu;
+          this.shuFrom = result.shuFrom;
+          this.shuTo = result.shuTo;
+        }
+      }
+    },
+    // 年月週の参照時の戻り
     handleSelectNentsuki(selectedData) {
       this.nen = selectedData.nentsuki.toString().substring(0, 4);
       this.tsuki = selectedData.nentsuki.toString().substring(4);

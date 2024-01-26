@@ -60,17 +60,17 @@ const routes = [
     props: route => ({ talentId: route.params.talentId })
   },
   {
-    path: '/NetsukiShuKanriTorokuKoshinBaseForm/:mode?',  // パラメータがオプショナルになるように変更
+    path: '/NetsukiShuKanriTorokuKoshinBaseForm/:mode?/:nentsuki?/:shu?',  // パラメータがオプショナルになるように変更
     name: 'NetsukiShuKanriTorokuKoshin',
     component: NetsukiShuKanriTorokuKoshinBaseForm,
-    props: route => ({ mode: route.params.mode || '1' })
+    props: route => ({ mode: route.params.mode || '1', nentsuki: route.params.nentsuki || '', shu: route.params.shu || ''  })
   },
   {
-    path: '/OnAirKanriTorokuKoshinBaseForm/:mode?',  // パラメータがオプショナルになるように変更
+    path: '/OnAirKanriTorokuKoshinBaseForm/:mode?/:id?',  // パラメータがオプショナルになるように変更
     name: 'OnAirKanriTorokuKoshin',
     component: OnAirKanriTorokuKoshinBaseForm,
-    props: route => ({ mode: route.params.mode || '1' })
-  },
+    props: route => ({ mode: route.params.mode || '1', id: route.params.id || '' })
+  }
 ]
 
 const router = createRouter({

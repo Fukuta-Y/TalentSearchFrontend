@@ -7,6 +7,8 @@
   />
   <NetsukiShuKanriTorokuKoshin
     v-bind:mode="mode"
+    v-bind:prop-nentsuki="nentsuki"
+    v-bind:prop-shu="shu"
     v-on:on-message="receiveMessage"
   />
 </template>
@@ -22,6 +24,12 @@ export default {
     mode: {
       type: String,
     },
+    nentsuki: {
+      type: String,
+    },
+    shu: {
+      type: String,
+    },
   },
   components: {
     CommonHeader,
@@ -32,6 +40,8 @@ export default {
     return {
       message: '',
     }
+  },
+  mounted() {
   },
 methods: {
     receiveMessage(value) {

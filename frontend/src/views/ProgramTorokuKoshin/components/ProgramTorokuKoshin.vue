@@ -127,15 +127,12 @@ export default {
           this.jyunjyo = programInfo.genreId;
         }
       }
-
       // チャンネル情報BFF（登録・更新時）
       const channelInfoUrl = "http://localhost:8081/api/channelInfoBFF";
       this.channelInfo = await axios.get(channelInfoUrl).then(response => response.data.channelInfo);
-
       // 区分マスタBFF（登録・更新モード共通）
       const genreInfoUrl = "http://localhost:8081/api/kbnMasterBFF/1";
       this.genreInfo = await axios.get(genreInfoUrl).then(response => response.data.mKbnGenre);
-
     },
     // 初期化ボタン
     btnClear() {
