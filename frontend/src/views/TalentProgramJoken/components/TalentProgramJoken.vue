@@ -18,6 +18,7 @@
     </table>
     <table align="center" border="1" style="border-collapse: collapse;" v-if="countFlg">
       <tr>
+        <td style="background-color: greenyellow;">ID </td>
         <td style="background-color: greenyellow;">出演番組 </td>
         <td style="background-color: greenyellow;">放送局（チャンネル） </td>
         <td style="background-color: greenyellow;">オンエア日</td>
@@ -25,6 +26,7 @@
         <td style="background-color: greenyellow;">番組ジャンル</td>
       </tr>
       <tr v-for="(item, key) in result" :key="key">
+        <td><router-link :to="{ name: 'OnAirKanriTorokuKoshin', params: { mode: '2', id: item.id } }">{{ item.id }}</router-link></td>
         <td><router-link :to="{ name: 'ProgramShutsuenJoken', params: { programId: item.programId, onAirDay: item.onAirDay + ' ' + item.onAirTime, nentsuki: this.nentsuki, shu: this.shu } }">{{ item.shutsuenProgram }}</router-link></td>
         <td>{{ item.hosokyokuChannel }} </td>
         <td>{{ item.onAirDay }} </td>

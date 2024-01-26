@@ -136,6 +136,9 @@ import { format } from 'date-fns';
 export default {
   name: 'OnAirKanriTorokuKoshin',
   props: {
+    propId: {
+      type: String,
+    },
     mode: {
       type: String,
     },
@@ -157,7 +160,7 @@ export default {
   emits: ['on-message'],
   data() {
     return {
-      id: '', //TOOD
+      id: this.propId,
       onAirDay: null,
       programId: null,
       programName: null,
@@ -212,6 +215,23 @@ export default {
     },
     // 初期表示時
     async fetchData() {
+      // 更新時の場合
+      if (this.id !== '') {
+        // 番組情報BFF（更新時のみ）※
+        const onAirKanriUrl  = "http://localhost:8081/api/onAirKanriRefBFF?id=" + this.propId + "&onAirDay=";
+        const onAirKanri = await axios.get(onAirKanriUrl).then(response => (response.data.tOnAirKanriRef[0]))
+        if (onAirKanri.id !== '') {
+          this.id = onAirKanri.id;
+          this.onAirDay = onAirKanri.onAirDay;
+          this.programId = onAirKanri.programId;
+          this.programName = onAirKanri.programName;
+          this.talentId = onAirKanri.talentId;
+          this.talentName = onAirKanri.talentName;
+          this.netuski = onAirKanri.netuski;
+          this.shu = onAirKanri.shu;
+          this.nentsukiShu = `${String(onAirKanri.nentsuki).substring(0, 4)}/${String(onAirKanri.nentsuki).substring(4, 6)} ${onAirKanri.shu}週`;
+        }
+      }
       // 年月週管理マスタ検索BFF
       const nentsukiShuKanriUrl = "http://localhost:8081/api/nentsukiShuKanriBFF";
       this.nentsukiShuKanriTmp = await axios.get(nentsukiShuKanriUrl).then(response => response.data.mNentsukiShuKanri);
@@ -293,7 +313,7 @@ export default {
 
       // データオブジェクトを作成
       const postData = {
-        id: this.id !== undefined && this.id != null ? this.id : '00000000',
+        id: this.id != null ? this.id : '00000000',
         onAirDay: this.onAirDay,
         programId: this.programId,
         talentId: this.talentId,
@@ -303,6 +323,7 @@ export default {
         torokuDay: "",
         koushinDay: ""
       };
+      console.log('data:' + JSON.stringify(postData));
       // 年月週管理登録・更新BFF（登録・更新モード共通）
       const onAirKanriInfoUrl = "http://localhost:8081/api/onAirKanriInfoBFF";
 

@@ -66,11 +66,11 @@ const routes = [
     props: route => ({ mode: route.params.mode || '1' })
   },
   {
-    path: '/OnAirKanriTorokuKoshinBaseForm/:mode?',  // パラメータがオプショナルになるように変更
+    path: '/OnAirKanriTorokuKoshinBaseForm/:mode?/:id?',  // パラメータがオプショナルになるように変更
     name: 'OnAirKanriTorokuKoshin',
     component: OnAirKanriTorokuKoshinBaseForm,
-    props: route => ({ mode: route.params.mode || '1' })
-  },
+    props: route => ({ mode: route.params.mode || '1', id: route.params.id || '' })
+  }
 ]
 
 const router = createRouter({
