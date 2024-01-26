@@ -74,7 +74,7 @@ export default {
   border-radius: 8px;
 }
 .dialog-content {
-  width: 55%; /* 任意の幅を指定してください */
+  width: 65%; /* 任意の幅を指定してください */
   height: 75%; /* 任意の幅を指定してください */
   margin: 0 auto;
 }

@@ -65,7 +65,7 @@ methods: {
 }
 
 .dialog-content {
-  width: 40%;
+  width: 60%;
   /* 任意の幅を指定してください */
   height: 70%;
   /* 任意の幅を指定してください */

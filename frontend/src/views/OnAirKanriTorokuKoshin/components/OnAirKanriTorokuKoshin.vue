@@ -311,7 +311,7 @@ export default {
 
       // データオブジェクトを作成
       const postData = {
-        id: this.id != null ? this.id : '00000000',
+        id: this.mode != '1' ? this.id : '00000000',
         onAirDay: this.onAirDay,
         programId: this.programId,
         talentId: this.talentId,

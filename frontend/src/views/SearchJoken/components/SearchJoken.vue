@@ -90,7 +90,7 @@
         <td><router-link :to="{ name: 'TalentProgramJoken', params: { nentsuki: this.nentsuki, shu: this.shu, talentId: item.talentId } }">{{ item.talentName }}</router-link></td>
         <td>{{ item.shukanShutsuenProgramHonsu }} </td>
         <td><router-link :to="{ name: 'ProgramShutsuenJoken', params: { programId: item.shutsuenProgramIdChokin, onAirDay: item.onAirDayChokin, nentsuki: this.nentsuki, shu: this.shu } }">{{ item.shutsuenProgramChokin  }}</router-link></td>
-        <td>{{ item.onAirDayChokin }} </td>
+        <td>{{ getOnAirDayFormat(item.onAirDayChokin)}} </td>
       </tr>
     </table>
     <br>
@@ -99,6 +99,7 @@
 <script>
 import { Field, ErrorMessage } from 'vee-validate'
 import axios from 'axios'
+import moment from 'moment';
 export default {
   name: 'SearchJoken',
   props: {
@@ -163,6 +164,9 @@ export default {
           this.$emit('on-message', this.msg)
           this.countFlg = false
       }
+    },
+    getOnAirDayFormat(onAirDay) {
+      return moment(onAirDay).format('YYYY-MM-DD HH:mm');
     },
     btnClear() {
       this.init();
