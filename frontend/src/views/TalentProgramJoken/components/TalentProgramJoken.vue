@@ -32,7 +32,7 @@
         <td><router-link :to="{ name: 'ProgramShutsuenJoken', params: { programId: item.programId, onAirDay: item.onAirDay + ' ' + item.onAirTime, nentsuki: this.nentsuki, shu: this.shu } }">{{ item.shutsuenProgram }}</router-link></td>
         <td>{{ item.hosokyokuChannel }} </td>
         <td>{{ item.onAirDay }} </td>
-        <td>{{ item.onAirTime }} </td>
+        <td>{{ getOnAirDayFormat(item.onAirTime) }} </td>
         <td>{{ item.programGenre }} </td>
       </tr>
     </table>
@@ -79,9 +79,12 @@ export default {
       if(this.result[0].talentName !== null) {
           this.countFlg = true
       } else {
-          this.msg ="検索結果が0件です。"
+          this.msg = "対象タレント（" + this.talentId +"）は【" + this.nentsuki.toString().substring(0, 4) + "年" +  this.nentsuki.toString().substring(4) + "月 " + this.shu + "週】に出演予定がありません。";
           this.countFlg = false
       }
+    },
+    getOnAirDayFormat(onAirDay) {
+      return onAirDay.toString().substring(0, 5);
     },
     btnClear() {
       this.init();
