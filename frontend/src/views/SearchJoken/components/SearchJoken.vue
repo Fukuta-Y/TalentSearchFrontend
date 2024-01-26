@@ -88,7 +88,7 @@
       </tr>
       <tr v-for="(item, key) in result" :key="key">
         <td><router-link :to="{ name: 'TalentProgramJoken', params: { nentsuki: this.nentsuki, shu: this.shu, talentId: item.talentId } }">{{ item.talentName }}</router-link></td>
-        <td>{{ item.shukanShutsuenProgramHonsu }} </td>
+        <td>{{ item.shukanShutsuenProgramHonsu + "本"}} </td>
         <td><router-link :to="{ name: 'ProgramShutsuenJoken', params: { programId: item.shutsuenProgramIdChokin, onAirDay: item.onAirDayChokin, nentsuki: this.nentsuki, shu: this.shu } }">{{ item.shutsuenProgramChokin  }}</router-link></td>
         <td>{{ getOnAirDayFormat(item.onAirDayChokin)}} </td>
       </tr>
