@@ -149,7 +149,7 @@ export default {
   },
   methods: {
     async btnSearch() {
-      const url = "http://localhost:8081/api/nentsukiShuKanrRefBFF?nentsuki=" + this.nen + this.tsuki.padStart(2, '0') + "&shu=" + this.shu;
+      const url = "http://localhost:8081/api/nentsukiShuKanrRefBFF?nentsuki=" + this.nen + this.tsuki + "&shu=" + this.shu;
       this.result = await axios.get(url).then(response => (response.data.mNentsukiShuKanri));
       this.resultCount = this.result.length; // 件数を更新
       if(this.result[0].nentsuki !== null) {
