@@ -20,7 +20,7 @@
         <td style="background-color: greenyellow;">タレント名 </td>
       </tr>
       <tr v-for="(item, key) in result" :key="key">
-        <td><router-link :to="{ name: 'TalentProgramJoken', params: { nentsuki: this.nentsuki, shu: this.shu, talentId: item.talentId }}">{{ item.talentName }}</router-link></td>
+        <td><router-link :to="{ name: 'TalentDetail', params: { nentsuki: this.nentsuki, shu: this.shu, talentId: item.talentId }}">{{ item.talentName }}</router-link></td>
       </tr>
     </table>
     <table align="center" border="0" style="border-collapse: collapse;" v-if="countFlg==false">
@@ -35,7 +35,7 @@
 <script>
 import axios from 'axios'
 export default {
-  name: 'ProgramShutsuenJoken',
+  name: 'ProgramDetailJoken',
   props: {
     programId: {
       type: String,

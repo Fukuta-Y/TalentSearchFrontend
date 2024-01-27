@@ -29,7 +29,7 @@
       </tr>
       <tr v-for="(item, key) in result" :key="key">
         <td><router-link :to="{ name: 'OnAirKanriTorokuKoshin', params: { mode: '2', id: item.id } }">{{ item.id }}</router-link></td>
-        <td><router-link :to="{ name: 'ProgramShutsuenJoken', params: { programId: item.programId, onAirDay: item.onAirDay + ' ' + item.onAirTime, nentsuki: this.nentsuki, shu: this.shu } }">{{ item.shutsuenProgram }}</router-link></td>
+        <td><router-link :to="{ name: 'ProgramDetail', params: { programId: item.programId, onAirDay: item.onAirDay + ' ' + item.onAirTime, nentsuki: this.nentsuki, shu: this.shu } }">{{ item.shutsuenProgram }}</router-link></td>
         <td>{{ item.hosokyokuChannel }} </td>
         <td>{{ item.onAirDay }} </td>
         <td>{{ getOnAirDayFormat(item.onAirTime) }} </td>

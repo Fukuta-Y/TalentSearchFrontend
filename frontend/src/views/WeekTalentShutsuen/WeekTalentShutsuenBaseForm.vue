@@ -2,22 +2,24 @@
   <CommonHeader
     />
   <ErrorMessage
-        v-if="message"
+      v-if="message"
+      v-bind:prop-message="message"
   />
-  <TalentProgramJoken
-    v-bind:nentsuki="nentsuki"
-    v-bind:shu="shu"
-    v-bind:talent-id="talentId"
+  <WeekTalentShutsuenJoken 
+      v-bind:prop-nentsuki="nentsuki"
+      v-bind:prop-shu="shu"
+      v-bind:prop-talent-name="talentName"
+      v-on:on-message="receiveMessage"
   />
 </template>
 
 <script>
 import CommonHeader from '../common/CommonHeader.vue'
 import ErrorMessage from '../common/ErrorMessage.vue'
-import TalentProgramJoken from './components/TalentProgramJoken.vue'
+import WeekTalentShutsuenJoken from './components/WeekTalentShutsuenJoken.vue'
 
 export default {
-  name: 'TalentProgramJokenBaseForm',
+  name: 'WeekTalentShutsuenBaseForm',
   props: {
     nentsuki: {
       type: String,
@@ -25,25 +27,25 @@ export default {
     shu: {
       type: String,
     },
-    talentId: {
+    talentName: {
       type: String,
     },
   },
   components: {
     CommonHeader,
     ErrorMessage,
-    TalentProgramJoken,
+    WeekTalentShutsuenJoken,
   },
   data() {
     return {
-      //talentProgramJoken: {},
+      searchJoken: {},
+      message:'',
     }
   },
 methods: {
-    // onTalentProgramJoken(data) {
-    //   this.talentProgramJoken = data
-    //   // this.$router.push({ name: 'TalentProgramListBaseForm', params: { nentsuki: this.talentProgramJoken.nentsuki, seibetsu: this.talentProgramJoken.seibetsu, address: this.talentProgramJoken.address, }, })
-    // }
+    receiveMessage(value) {
+      this.message = value
+    },
   },
 }
 </script>

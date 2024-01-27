@@ -87,9 +87,9 @@
         <td style="background-color: greenyellow;">オンエア日（直近） </td>
       </tr>
       <tr v-for="(item, key) in result" :key="key">
-        <td><router-link :to="{ name: 'TalentProgramJoken', params: { nentsuki: this.nentsuki, shu: this.shu, talentId: item.talentId } }">{{ item.talentName }}</router-link></td>
+        <td><router-link :to="{ name: 'TalentDetail', params: { nentsuki: this.nentsuki, shu: this.shu, talentId: item.talentId } }">{{ item.talentName }}</router-link></td>
         <td>{{ item.shukanShutsuenProgramHonsu + "本"}} </td>
-        <td><router-link :to="{ name: 'ProgramShutsuenJoken', params: { programId: item.shutsuenProgramIdChokin, onAirDay: item.onAirDayChokin, nentsuki: this.nentsuki, shu: this.shu } }">{{ item.shutsuenProgramChokin  }}</router-link></td>
+        <td><router-link :to="{ name: 'ProgramDetail', params: { programId: item.shutsuenProgramIdChokin, onAirDay: item.onAirDayChokin, nentsuki: this.nentsuki, shu: this.shu } }">{{ item.shutsuenProgramChokin  }}</router-link></td>
         <td>{{ getOnAirDayFormat(item.onAirDayChokin)}} </td>
       </tr>
     </table>
@@ -101,7 +101,7 @@ import { Field, ErrorMessage } from 'vee-validate'
 import axios from 'axios'
 import moment from 'moment';
 export default {
-  name: 'SearchJoken',
+  name: 'WeekTalentShutsuenJoken',
   props: {
     propNentsuki: {
       type: String,
@@ -158,7 +158,7 @@ export default {
       this.result = await axios.get(url).then(response => (response.data.shukanTalent))
       if(this.result[0].talentId !== null) {
           this.countFlg = true
-        this.$emit('on-message', "")
+          this.$emit('on-message', "")
       } else {
           this.msg ="検索結果が0件です。"
           this.$emit('on-message', this.msg)

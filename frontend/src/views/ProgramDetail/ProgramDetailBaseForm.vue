@@ -4,7 +4,7 @@
   <ErrorMessage
         v-if="message"
   />
-  <ProgramShutsuenJoken
+  <ProgramDetailJoken
     v-bind:program-id="programId"
     v-bind:on-air-day="onAirDay"
     v-bind:nentsuki="nentsuki"
@@ -15,10 +15,10 @@
 <script>
 import CommonHeader from '../common/CommonHeader.vue'
 import ErrorMessage from '../common/ErrorMessage.vue'
-import ProgramShutsuenJoken from './components/ProgramShutsuenJoken.vue'
+import ProgramDetailJoken from './components/ProgramDetailJoken.vue'
 
 export default {
-  name: 'ProgramShutenJokenBaseForm',
+  name: 'ProgramDetailBaseForm',
   props: {
     programId: {
       type: String,
@@ -36,7 +36,7 @@ export default {
   components: {
     CommonHeader,
     ErrorMessage,
-    ProgramShutsuenJoken,
+    ProgramDetailJoken,
   },
   data() {
     return {
