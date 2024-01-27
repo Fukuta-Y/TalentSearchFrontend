@@ -2,24 +2,22 @@
   <CommonHeader
     />
   <ErrorMessage
-      v-if="message"
-      v-bind:prop-message="message"
+        v-if="message"
   />
-  <SearchJoken 
-      v-bind:prop-nentsuki="nentsuki"
-      v-bind:prop-shu="shu"
-      v-bind:prop-talent-name="talentName"
-      v-on:on-message="receiveMessage"
+  <TalentDetailJoken
+    v-bind:nentsuki="nentsuki"
+    v-bind:shu="shu"
+    v-bind:talent-id="talentId"
   />
 </template>
 
 <script>
 import CommonHeader from '../common/CommonHeader.vue'
 import ErrorMessage from '../common/ErrorMessage.vue'
-import SearchJoken from './components/SearchJoken.vue'
+import TalentDetailJoken from './components/TalentDetailJoken.vue'
 
 export default {
-  name: 'WeekTalentShutsuenBaseForm',
+  name: 'TalentProgramJokenBaseForm',
   props: {
     nentsuki: {
       type: String,
@@ -27,25 +25,20 @@ export default {
     shu: {
       type: String,
     },
-    talentName: {
+    talentId: {
       type: String,
     },
   },
   components: {
     CommonHeader,
     ErrorMessage,
-    SearchJoken,
+    TalentDetailJoken,
   },
   data() {
     return {
-      searchJoken: {},
-      message:'',
     }
   },
 methods: {
-    receiveMessage(value) {
-      this.message = value
-    },
   },
 }
 </script>

@@ -1,8 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import TalentProgramJokenBaseForm from '../views/TalentProgramJoken/TalentProgramJokenBaseForm.vue'
-import WeekTalentShutsuenBaseForm from '../views/SearchJoken/WeekTalentShutsuenBaseForm.vue'
+import WeekTalentShutsuenBaseForm from '../views/WeekTalentShutsuen/WeekTalentShutsuenBaseForm.vue'
+import TalentDetailBaseForm from '../views/TalentDetail/TalentDetailBaseForm.vue'
+import ProgramDetailBaseForm from '../views/ProgramDetail/ProgramDetailBaseForm.vue'
 import MenuBaseForm from '../views/MainMenu/MenuBaseForm.vue'
-import ProgramShutsuenJokenBaseForm from '../views/ProgramShutsuenJoken/ProgramShutsuenJokenBaseForm.vue'
 import ProgramTorokuKoshinBaseForm from '../views/ProgramTorokuKoshin/ProgramTorokuKoshinBaseForm.vue'
 import TalentTorokuKoshinBaseForm from '../views/TalentTorokuKoshin/TalentTorokuKoshinBaseForm.vue'
 import NetsukiShuKanriTorokuKoshinBaseForm from '../views/NetsukiShuKanriTorokuKoshin/NetsukiShuKanriTorokuKoshinBaseForm.vue'
@@ -20,22 +20,22 @@ const routes = [
     component: WeekTalentShutsuenBaseForm
   },
   {
-    path: '/TalentProgramJokenBaseForm/:nentsuki/:shu/:talentId',
-    name: 'TalentProgramJoken',
-    component: TalentProgramJokenBaseForm,
-    props: route => ({ nentsuki: route.params.nentsuki, shu: route.params.shu, talentId: route.params.talentId })
-  },
-  {
-    path: '/ProgramShutsuenJokenBaseForm/:programId/:onAirDay/:nentsuki/:shu',
-    name: 'ProgramShutsuenJoken',
-    component: ProgramShutsuenJokenBaseForm,
-    props: route => ({ programId: route.params.programId, onAirDay: route.params.onAirDay, nentsuki: route.params.nentsuki, shu: route.params.shu })
-  },
-  {
     path: '/WeekTalentShutsuenBaseForm/:nentsuki/:shu/:talentName',
     name: 'WeekTalentShutsuen',
     component: WeekTalentShutsuenBaseForm,
     props: route => ({ nentsuki: route.params.nentsuki, shu: route.params.shu, talentName: route.params.talentName })
+  },
+  {
+    path: '/TalentDetailBaseForm/:nentsuki/:shu/:talentId',
+    name: 'TalentDetail',
+    component: TalentDetailBaseForm,
+    props: route => ({ nentsuki: route.params.nentsuki, shu: route.params.shu, talentId: route.params.talentId })
+  },
+  {
+    path: '/ProgramDetailBaseForm/:programId/:onAirDay/:nentsuki/:shu',
+    name: 'ProgramDetail',
+    component: ProgramDetailBaseForm,
+    props: route => ({ programId: route.params.programId, onAirDay: route.params.onAirDay, nentsuki: route.params.nentsuki, shu: route.params.shu })
   },
   {
     path: '/ProgramTorokuKoshinBaseForm',
