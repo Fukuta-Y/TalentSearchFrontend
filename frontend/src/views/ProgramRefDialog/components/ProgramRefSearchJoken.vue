@@ -160,7 +160,7 @@ export default {
       this.result = await axios.get(url).then(response => (response.data.mProgram));
       this.totalPages = Math.ceil(this.result.length / this.pageSize);
       this.resultCount = this.result.length;
-      if(this.result[0]?.programId !== null) {
+      if(this.result[0].programId !== null) {
           this.countFlg = true
           this.$emit('on-message', "")
       } else {

@@ -80,7 +80,7 @@ export default {
 }
 .dialog-content {
   width: 55%; /* 任意の幅を指定してください */
-  height: 60%; /* 任意の幅を指定してください */
+  height: 68%; /* 任意の幅を指定してください */
   margin: 0 auto;
 }
 </style>

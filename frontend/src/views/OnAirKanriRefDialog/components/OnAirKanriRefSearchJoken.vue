@@ -48,37 +48,48 @@
       </button>
     </div>
     <br>
-    <br>
     <div style="overflow-y: auto;">
-    <table align="center" border="1" style="border-collapse: collapse;" v-if="countFlg">
-      <tr>
-        <td style="background-color: greenyellow;"></td>
-        <td style="background-color: greenyellow;">ID </td>
-        <td style="background-color: greenyellow;width:170px;">オンエア日</td>
-        <td style="background-color: greenyellow;">番組ID</td>
-        <td style="background-color: greenyellow; width:130px;">番組名</td>
-        <td style="background-color: greenyellow;">タレントID</td>
-        <td style="background-color: greenyellow; width:130px;">タレント名</td>
-        <td style="background-color: greenyellow; width:70px;">年月</td>
-        <td style="background-color: greenyellow; width:45px;">週</td>
-      </tr>
-      <tr v-for="(item, key) in paginatedResult" :key="key">
-        <td><button v-on:click="selectId(item.id, item.onAirDay, item.programId, item.programName, item.talentId, item.talentName, item.nentsuki, item.shu)">選択</button></td>
-        <td>{{ item.id }} </td>
-        <td>{{ item.onAirDay }} </td>
-        <td>{{ item.programId }} </td>
-        <td>{{ item.programName }} </td>
-        <td>{{ item.talentId }} </td>
-        <td>{{ item.talentName }} </td>
-        <td>{{ item.nentsuki }} </td>
-        <td>{{ item.shu }} </td>
-      </tr>
-    </table>
-    <div>
-      <button v-for="pageNumber in totalPages" :key="pageNumber" @click="changePage(pageNumber)">
-        {{ pageNumber }}
-      </button>
-    </div>
+      <table align="center" border="1" style="border-collapse: collapse;" v-if="countFlg">
+        <tr>
+          <td style="background-color: greenyellow;"></td>
+          <td style="background-color: greenyellow;">ID </td>
+          <td style="background-color: greenyellow;width:170px;">オンエア日</td>
+          <td style="background-color: greenyellow;">番組ID</td>
+          <td style="background-color: greenyellow; width:130px;">番組名</td>
+          <td style="background-color: greenyellow;">タレントID</td>
+          <td style="background-color: greenyellow; width:130px;">タレント名</td>
+          <td style="background-color: greenyellow; width:70px;">年月</td>
+          <td style="background-color: greenyellow; width:45px;">週</td>
+        </tr>
+        <tr v-for="(item, key) in paginatedResult" :key="key">
+          <td><button v-on:click="selectId(item.id, item.onAirDay, item.programId, item.programName, item.talentId, item.talentName, item.nentsuki, item.shu)">選択</button></td>
+          <td>{{ item.id }} </td>
+          <td>{{ item.onAirDay }} </td>
+          <td>{{ item.programId }} </td>
+          <td>{{ item.programName }} </td>
+          <td>{{ item.talentId }} </td>
+          <td>{{ item.talentName }} </td>
+          <td>{{ item.nentsuki }} </td>
+          <td>{{ item.shu }} </td>
+        </tr>
+      </table>
+      <div v-if="countFlg">
+        <div class="pagination-container">
+          <a @click="changePage(1)" :disabled="currentPage === 1" class="pagination-link">最初</a>
+          <a
+            v-for="pageNumber in totalPageLinks"
+            :key="pageNumber"
+            @click="pageNumber !== '...' ? changePage(pageNumber) : null"
+            class="pagination-link"
+          >
+            <span v-if="pageNumber !== '...'">
+              <span class="underlined">{{ pageNumber }}</span>
+            </span>
+            <span v-else>...</span>
+          </a>
+          <a @click="changePage(totalPages)" :disabled="currentPage === totalPages" class="pagination-link">最後</a>
+        </div>
+      </div>
     </div>
     <br>
   </div>
@@ -118,10 +129,10 @@ export default {
       msg: '',
       countFlg: false,
       result: {},
+      formattedDate: null,
       currentPage: 1,
       pageSize: 10, // 1ページあたりのアイテム数
       totalPages: 0,
-      formattedDate: null,
     }
   },
   async created() {
@@ -134,13 +145,25 @@ export default {
   },
   computed: {
     paginatedResult() {
+      // ページングされた結果を返すように変更
       const startIndex = (this.currentPage - 1) * this.pageSize;
       const endIndex = startIndex + this.pageSize;
       return this.result.slice(startIndex, endIndex);
     },
+    totalPageLinks() {
+      const maxPageLinks = 10;
+      const currentGroup = Math.ceil(this.currentPage / maxPageLinks);
+      const startPage = (currentGroup - 1) * maxPageLinks + 1;
+      const endPage = Math.min(currentGroup * maxPageLinks, this.totalPages);
+
+      return Array.from({ length: endPage - startPage + 1 }, (_, index) => startPage + index);
+    },
   },
   methods: {
     async btnSearch() {
+      this.fetchData();
+    },
+    async fetchData() {
       if (this.onAirDay !== '') {
         const dateObject = new Date(this.onAirDay);
         const year = dateObject.getFullYear();
@@ -153,7 +176,8 @@ export default {
       }
       const url = "http://localhost:8081/api/onAirKanriRefBFF?id=" + this.id +"&onAirDay=" + this.onAirDay;
       this.result = await axios.get(url).then(response => (response.data.tOnAirKanriRef));
-      this.resultCount = this.result.length; // 件数を更新
+      this.totalPages = Math.ceil(this.result.length / this.pageSize);
+      this.resultCount = this.result.length;
       if(this.result[0].id !== null) {
           this.countFlg = true
           this.$emit('on-message', "")
@@ -189,6 +213,10 @@ export default {
       this.msg = ''
       this.result = {}
     },
+    underlineNumber(number) {
+      // 数字にアンダーラインをつけるためのスタイルを適用するメソッド
+      return `<span class="underlined">${number}</span>`;
+    },
   },
 }
 </script>
@@ -205,5 +233,19 @@ export default {
 .date-picker {
   margin: 60px auto 0;
   width: 60%;
+}
+.pagination-container {
+  display: flex;
+  gap: 8px;
+  justify-content: center; /* 画面中央に寄せる */
+}
+
+.pagination-link {
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.underlined {
+  text-decoration: underline;
 }
 </style>

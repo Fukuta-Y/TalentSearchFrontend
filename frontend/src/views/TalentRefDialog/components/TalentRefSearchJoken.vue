@@ -155,6 +155,7 @@ export default {
       const url = "http://localhost:8081/api/talentRefBFF?talentId=" + this.talentId +"&talentName=" + this.talentName;
       this.result = await axios.get(url).then(response => (response.data.mTalent));
       this.resultCount = this.result.length; // 件数を更新
+      this.totalPages = Math.ceil(this.result.length / this.pageSize);
       if(this.result[0].talentId !== null) {
           this.countFlg = true
           this.$emit('on-message', "")
