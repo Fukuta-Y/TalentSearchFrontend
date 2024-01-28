@@ -92,7 +92,6 @@
           <a @click="changePage(totalPages)" :disabled="currentPage === totalPages" class="pagination-link">最後</a>
         </div>
       </div>
-      <br>
     </div>
     <br>
   </div>
@@ -198,7 +197,6 @@ export default {
 }
 </script>
 <style scoped>
-
 .pagination-container {
   display: flex;
   gap: 8px;
