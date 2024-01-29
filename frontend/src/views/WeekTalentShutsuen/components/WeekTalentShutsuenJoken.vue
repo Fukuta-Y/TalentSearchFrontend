@@ -94,11 +94,6 @@
           <td>{{ getOnAirDayFormat(item.onAirDayChokin)}} </td>
         </tr>
       </table>
-      <table align="center" border="0" style="border-collapse: collapse;" v-if="countFlg == false">
-        <tr>
-          <font color="red">{{ this.msg }} </font>
-        </tr>
-      </table>
       <div v-if="countFlg">
         <div class="pagination-container">
           <a @click="changePage(1)" :disabled="currentPage === 1" class="pagination-link">最初</a>
