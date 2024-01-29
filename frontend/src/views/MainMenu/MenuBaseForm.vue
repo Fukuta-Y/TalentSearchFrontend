@@ -1,24 +1,16 @@
 <template>
   <div id="app" style="display: flex; flex-direction: column; height: 100vh;">
-    <div>
-      <!-- ハンバーガーメニュー -->
-      <div class="burger-menu" @click="toggleSidebar">
-        <div :class="{ 'bar': isSidebarCollapsed, 'plus': !isSidebarCollapsed }"></div>
-        <div :class="{ 'bar': isSidebarCollapsed, 'plus': !isSidebarCollapsed }"></div>
-        <div :class="{ 'bar': isSidebarCollapsed, 'plus': !isSidebarCollapsed }"></div>
-      </div>
-    </div>
     <div style="display: flex; flex: 1;">
-      <div :style="{ width: isSidebarCollapsed ? '60px' : '200px' }" class="sidebar">
-        <!-- サイドバー -->
-        <SidebarMenu :isSidebarCollapsed="isSidebarCollapsed" :sidebarLinks="sidebarLinks"
-          :expandedSubmenus="expandedSubmenus" @toggleSubmenu="toggleSubmenu" />
-      </div>
+      <!-- サイドバー -->
+      <SideBar />
+
+      <!-- メインメニュータイトルブロックとコンテンツ -->
       <div style="flex: 1; display: flex; flex-direction: column; padding: 20px;">
         <!-- メインメニュータイトルブロック -->
         <div style="width: 95%; text-align: center; margin-bottom: 20px;" class="boxed-title">
           <p>メインメニュー</p>
         </div>
+
         <!-- 業務とマスタのコンテンツ -->
         <div style="display: flex; justify-content: space-between;">
           <div style="width: 48%; padding: 4px; box-sizing: border-box;" class="sidebar-link">
@@ -45,37 +37,18 @@
 <script>
 import GyomuList from './components/GyomuList.vue';
 import MasterList from './components/MasterList.vue';
-import SidebarMenu from './components/SidebarMenu.vue';
+import SideBar from '../common/SideBar.vue';
 
 export default {
   components: {
     MasterList,
     GyomuList,
-    SidebarMenu,
+    SideBar,
   },
   data() {
     return {
       isSidebarCollapsed: true, // サイドメニューがデフォルトで閉じている
       expandedSubmenus: [],
-      sidebarLinks: [
-        {
-          id: 1,
-          text: '業務',
-          children: [
-            { id: 2, text: '週間タレント出演検索', url: 'http://localhost:8080/WeekTalentShutsuenBaseForm' },
-          ]
-        },
-        {
-          id: 10,
-          text: 'マスタ',
-          children: [
-            { id: 11, text: '番組登録', url: 'http://localhost:8080/ProgramTorokuKoshinBaseForm' },
-            { id: 12, text: 'タレント登録', url: 'http://localhost:8080/TalentTorokuKoshinBaseForm' },
-            { id: 13, text: '年月週管理登録', url: 'http://localhost:8080/NetsukiShuKanriTorokuKoshinBaseForm' },
-            { id: 14, text: 'オンエア管理登録', url: 'http://localhost:8080/OnAirKanriTorokuKoshinBaseForm' },
-          ]
-        }
-      ],
     };
   },
   methods: {

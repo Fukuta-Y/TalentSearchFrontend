@@ -1,20 +1,32 @@
-<template>
-  <CommonHeader
-    />
-  <ErrorMessage
-        v-if="message"
-  />
-  <TalentDetailJoken
-    v-bind:nentsuki="nentsuki"
-    v-bind:shu="shu"
-    v-bind:talent-id="talentId"
-  />
-</template>
 
+<template>
+  <div id="app" style="display: flex; flex-direction: column; height: 100vh;">
+    <div style="display: flex; flex: 1;">
+      <!-- サイドバー -->
+      <SideBar />
+
+      <!-- メインメニュータイトルブロックとコンテンツ -->
+      <div style="flex: 1; display: flex; flex-direction: column; padding: 20px;">
+          <CommonHeader
+            />
+          <ErrorMessage
+              v-if="message"
+              v-bind:prop-message="message"
+          />
+          <TalentDetailJoken
+            v-bind:nentsuki="nentsuki"
+            v-bind:shu="shu"
+            v-bind:talent-id="talentId"
+          />
+        </div>
+    </div>
+  </div>
+</template>
 <script>
 import CommonHeader from '../common/CommonHeader.vue'
 import ErrorMessage from '../common/ErrorMessage.vue'
 import TalentDetailJoken from './components/TalentDetailJoken.vue'
+import SideBar from '../common/SideBar.vue';
 
 export default {
   name: 'TalentProgramJokenBaseForm',
@@ -33,6 +45,7 @@ export default {
     CommonHeader,
     ErrorMessage,
     TalentDetailJoken,
+    SideBar,
   },
   data() {
     return {
