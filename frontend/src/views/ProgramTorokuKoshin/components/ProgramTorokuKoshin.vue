@@ -123,6 +123,7 @@ export default {
       genreInfo: [],
       jyunjyo: null, //ジャンルID
       programRefDialogComponent: false,
+      msg: '',
     };
   },
   mounted() {
@@ -220,6 +221,7 @@ export default {
       this.programName = null
       this.jyunjyo = null
       this.channelId = null
+      this.msg = ''
     },
     // チャンネル名の表示
     getChannelName(channelId) {

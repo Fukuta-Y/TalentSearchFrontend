@@ -16,7 +16,7 @@
           v-on:on-select-id="handleSelectId" 
         />
       </tr>
-      <tr>
+      <tr v-if="!idRefDialogComponent">
         <td>オンエア日： </td>
         <td class="date-picker">
           <Datepicker v-model="onAirDay" @input="updateFormattedDate" :style="{ width: '250px' }" language="ja" v-show="mode === '1' || !idRefDialogComponent"></Datepicker>
