@@ -57,31 +57,51 @@
     <br>
     <br>
     <div style="overflow-y: auto;">
-    <table align="center" border="1" style="border-collapse: collapse;" v-if="countFlg">
-      <tr>
-        <td style="background-color: greenyellow;"></td>
-        <td style="background-color: greenyellow;">番組ID </td>
-        <td style="background-color: greenyellow;">番組名 </td>
-        <td style="background-color: greenyellow;">チャンネル局ID</td>
-        <td style="background-color: greenyellow;">ジャンルID </td>
-      </tr>
-      <tr v-for="(item, key) in paginatedResult" :key="key">
-        <td><button v-on:click="selectProgram(item.programId, item.programName)">選択</button></td>
-        <td>{{ item.programId }} </td>
-        <td>{{ item.programName }} </td>
-        <td>{{ item.channelId }} </td>
-        <td>{{ item.genreId }} </td>
-      </tr>
-    </table>
-    <div>
-      <button v-for="pageNumber in totalPages" :key="pageNumber" @click="changePage(pageNumber)">
-        {{ pageNumber }}
-      </button>
-    </div>
+      <table align="center" border="1" style="border-collapse: collapse;" v-if="countFlg">
+        <!-- テーブルのヘッダー部分 -->
+        <tr>
+          <td style="background-color: greenyellow;"></td>
+          <td style="background-color: greenyellow;">番組ID </td>
+          <td style="background-color: greenyellow;">番組名 </td>
+          <td style="background-color: greenyellow;" v-if="isProgramToroku">チャンネル局ID</td>
+          <td style="background-color: greenyellow;" v-if="isProgramToroku">ジャンルID </td>
+        </tr>
+        <!-- ページごとに表示されるアイテムを反復処理 -->
+        <tr v-for="(item, key) in paginatedResult" :key="key">
+          <td><button v-on:click="selectProgram(item.programId, item.programName, item.channelKyokuId, item.genreId)">選択</button></td>
+          <td v-if="isProgramToroku">
+            {{ item.programId }}
+          </td>
+          <td v-else>
+            <router-link :to="{ name: 'ProgramTorokuKoshin', params: { programId: item.programId } }">{{ item.programId }}</router-link>
+          </td>
+          <td>{{ item.programName }} </td>
+          <td v-if="isProgramToroku">{{ item.channelKyokuId }} </td>
+          <td v-if="isProgramToroku">{{ item.genreId }} </td>
+        </tr>
+      </table>
+      <div v-if="countFlg">
+        <div class="pagination-container">
+          <a @click="changePage(1)" :disabled="currentPage === 1" class="pagination-link">最初</a>
+          <a
+            v-for="pageNumber in totalPageLinks"
+            :key="pageNumber"
+            @click="pageNumber !== '...' ? changePage(pageNumber) : null"
+            class="pagination-link"
+          >
+            <span v-if="pageNumber !== '...'">
+              <span class="underlined">{{ pageNumber }}</span>
+            </span>
+            <span v-else>...</span>
+          </a>
+          <a @click="changePage(totalPages)" :disabled="currentPage === totalPages" class="pagination-link">最後</a>
+        </div>
+      </div>
     </div>
     <br>
   </div>
 </template>
+
 <script>
 import { Field, ErrorMessage } from 'vee-validate'
 import axios from 'axios'
@@ -93,6 +113,9 @@ export default {
     },
     propProgramName: {
       type: String,
+    },
+    isProgramToroku: {
+      type: Boolean,
     },
   },
   components: {
@@ -106,7 +129,7 @@ export default {
       programName: '',
       msg: '',
       countFlg: false,
-      result: {},
+      result: [],
       currentPage: 1,
       pageSize: 10, // 1ページあたりのアイテム数
       totalPages: 0,
@@ -122,16 +145,29 @@ export default {
   },
   computed: {
     paginatedResult() {
+      // ページングされた結果を返すように変更
       const startIndex = (this.currentPage - 1) * this.pageSize;
       const endIndex = startIndex + this.pageSize;
       return this.result.slice(startIndex, endIndex);
     },
+    totalPageLinks() {
+      const maxPageLinks = 10;
+      const currentGroup = Math.ceil(this.currentPage / maxPageLinks);
+      const startPage = (currentGroup - 1) * maxPageLinks + 1;
+      const endPage = Math.min(currentGroup * maxPageLinks, this.totalPages);
+
+      return Array.from({ length: endPage - startPage + 1 }, (_, index) => startPage + index);
+    },
   },
   methods: {
     async btnSearch() {
+      this.fetchData();
+    },
+    async fetchData() {
       const url = "http://localhost:8081/api/programRefBFF?programId=" + this.programId +"&programName=" + this.programName;
-      this.result = await axios.get(url).then(response => (response.data.mProgram));
-      this.resultCount = this.result.length; // 件数を更新
+      this.result = await axios.get(url).then(response => (response.data.programInfoRef));
+      this.totalPages = Math.ceil(this.result.length / this.pageSize);
+      this.resultCount = this.result.length;
       if(this.result[0].programId !== null) {
           this.countFlg = true
           this.$emit('on-message', "")
@@ -145,10 +181,10 @@ export default {
       this.currentPage = pageNumber;
       this.fetchData(); // ページ変更時にデータを再取得するなどの処理を追加
     },
-    selectProgram(programId, programName) {
+    selectProgram(programId, programName, channelKyokuId, genreId) {
       // 「選択」ボタンがクリックされたときに呼ばれるメソッド
-      // programId と programName を親コンポーネントに渡す
-      this.$emit('on-select-program', { programId, programName });
+      // programId と programName と channelId と genreId  を親コンポーネントに渡す
+      this.$emit('on-select-program', { programId, programName, channelKyokuId, genreId });
     },
     btnClear() {
       this.init();
@@ -159,10 +195,28 @@ export default {
       this.programName = ''
       this.countFlg = false
       this.msg = ''
-      this.result = {}
+      this.result = []
+    },
+    underlineNumber(number) {
+      // 数字にアンダーラインをつけるためのスタイルを適用するメソッド
+      return `<span class="underlined">${number}</span>`;
     },
   },
 }
 </script>
 <style scoped>
+.pagination-container {
+  display: flex;
+  gap: 8px;
+  justify-content: center; /* 画面中央に寄せる */
+}
+
+.pagination-link {
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.underlined {
+  text-decoration: underline;
+}
 </style>

@@ -23,13 +23,14 @@
               maxlength="2"
               placeholder="例：04"
             />月
-          <button v-on:click="btnNentsukiRefDialogOpen()"  v-if="mode !== '1'">
+          <button v-on:click="btnNentsukiRefDialogOpen()">
             <label>参照</label>
           </button>
           <NetsukiShuKanriRefDialog 
             v-bind:prop-nen="nen"
             v-bind:prop-tsuki="tsuki"
             v-bind:prop-shu="shu"
+            v-bind:is-nentsuki-shu="true"
             :is-open="nentsukiShuRefDialogComponent" 
             @close="btnNentsukiRefDialogClose()" 
             v-on:on-select-nentsuki-shu="handleSelectNentsuki" 
@@ -96,14 +97,13 @@ export default {
       type: String,
     },
     propShu: {
-      type: String,
+      type: Number,
     },
   },
   computed: {
       // ラベルの木切り替え
     getTorokuKoshinName() {
-      // this.modeが1の時は新規登録/2の時は更新モード
-      return this.mode === '1' ? '登録' : '更新';
+      return this.nen === null && this.nen === null ? '登録' : '更新';
     },
 
   },

@@ -5,6 +5,7 @@
         v-bind:prop-nen="propNen"
         v-bind:prop-tsuki="propTsuki"
         v-bind:prop-shu="propShu"
+        v-bind:is-nentsuki-shu="isNentsukiShu"
         v-on:on-select-nentsuki-shu="receiveSelectNentsukiShu"
         v-on:on-message="receiveMessage"
       />
@@ -27,7 +28,10 @@ export default {
       type: String,
     },
     propShu: {
-      type: String,
+      type: Number,
+    },
+    isNentsukiShu: {
+      type: Boolean,
     },
     isOpen: {
       type: Boolean,
@@ -80,7 +84,7 @@ export default {
 }
 .dialog-content {
   width: 55%; /* 任意の幅を指定してください */
-  height: 60%; /* 任意の幅を指定してください */
+  height: 68%; /* 任意の幅を指定してください */
   margin: 0 auto;
 }
 </style>

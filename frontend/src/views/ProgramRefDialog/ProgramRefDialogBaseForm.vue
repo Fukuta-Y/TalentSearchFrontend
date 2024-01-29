@@ -4,6 +4,7 @@
     <ProgramRefSearchJoken 
         v-bind:prop-program-id="propProgramId"
         v-bind:prop-program-name="propProgramName"
+        v-bind:is-program-toroku="isProgramToroku"
         v-on:on-select-program="reciveSelectProgram"
         v-on:on-message="receiveMessage"
       />
@@ -24,6 +25,9 @@ export default {
     },
     propProgramName: {
       type: String,
+    },
+    isProgramToroku: {
+      type: Boolean,
     },
     isOpen: {
       type: Boolean,

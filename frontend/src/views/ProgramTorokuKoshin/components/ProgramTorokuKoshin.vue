@@ -6,6 +6,17 @@
          <td>
           <label>{{ getProgramId }}</label>
         </td>
+        <button v-on:click="btnProgramRefDialogOpen()">
+          <label>参照</label>
+        </button>
+        <ProgramRefDialog 
+          v-bind:prop-program-id="programId"
+          v-bind:prop-program-name="programName"
+          v-bind:is-program-toroku="true"
+          :is-open="programRefDialogComponent" 
+          @close="btnProgramRefDialogClose()" 
+          v-on:on-select-program="handleSelectProgram" 
+        />
       </tr>
       <tr>
         <td>番組名： </td>
@@ -22,7 +33,7 @@
         </td>
       </tr>
       <tr>
-        <td>チャンネルID： </td>
+        <td>チャンネル局ID： </td>
         <td>
           <div>
               <select id="channelDropdown" v-model="channelId" class="custom-select">
@@ -78,10 +89,11 @@
 <script>
 import { Field } from 'vee-validate'
 import axios from 'axios'
+import ProgramRefDialog from '../../ProgramRefDialog/ProgramRefDialogBaseForm.vue';
 export default {
   name: 'ProgramTorokuKoshin',
   props: {
-    programId: {
+    propProgramId: {
       type: String,
     },
   },
@@ -98,16 +110,19 @@ export default {
   },
   components: {
     Field,
+    ProgramRefDialog,
   },
   emits: ['on-message'],
   data() {
     return {
+      programId: this.propProgramId,
       programName: null,
       channelInfo: [],
       channelId: null, // チャンネルID
       channelName: '',
       genreInfo: [],
       jyunjyo: null, //ジャンルID
+      programRefDialogComponent: false,
     };
   },
   mounted() {
@@ -137,6 +152,24 @@ export default {
     // 初期化ボタン
     btnClear() {
       this.init();
+    },
+    // 番組IDの参照時の戻り
+    handleSelectProgram(selectedData) {
+      console.log('selectedData:' + JSON.stringify(selectedData));
+      this.programId = selectedData.programId;
+      this.programName = selectedData.programName;
+      this.channelId = selectedData.channelKyokuId;
+      this.jyunjyo = selectedData.genreId;
+    },
+    // 番組参照ボタン
+    btnProgramRefDialogOpen() {
+      // ダイアログができたら作成
+      this.programRefDialogComponent = true;
+    },
+    // 番組参照ボタン
+    btnProgramRefDialogClose() {
+      // ダイアログができたら作成
+      this.programRefDialogComponent = false;
     },
     // 登録・更新ボタン
     async btnToroku() {
@@ -183,6 +216,7 @@ export default {
     },
     // 初期化
     init(){
+      this.programId = undefined
       this.programName = null
       this.jyunjyo = null
       this.channelId = null

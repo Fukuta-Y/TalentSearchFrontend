@@ -2,30 +2,19 @@
   <table align="center">
       <tr>
         <td>ID： </td>
-        <td v-if="mode === '1'">
-            <label>{{ getOnAirKanriId() }}</label>
+        <td>
+          <label>{{ getId() }}</label>
         </td>
-        <td v-else>
-          <Field 
-            name="id" 
-            v-model="id"
-            size="9"
-            label="ID"
-            rules="required"
-            maxlength="8"
-            :disabled="true" 
-          />
-          </td>
-          <button v-on:click="btnIdRefDialogOpen()"  v-if="mode !== '1'">
-            <label>参照</label>
-          </button>
-          <OnAirKanriRefDialog 
-            v-bind:prop-id="id"
-            v-bind:prop-on-air-day="onAirDay"
-            :is-open="idRefDialogComponent" 
-            @close="btnIdRefDialogClose()" 
-            v-on:on-select-id="handleSelectId" 
-          />
+        <button v-on:click="btnIdRefDialogOpen()">
+          <label>参照</label>
+        </button>
+        <OnAirKanriRefDialog 
+          v-bind:prop-id="id"
+          v-bind:prop-on-air-day="onAirDay"
+          :is-open="idRefDialogComponent" 
+          @close="btnIdRefDialogClose()" 
+          v-on:on-select-id="handleSelectId" 
+        />
       </tr>
       <tr>
         <td>オンエア日： </td>
@@ -52,6 +41,7 @@
           <ProgramRefDialog 
             v-bind:prop-program-id="programId"
             v-bind:prop-program-name="programName"
+            v-bind:is-program-toroku="false"
             :is-open="programRefDialogComponent" 
             @close="btnProgramRefDialogClose()" 
             v-on:on-select-program="handleSelectProgram" 
@@ -82,6 +72,7 @@
         <TalentRefDialog 
           v-bind:prop-talent-id="talentId"
           v-bind:prop-talent-name="talentName"
+          v-bind:is-talent-toroku="false"
           :is-open="talentRefDialogComponent" 
           @close="btnTalentRefDialogClose()" 
           v-on:on-select-talent="handleSelectTalent" 
@@ -96,15 +87,24 @@
       <tr>
         <td>対象年月・週： </td>
         <td>
-          <div>
-              <select id="nentsukiShuDropDownList" v-model="nentsukiShu" class="custom-select">
-                <option value="" disabled style="display: none;"></option>
-                <option v-for="nentsukiShu in this.nentsukiShuKanri" :key="nentsukiShu" :value="nentsukiShu">
-                  {{ nentsukiShu }}
-                </option>
-              </select>
-          </div>
-        </td>
+          <Field 
+            name="nentsukiShu" 
+            v-model="nentsukiShu"
+            size="15"
+            label="対象年月・週"
+            rules="required"
+            :disabled="true" 
+          />
+          </td>
+          <button v-on:click="btnNentsukiRefDialogOpen()">
+            <label>参照</label>
+          </button>
+          <NetsukiShuKanriRefDialog 
+            v-bind:prop-nentsuki-shu-="nentsukiShu"
+            :is-open="nentsukiShuRefDialogComponent" 
+            @close="btnNentsukiRefDialogClose()" 
+            v-on:on-select-nentsuki-shu="handleSelectNentsuki" 
+          />
       </tr>
     </table>
     <br/>
@@ -124,6 +124,7 @@
 <script>
 import { Field } from 'vee-validate'
 import axios from 'axios'
+import NetsukiShuKanriRefDialog from '../../NetsukiShuKanriRefDialog/NetsukiShuKanriRefDialogBaseForm.vue';
 import OnAirKanriRefDialog from '../../OnAirKanriRefDialog/OnAirKanriRefDialogBaseForm.vue';
 import ProgramRefDialog from '../../ProgramRefDialog/ProgramRefDialogBaseForm.vue';
 import TalentRefDialog from '../../TalentRefDialog/TalentRefDialogBaseForm.vue';
@@ -144,13 +145,13 @@ export default {
   computed: {
       // ラベルの木切り替え
     getTorokuKoshinName() {
-      // this.modeが1の時は新規登録/2の時は更新モード
-      return this.mode === '1' ? '登録' : '更新';
+      return this.id === '' ? '登録' : '更新';
     },
   },
   components: {
     Field,
     Datepicker,
+    NetsukiShuKanriRefDialog,
     OnAirKanriRefDialog,
     ProgramRefDialog,
     TalentRefDialog,
@@ -169,9 +170,10 @@ export default {
       shu: null,
       formattedDate: null,
       nentsukiShuKanri: [],
+      idRefDialogComponent: false,
       programRefDialogComponent: false,
       talentRefDialogComponent: false,
-      idRefDialogComponent: false,
+      nentsukiShuRefDialogComponent: false,
     };
   },
   watch: {
@@ -207,9 +209,18 @@ export default {
       this.talentId = selectedData.talentId
       this.talentName = selectedData.talentName
     },
+    // 年月週の参照時の戻り
+    handleSelectNentsuki(selectedData) {
+      this.nen = selectedData.nentsuki.toString().substring(0, 4);
+      this.tsuki = selectedData.nentsuki.toString().substring(4);
+      this.shu = selectedData.shu
+      this.shuFrom = selectedData.shuFrom
+      this.shuTo = selectedData.shuTo
+      this.nentsukiShu = `${this.nen}/${this.tsuki} ${this.shu}週`;
+    },
      getId() {
       // this.idが空文字の場合とそうでない場合でラベルを変更
-      return this.id === undefined ? '（新規登録）' : this.id;
+      return this.id === '' ? '（新規登録）' : this.id;
     },
     // 初期表示時
     async fetchData() {
@@ -241,10 +252,6 @@ export default {
         const week = item.shu;
         return `${year}/${month} ${week}週`;
       });
-    },
-    getOnAirKanriId() {
-      // this.modeが空文字の場合とそうでない場合でラベルを変更
-      return this.mode === '1' ? '（新規登録）' : '';
     },
     updateFormattedDate() {
       this.formattedDate = this.formatDate(this.selectedDate);
@@ -281,10 +288,20 @@ export default {
       // ダイアログができたら作成
       this.talentRefDialogComponent = true;
     },
-    // 番組参照ボタン
+    // タレント参照ボタン
     btnTalentRefDialogClose() {
       // ダイアログができたら作成
       this.talentRefDialogComponent = false;
+    },
+    // 年月週参照ボタン
+    btnNentsukiRefDialogOpen() {
+      // ダイアログができたら作成
+      this.nentsukiShuRefDialogComponent = true;
+    },
+    // 年月週参照ボタン
+    btnNentsukiRefDialogClose() {
+      // ダイアログができたら作成
+      this.nentsukiShuRefDialogComponent = false;
     },
     // 登録・更新ボタン
     async btnToroku() {
@@ -311,7 +328,7 @@ export default {
 
       // データオブジェクトを作成
       const postData = {
-        id: this.mode != '1' ? this.id : '00000000',
+        id: this.id != '' ? this.id : '00000000',
         onAirDay: this.onAirDay,
         programId: this.programId,
         talentId: this.talentId,
@@ -321,7 +338,7 @@ export default {
         torokuDay: "",
         koushinDay: ""
       };
-      console.log('data:' + JSON.stringify(postData));
+
       // 年月週管理登録・更新BFF（登録・更新モード共通）
       const onAirKanriInfoUrl = "http://localhost:8081/api/onAirKanriInfoBFF";
 
