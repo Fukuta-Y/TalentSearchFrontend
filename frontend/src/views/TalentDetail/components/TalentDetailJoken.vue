@@ -13,7 +13,7 @@
     <br>
     <table align="center" v-if="countFlg">
       <tr>
-        <td style="text-align: left;">対象年月・週：<router-link :to="{ name: 'NetsukiShuKanriTorokuKoshin', params: { mode: '2', nentsuki: this.nentsuki, shu: this.shu } }">{{ `${String(this.nentsuki).substring(0, 4)}/${String(this.nentsuki).substring(4, 6)} ${this.shu}週` }}</router-link></td>
+        <td style="text-align: left;">対象年月・週：{{ `${String(this.nentsuki).substring(0, 4)}/${String(this.nentsuki).substring(4, 6)} ${this.shu}週` }}</td>
         <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
         <td style="text-align: left;">対象週・日付：   {{ this.result[0].shuFrom }}  ー   {{ this.result[0].shuTo }}</td>
       </tr>

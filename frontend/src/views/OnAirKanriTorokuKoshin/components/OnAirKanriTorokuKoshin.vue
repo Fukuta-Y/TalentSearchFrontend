@@ -16,7 +16,7 @@
             :disabled="true" 
           />
           </td>
-          <button v-on:click="btnIdRefDialogOpen()"  v-if="mode !== '1'">
+          <button v-on:click="btnIdRefDialogOpen()">
             <label>参照</label>
           </button>
           <OnAirKanriRefDialog 

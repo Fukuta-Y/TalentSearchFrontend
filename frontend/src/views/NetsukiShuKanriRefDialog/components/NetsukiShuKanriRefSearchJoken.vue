@@ -74,7 +74,7 @@
         </tr>
         <tr v-for="(item, key) in paginatedResult" :key="key">
           <td><button v-on:click="selectNentsukiShu(item.nentsuki, item.shu, item.shuFrom, item.shuTo)">選択</button></td>
-          <td>{{ `${String(item.nentsuki).substring(0, 4)}/${String(item.nentsuki).substring(4, 6)} ${item.shu}週` }}</td>
+          <td><router-link :to="{ name: 'NetsukiShuKanriTorokuKoshin', params: { mode: '2', nentsuki: item.nentsuki, shu: item.shu } }">{{ `${String(item.nentsuki).substring(0, 4)}/${String(item.nentsuki).substring(4, 6)} ${item.shu}週` }}</router-link></td>
           <td>{{ item.shuFrom }} </td>
           <td>{{ item.shuTo }} </td>
         </tr>
