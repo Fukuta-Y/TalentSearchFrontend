@@ -63,8 +63,8 @@
           <td style="background-color: greenyellow;"></td>
           <td style="background-color: greenyellow;">番組ID </td>
           <td style="background-color: greenyellow;">番組名 </td>
-          <td style="background-color: greenyellow;">チャンネル局ID</td>
-          <td style="background-color: greenyellow;">ジャンルID </td>
+          <td style="background-color: greenyellow;" v-if="isProgramToroku">チャンネル局ID</td>
+          <td style="background-color: greenyellow;" v-if="isProgramToroku">ジャンルID </td>
         </tr>
         <!-- ページごとに表示されるアイテムを反復処理 -->
         <tr v-for="(item, key) in paginatedResult" :key="key">
@@ -76,8 +76,8 @@
             <router-link :to="{ name: 'ProgramTorokuKoshin', params: { programId: item.programId } }">{{ item.programId }}</router-link>
           </td>
           <td>{{ item.programName }} </td>
-          <td>{{ item.channelId }} </td>
-          <td>{{ item.genreId }} </td>
+          <td v-if="isProgramToroku">{{ item.channelId }} </td>
+          <td v-if="isProgramToroku">{{ item.genreId }} </td>
         </tr>
       </table>
       <div v-if="countFlg">

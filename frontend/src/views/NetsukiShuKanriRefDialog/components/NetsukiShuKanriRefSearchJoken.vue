@@ -68,7 +68,7 @@
       <table align="center" border="1" style="border-collapse: collapse;" v-if="countFlg">
         <tr>
           <td style="background-color: greenyellow;"></td>
-          <td style="background-color: greenyellow; width:150px;">年月週</td>
+          <td style="background-color: greenyellow; width:150px;">年月・週</td>
           <td style="background-color: greenyellow; width:180px;">週の開始日（日曜日）</td>
           <td style="background-color: greenyellow; width:180px;">週の終了日（土曜日）</td>
         </tr>
@@ -78,7 +78,7 @@
              {{ `${String(item.nentsuki).substring(0, 4)}/${String(item.nentsuki).substring(4, 6)} ${item.shu}週` }}
           </td>
           <td v-else>
-            <router-link :to="{ name: 'NetsukiShuKanriTorokuKoshin', params: { mode: '2', nentsuki: item.nentsuki, shu: item.shu } }">{{ `${String(item.nentsuki).substring(0, 4)}/${String(item.nentsuki).substring(4, 6)} ${item.shu}週` }}</router-link>
+            <router-link :to="{ name: 'NetsukiShuKanriTorokuKoshin', params: { mode: '2', nentsuki: item.nentsuki, shu: item.shu } }">{{ `${String(item.nentsuki).substring(0, 4)}/${String(item.nentsuki).substring(4, 6)} ${item.shu}週目` }}</router-link>
           </td>
           <td>{{ item.shuFrom }} </td>
           <td>{{ item.shuTo }} </td>

@@ -58,19 +58,17 @@
           <td style="background-color: greenyellow; width:130px;">番組名</td>
           <td style="background-color: greenyellow;">タレントID</td>
           <td style="background-color: greenyellow; width:130px;">タレント名</td>
-          <td style="background-color: greenyellow; width:70px;">年月</td>
-          <td style="background-color: greenyellow; width:45px;">週</td>
+          <td style="background-color: greenyellow; width:115px;">年月・週</td>
         </tr>
         <tr v-for="(item, key) in paginatedResult" :key="key">
           <td><button v-on:click="selectId(item.id, item.onAirDay, item.programId, item.programName, item.talentId, item.talentName, item.nentsuki, item.shu)">選択</button></td>
           <td>{{ item.id }} </td>
           <td>{{ item.onAirDay }} </td>
-          <td>{{ item.programId }} </td>
+          <td><router-link :to="{ name: 'ProgramTorokuKoshin', params: { programId: item.programId } }">{{ item.programId }}</router-link></td>
           <td>{{ item.programName }} </td>
-          <td>{{ item.talentId }} </td>
+          <td><router-link :to="{ name: 'TalentTorokuKoshin', params: { talentId: item.talentId } }">{{ item.talentId }}</router-link></td>
           <td>{{ item.talentName }} </td>
-          <td>{{ item.nentsuki }} </td>
-          <td>{{ item.shu }} </td>
+          <td><router-link :to="{ name: 'NetsukiShuKanriTorokuKoshin', params: { mode: '2', nentsuki: item.nentsuki, shu: item.shu } }">{{ `${String(item.nentsuki).substring(0, 4)}/${String(item.nentsuki).substring(4, 6)} ${item.shu}週` }}</router-link></td>
         </tr>
       </table>
       <div v-if="countFlg">

@@ -31,7 +31,7 @@
             maxlength="1"
             size="5"
             placeholder="例：3"
-          />
+          />週目
         </td>
         <td style="font-size:11px;color:red;" >※月と週はセットで必須入力</td>
       </tr>
@@ -74,9 +74,9 @@
     <br>
     <table align="center" v-if="countFlg">
       <tr>
-        <td style="text-align: left;">対象年月・週：{{ `${String(this.nentsuki).substring(0, 4)}/${String(this.nentsuki).substring(4, 6)} ${this.shu}週` }}</td>
+        <td style="text-align: left;">【対象年月・週】：{{ `${String(this.nentsuki).substring(0, 4)}/${String(this.nentsuki).substring(4, 6)} ${this.shu}週目` }}</td>
         <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
-        <td style="text-align: left;">対象週・日付：   {{ this.result[0].shuFrom }}  ー   {{ this.result[0].shuTo }}</td>
+        <td style="text-align: left;">【対象週・日付】：   {{ this.result[0].shuFrom }}  ー   {{ this.result[0].shuTo }}</td>
       </tr>
     </table>
     <div style="overflow-y: auto;">

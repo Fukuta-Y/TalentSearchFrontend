@@ -17,7 +17,7 @@
     <br>
     <table align="center" v-if="countFlg">
       <tr>
-        <td style="text-align: left;">対象年月・週：{{ `${String(this.nentsuki).substring(0, 4)}/${String(this.nentsuki).substring(4, 6)} ${this.shu}週` }}</td>
+        <td style="text-align: left;">【対象年月・週】：{{ `${String(this.nentsuki).substring(0, 4)}/${String(this.nentsuki).substring(4, 6)} ${this.shu}週目` }}</td>
       </tr>
     </table>
     <table align="center" border="1" style="border-collapse: collapse;" v-if="countFlg">

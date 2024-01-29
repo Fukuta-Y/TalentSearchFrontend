@@ -62,7 +62,7 @@
           <td style="background-color: greenyellow;"></td>
           <td style="background-color: greenyellow;">タレントID </td>
           <td style="background-color: greenyellow;">タレント名 </td>
-          <td style="background-color: greenyellow;">ジャンルID</td>
+          <td style="background-color: greenyellow;" v-if="isTalentToroku">ジャンルID</td>
         </tr>
         <tr v-for="(item, key) in paginatedResult" :key="key">
           <td><button v-on:click="selectTalent(item.talentId, item.talentName, item.genreId)">選択</button></td>
@@ -73,7 +73,7 @@
             <router-link :to="{ name: 'TalentTorokuKoshin', params: { talentId: item.talentId } }">{{ item.talentId }}</router-link>
           </td>
           <td>{{ item.talentName }} </td>
-          <td>{{ item.genreId }} </td>
+          <td v-if="isTalentToroku">{{ item.genreId }} </td>
         </tr>
       </table>
       <div v-if="countFlg">
