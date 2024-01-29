@@ -135,9 +135,9 @@ export default {
   async created() {
     this.init();
     if(this.propTalentId && this.propTalentName) {
-      this.talentId = this.propTalentId
-      this.talentName = this.propTalentName
-      this.btnSearch()
+      this.talentId = this.propTalentId;
+      this.talentName = this.propTalentName;
+      this.btnSearch();
     }
   },
   computed: {
@@ -166,12 +166,12 @@ export default {
       this.resultCount = this.result.length; // 件数を更新
       this.totalPages = Math.ceil(this.result.length / this.pageSize);
       if(this.result[0].talentId !== null) {
-          this.countFlg = true
-          this.$emit('on-message', "")
+        this.countFlg = true;
+        this.$emit('on-message', "");
       } else {
-          this.msg ="検索結果が0件です。"
-          this.$emit('on-message', this.msg)
-          this.countFlg = false
+        this.msg ="検索結果が0件です。"
+        this.$emit('on-message', this.msg)
+        this.countFlg = false
       }
     },
     changePage(pageNumber) {
@@ -185,14 +185,14 @@ export default {
     },
     btnClear() {
       this.init();
-      this.$emit('on-message', this.msg)
+      this.$emit('on-message', this.msg);
     },
     init(){
-      this.talentId = ''
-      this.talentName = ''
-      this.countFlg = false
-      this.msg = ''
-      this.result = {}
+      this.talentId = '';
+      this.talentName = '';
+      this.countFlg = false;
+      this.msg = '';
+      this.result = {};
     },
     underlineNumber(number) {
       // 数字にアンダーラインをつけるためのスタイルを適用するメソッド

@@ -169,12 +169,12 @@ export default {
       this.totalPages = Math.ceil(this.result.length / this.pageSize);
       this.resultCount = this.result.length;
       if(this.result[0].programId !== null) {
-          this.countFlg = true
-          this.$emit('on-message', "")
+        this.countFlg = true;
+        this.$emit('on-message', "");
       } else {
-          this.msg ="検索結果が0件です。"
-          this.$emit('on-message', this.msg)
-          this.countFlg = false
+        this.msg = "検索結果が0件です。";
+        this.$emit('on-message', this.msg);
+        this.countFlg = false;
       }
     },
     changePage(pageNumber) {
@@ -188,14 +188,14 @@ export default {
     },
     btnClear() {
       this.init();
-      this.$emit('on-message', this.msg)
+      this.$emit('on-message', this.msg);
     },
     init(){
-      this.programId = ''
-      this.programName = ''
-      this.countFlg = false
-      this.msg = ''
-      this.result = []
+      this.programId = '';
+      this.programName = '';
+      this.countFlg = false;
+      this.msg = '';
+      this.result = [];
     },
     underlineNumber(number) {
       // 数字にアンダーラインをつけるためのスタイルを適用するメソッド

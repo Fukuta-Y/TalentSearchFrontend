@@ -27,9 +27,7 @@
             <label>参照</label>
           </button>
           <NetsukiShuKanriRefDialog 
-            v-bind:prop-nen="nen"
-            v-bind:prop-tsuki="tsuki"
-            v-bind:prop-shu="shu"
+            v-bind:prop-nentsuki-shu="nentsukiShu"
             v-bind:is-nentsuki-shu="true"
             :is-open="nentsukiShuRefDialogComponent" 
             @close="btnNentsukiRefDialogClose()" 
@@ -118,13 +116,13 @@ export default {
       nen: null,
       tsuki: null,
       shu: null,
+      nentsukiShu: null,
       shuFrom: null, 
       shuTo: null,
       formattedDate: null,
       nentsukiShuRefDialogComponent: false,
     };
   },
-
   watch: {
     selectedDate: function (newDate) {
       // 日付をフォーマットして表示用の変数にセット
@@ -154,9 +152,10 @@ export default {
       this.$emit('on-message', '');
       this.nen = selectedData.nentsuki.toString().substring(0, 4);
       this.tsuki = selectedData.nentsuki.toString().substring(4);
-      this.shu = selectedData.shu
-      this.shuFrom = selectedData.shuFrom
-      this.shuTo = selectedData.shuTo
+      this.shu = selectedData.shu;
+      this.shuFrom = selectedData.shuFrom;
+      this.shuTo = selectedData.shuTo;
+      this.nentsukiShu = this.nen + this.tsuki + this.shu;
     },
     updateFormattedDate() {
       this.formattedDate = this.formatDate(this.selectedDate);
@@ -167,7 +166,7 @@ export default {
     // 初期化ボタン
     btnClear() {
       this.init();
-      this.$emit('on-message', this.msg)
+      this.$emit('on-message', this.msg);
     },
     // 年月週参照ボタン
     btnNentsukiRefDialogOpen() {
@@ -183,8 +182,8 @@ export default {
     async btnToroku() {
       // 全項目入力済みでない場合は止める
       if (this.nen == null || this.tsuki === null || this.shu === null || this.shuFrom === null || this.shuTo === null) {
-        this.msg = "全項目入力必須"
-        this.$emit('on-message', this.msg)
+        this.msg = "全項目入力必須";
+        this.$emit('on-message', this.msg);
         return;
       }
 

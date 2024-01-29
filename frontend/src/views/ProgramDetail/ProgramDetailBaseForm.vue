@@ -17,6 +17,7 @@
             v-bind:on-air-day="onAirDay"
             v-bind:nentsuki="nentsuki"
             v-bind:shu="shu"
+            v-on:on-message="receiveMessage"
           />
         </div>
     </div>
@@ -52,9 +53,13 @@ export default {
   },
   data() {
     return {
+      message: '',
     }
   },
-methods: {
+  methods: {
+    receiveMessage(value) {
+      this.message = value;
+    },
   },
 }
 </script>

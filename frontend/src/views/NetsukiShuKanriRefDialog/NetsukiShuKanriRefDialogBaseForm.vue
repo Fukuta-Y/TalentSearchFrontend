@@ -2,9 +2,7 @@
   <div class="modal-container dialog-overlay" v-if="isOpen">
     <div class="modal-content dialog-content">
     <NetsukiShuKanriRefSearchJoken 
-        v-bind:prop-nen="propNen"
-        v-bind:prop-tsuki="propTsuki"
-        v-bind:prop-shu="propShu"
+        v-bind:prop-nentsuki-shu="propNentsukiShu"
         v-bind:is-nentsuki-shu="isNentsukiShu"
         v-on:on-select-nentsuki-shu="receiveSelectNentsukiShu"
         v-on:on-message="receiveMessage"
@@ -21,14 +19,8 @@ import NetsukiShuKanriRefSearchJoken from './components/NetsukiShuKanriRefSearch
 export default {
   name: 'NetsukiShuKanriRefDialogBaseForm',
   props: {
-    propNen: {
+    propNentsukiShu: {
       type: String,
-    },
-    propTsuki: {
-      type: String,
-    },
-    propShu: {
-      type: Number,
     },
     isNentsukiShu: {
       type: Boolean,
