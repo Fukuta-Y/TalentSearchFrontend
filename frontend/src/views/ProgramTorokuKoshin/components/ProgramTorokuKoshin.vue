@@ -123,6 +123,7 @@ export default {
       genreInfo: [],
       jyunjyo: null, //ジャンルID
       programRefDialogComponent: false,
+      msg: '',
     };
   },
   mounted() {
@@ -152,10 +153,11 @@ export default {
     // 初期化ボタン
     btnClear() {
       this.init();
+      this.$emit('on-message', this.msg)
     },
     // 番組IDの参照時の戻り
     handleSelectProgram(selectedData) {
-      console.log('selectedData:' + JSON.stringify(selectedData));
+      this.$emit('on-message', "");
       this.programId = selectedData.programId;
       this.programName = selectedData.programName;
       this.channelId = selectedData.channelKyokuId;
@@ -216,10 +218,11 @@ export default {
     },
     // 初期化
     init(){
-      this.programId = undefined
-      this.programName = null
-      this.jyunjyo = null
-      this.channelId = null
+      this.programId = undefined;
+      this.programName = null;
+      this.jyunjyo = null;
+      this.channelId = null;
+      this.msg = '';
     },
     // チャンネル名の表示
     getChannelName(channelId) {

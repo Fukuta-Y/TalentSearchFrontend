@@ -28,11 +28,28 @@
         <td><router-link :to="{ name: 'TalentDetail', params: { nentsuki: this.nentsuki, shu: this.shu, talentId: item.talentId }}">{{ item.talentName }}</router-link></td>
       </tr>
     </table>
-    <table align="center" border="0" style="border-collapse: collapse;" v-if="countFlg==false">
+    <table align="center" border="0" style="border-collapse: collapse;" v-if="countFlg == false">
       <tr>
         <font color="red">{{ this.msg }} </font>
       </tr>
     </table>
+    <div v-if="countFlg">
+      <div class="pagination-container">
+        <a @click="changePage(1)" :disabled="currentPage === 1" class="pagination-link">最初</a>
+        <a
+          v-for="pageNumber in totalPageLinks"
+          :key="pageNumber"
+          @click="pageNumber !== '...' ? changePage(pageNumber) : null"
+          class="pagination-link"
+        >
+          <span v-if="pageNumber !== '...'">
+            <span class="underlined">{{ pageNumber }}</span>
+          </span>
+          <span v-else>...</span>
+        </a>
+        <a @click="changePage(totalPages)" :disabled="currentPage === totalPages" class="pagination-link">最後</a>
+      </div>
+    </div>
     <br>
   </div>
 </template>
@@ -59,22 +76,50 @@ export default {
     return {
       msg: '',
       countFlg: false,
-      result: {}
+      result: {},
+      currentPage: 1,
+      pageSize: 10, // 1ページあたりのアイテム数
+      totalPages: 0,
     }
   },
   async created() {
-    this.search();
+    this.fetchData();
+  },
+  computed: {
+    paginatedResult() {
+      // ページングされた結果を返すように変更
+      const startIndex = (this.currentPage - 1) * this.pageSize;
+      const endIndex = startIndex + this.pageSize;
+      return this.result.slice(startIndex, endIndex);
+    },
+    totalPageLinks() {
+      const maxPageLinks = 10;
+      const currentGroup = Math.ceil(this.currentPage / maxPageLinks);
+      const startPage = (currentGroup - 1) * maxPageLinks + 1;
+      const endPage = Math.min(currentGroup * maxPageLinks, this.totalPages);
+
+      return Array.from({ length: endPage - startPage + 1 }, (_, index) => startPage + index);
+    },
   },
   methods: {
-    async search() {
+    async fetchData() {
       const url = "http://localhost:8081/api/programShutsuenBFF?programId=" + this.programId + "&onAirDay=" + this.onAirDay +"&nentsuki=" + this.nentsuki + "&shu=" + this.shu;
-      this.result = await axios.get(url).then(response => (response.data.programShutsuen))
+      this.result = await axios.get(url).then(response => (response.data.programShutsuen));
+      this.totalPages = Math.ceil(this.result.length / this.pageSize);
+      this.resultCount = this.result.length;
       if(this.result[0].talentId !== null) {
           this.countFlg = true
       } else {
           this.msg ="検索結果が0件です。"
           this.countFlg = false
       }
+    },
+    changePage(pageNumber) {
+      this.currentPage = pageNumber;
+      this.fetchData(); // ページ変更時にデータを再取得するなどの処理を追加
+    },
+    getOnAirDayFormat(onAirDay) {
+      return onAirDay.toString().substring(0, 5);
     },
     btnClear() {
       this.init();
@@ -83,9 +128,28 @@ export default {
       this.countFlg = false
       this.msg = ''
       this.result= { }
-    }
+    },
+    underlineNumber(number) {
+      // 数字にアンダーラインをつけるためのスタイルを適用するメソッド
+      return `<span class="underlined">${number}</span>`;
+    },
   },
 }
 </script>
 <style scoped>
+.pagination-container {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  /* 画面中央に寄せる */
+}
+
+.pagination-link {
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.underlined {
+  text-decoration: underline;
+}
 </style>

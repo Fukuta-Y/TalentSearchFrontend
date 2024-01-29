@@ -151,6 +151,7 @@ export default {
     },
     // 年月週の参照時の戻り
     handleSelectNentsuki(selectedData) {
+      this.$emit('on-message', '');
       this.nen = selectedData.nentsuki.toString().substring(0, 4);
       this.tsuki = selectedData.nentsuki.toString().substring(4);
       this.shu = selectedData.shu
@@ -166,6 +167,7 @@ export default {
     // 初期化ボタン
     btnClear() {
       this.init();
+      this.$emit('on-message', this.msg)
     },
     // 年月週参照ボタン
     btnNentsukiRefDialogOpen() {
@@ -223,11 +225,12 @@ export default {
     },
     // 初期化
     init(){
-      this.nen = null
-      this.tsuki = null
-      this.shu = null
-      this.shuFrom = null
-      this.shuTo = null
+      this.nen = null;
+      this.tsuki = null;
+      this.shu = null;
+      this.shuFrom = null;
+      this.shuTo = null;
+      this.msg = '';
     },
   },
 }

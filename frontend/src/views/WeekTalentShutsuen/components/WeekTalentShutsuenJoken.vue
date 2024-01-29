@@ -74,7 +74,7 @@
     <br>
     <table align="center" v-if="countFlg">
       <tr>
-        <td style="text-align: left;">【対象年月・週】：{{ `${String(this.nentsuki).substring(0, 4)}/${String(this.nentsuki).substring(4, 6)} ${this.shu}週目` }}</td>
+        <td style="text-align: left;">【対象年月・週】：{{ `${String(this.labelNentsuki).substring(0, 4)}/${String(this.labelNentsuki).substring(4, 6)} ${this.labelShu}週目` }}</td>
         <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
         <td style="text-align: left;">【対象週・日付】：   {{ this.result[0].shuFrom }}  ー   {{ this.result[0].shuTo }}</td>
       </tr>
@@ -88,10 +88,15 @@
           <td style="background-color: greenyellow;">オンエア日（直近） </td>
         </tr>
         <tr v-for="(item, key) in result" :key="key">
-          <td><router-link :to="{ name: 'TalentDetail', params: { nentsuki: this.nentsuki, shu: this.shu, talentId: item.talentId } }">{{ item.talentName }}</router-link></td>
+          <td><router-link :to="{ name: 'TalentDetail', params: { nentsuki: this.labelNentsuki, shu: this.labelShu, talentId: item.talentId } }">{{ item.talentName }}</router-link></td>
           <td>{{ item.shukanShutsuenProgramHonsu + "本"}} </td>
-          <td><router-link :to="{ name: 'ProgramDetail', params: { programId: item.shutsuenProgramIdChokin, onAirDay: item.onAirDayChokin, nentsuki: this.nentsuki, shu: this.shu } }">{{ item.shutsuenProgramChokin  }}</router-link></td>
+          <td><router-link :to="{ name: 'ProgramDetail', params: { programId: item.shutsuenProgramIdChokin, onAirDay: item.onAirDayChokin, nentsuki: this.labelNentsuki, shu: this.labelShu } }">{{ item.shutsuenProgramChokin  }}</router-link></td>
           <td>{{ getOnAirDayFormat(item.onAirDayChokin)}} </td>
+        </tr>
+      </table>
+      <table align="center" border="0" style="border-collapse: collapse;" v-if="countFlg == false">
+        <tr>
+          <font color="red">{{ this.msg }} </font>
         </tr>
       </table>
       <div v-if="countFlg">
@@ -141,6 +146,8 @@ export default {
     return {
       nentsuki: '',
       shu: '',
+      labelNentsuki: '',
+      labelShu: '',
       name: '',
       shuFrom: '',
       shuTo: '',
@@ -161,7 +168,7 @@ export default {
       this.fetchData()
     }
   },
-   computed: {
+  computed: {
     paginatedResult() {
       // ページングされた結果を返すように変更
       const startIndex = (this.currentPage - 1) * this.pageSize;
@@ -193,6 +200,9 @@ export default {
       // ③対象週が数値かつ、1～5の数値のいずれかであること。 
 
       // ④タレントが30桁以内であること。
+
+      this.labelNentsuki = this.nentsuki;
+      this.labelShu = this.shu;
 
       const url = "http://localhost:8081/api/shukanTalentJohoBFF?nentsuki=" + this.nentsuki + "&shu=" + this.shu + "&talentName=" + this.name;
       this.result = await axios.get(url).then(response => (response.data.shukanTalent))

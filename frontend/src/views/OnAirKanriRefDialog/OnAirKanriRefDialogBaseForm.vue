@@ -75,7 +75,7 @@ export default {
 }
 .dialog-content {
   width: 65%; /* 任意の幅を指定してください */
-  height: 90%; /* 任意の幅を指定してください */
+  height: 80%; /* 任意の幅を指定してください */
   margin: 0 auto;
 }
 </style>
