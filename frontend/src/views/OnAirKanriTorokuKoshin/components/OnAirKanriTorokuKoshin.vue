@@ -100,7 +100,8 @@
             <label>参照</label>
           </button>
           <NetsukiShuKanriRefDialog 
-            v-bind:prop-nentsuki-shu-="nentsukiShu"
+            v-bind:prop-nentsuki-shu="propNentsukiShu"
+            v-bind:is-nentsuki-shu="false"
             :is-open="nentsukiShuRefDialogComponent" 
             @close="btnNentsukiRefDialogClose()" 
             v-on:on-select-nentsuki-shu="handleSelectNentsuki" 
@@ -166,6 +167,7 @@ export default {
       talentId: null,
       talentName: null,
       nentsukiShu: null,
+      propNentsukiShu: null,
       nentsuki: null,
       shu: null,
       msg: '',
@@ -191,36 +193,37 @@ export default {
     // IDの参照時の戻り
     handleSelectId(selectedData) {
       this.$emit('on-message', "");
-      this.id = selectedData.id
-      this.onAirDay = selectedData.onAirDay
-      this.programId = selectedData.programId
-      this.programName = selectedData.programName
-      this.talentId = selectedData.talentId
-      this.talentName = selectedData.talentName
-      this.nentsuki = selectedData.nentsuki
-      this.shu = selectedData.shu
+      this.id = selectedData.id;
+      this.onAirDay = selectedData.onAirDay;
+      this.programId = selectedData.programId;
+      this.programName = selectedData.programName;
+      this.talentId = selectedData.talentId;
+      this.talentName = selectedData.talentName;
+      this.nentsuki = selectedData.nentsuki;
+      this.shu = selectedData.shu;
       this.nentsukiShu = `${String(this.nentsuki).substring(0, 4)}/${String(this.nentsuki).substring(4, 6)} ${this.shu}週`;
     },
     // 番組IDの参照時の戻り
     handleSelectProgram(selectedData) {
       this.$emit('on-message', "");
-      this.programId =  selectedData.programId
-      this.programName = selectedData.programName
+      this.programId =  selectedData.programId;
+      this.programName = selectedData.programName;
     },
     // タレントIDの参照時の戻り
     handleSelectTalent(selectedData) {
       this.$emit('on-message', "");
-      this.talentId = selectedData.talentId
-      this.talentName = selectedData.talentName
+      this.talentId = selectedData.talentId;
+      this.talentName = selectedData.talentName;
     },
     // 年月週の参照時の戻り
     handleSelectNentsuki(selectedData) {
       this.$emit('on-message', "");
       this.nen = selectedData.nentsuki.toString().substring(0, 4);
       this.tsuki = selectedData.nentsuki.toString().substring(4);
-      this.shu = selectedData.shu
-      this.shuFrom = selectedData.shuFrom
-      this.shuTo = selectedData.shuTo
+      this.shu = selectedData.shu;
+      this.shuFrom = selectedData.shuFrom;
+      this.shuTo = selectedData.shuTo;
+      this.propNentsukiShu = this.nen + this.tsuki + this.shu;
       this.nentsukiShu = `${this.nen}/${this.tsuki} ${this.shu}週`;
     },
      getId() {
@@ -267,7 +270,7 @@ export default {
     // 初期化ボタン
     btnClear() {
       this.init();
-      this.$emit('on-message', this.msg)
+      this.$emit('on-message', this.msg);
     },
     // ID参照ボタン
     btnIdRefDialogOpen() {
@@ -313,8 +316,8 @@ export default {
     async btnToroku() {
       // 全項目入力済みでない場合は止める
       if (this.onAirDay === null || this.programId === null || this.talentId === null || this.nentsukiShu === null) {
-        this.msg = "全項目入力必須"
-        this.$emit('on-message', this.msg)
+        this.msg = "全項目入力必須";
+        this.$emit('on-message', this.msg);
         return;
       }
 
@@ -368,6 +371,7 @@ export default {
       this.talentId = null;
       this.talentName = null;
       this.nentsukiShu = null;
+      this.propNentsukiShu = null;
       this.msg = '';
     },
   },

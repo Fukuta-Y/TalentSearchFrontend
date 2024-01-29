@@ -153,7 +153,7 @@ export default {
     // 初期化ボタン
     btnClear() {
       this.init();
-      this.$emit('on-message', this.msg)
+      this.$emit('on-message', this.msg);
     },
     // 番組IDの参照時の戻り
     handleSelectProgram(selectedData) {
@@ -177,8 +177,8 @@ export default {
     async btnToroku() {
       // 全項目入力済みでない場合は止める
       if (this.programName === null || this.channelId === null || this.jyunjyo === null) {
-        this.msg = "全項目入力必須"
-        this.$emit('on-message', this.msg)
+        this.msg = "全項目入力必須";
+        this.$emit('on-message', this.msg);
         return;
       }
 

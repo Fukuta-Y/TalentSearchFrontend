@@ -124,10 +124,6 @@ export default {
     ErrorMessage,
   },
   watch: {
-    selectedDate: function (newDate) {
-      // 日付をフォーマットして表示用の変数にセット
-      this.formattedDate = this.formatDate(newDate);
-    },
   },
   emits: ['on-message', 'on-select-nentsuki-shu'],
   data() {
@@ -135,10 +131,10 @@ export default {
       nen: '',
       tsuki: '',
       shu: '',
+      nentsuki: '',
       msg: '',
       countFlg: false,
       result: {},
-      formattedDate: null,
       currentPage: 1,
       pageSize: 10, // Update to 10 items per page
       totalPages: 0,
@@ -174,18 +170,21 @@ export default {
       this.fetchData();
     },
     async fetchData() {
-      const url = "http://localhost:8081/api/nentsukiShuKanrRefBFF?nentsuki=" + this.nen + this.tsuki + "&shu=" + this.shu;
+      if (this.tsuki !== '') {
+        this.nentsuki = this.nen + this.tsuki.padStart(2, '0');
+      }
+      const url = "http://localhost:8081/api/nentsukiShuKanrRefBFF?nentsuki=" + this.nentsuki + "&shu=" + this.shu;
       this.result = await axios.get(url).then(response => (response.data.mNentsukiShuKanri));
       this.resultCount = this.result.length; // 件数を更新
       this.totalPages = Math.ceil(this.result.length / this.pageSize);
       this.resultCount = this.result.length;
       if(this.result[0].nentsuki !== null) {
-          this.countFlg = true
-          this.$emit('on-message', "")
+          this.countFlg = true;
+          this.$emit('on-message', "");
       } else {
-          this.msg ="検索結果が0件です。"
-          this.$emit('on-message', this.msg)
-          this.countFlg = false
+          this.msg ="検索結果が0件です。";
+          this.$emit('on-message', this.msg);
+          this.countFlg = false;
       }
     },
     changePage(pageNumber) {
@@ -199,15 +198,16 @@ export default {
     },
     btnClear() {
       this.init();
-      this.$emit('on-message', this.msg)
+      this.$emit('on-message', this.msg);
     },
     init(){
-      this.nen = '',
-      this.tsuki = '',
-      this.shu = '',
-      this.countFlg = false
-      this.msg = ''
-      this.result = {}
+      this.nentsuki = '';
+      this.nen = '';
+      this.tsuki = '';
+      this.shu = '';
+      this.countFlg = false;
+      this.msg = '';
+      this.result = {};
     },
     underlineNumber(number) {
       // 数字にアンダーラインをつけるためのスタイルを適用するメソッド

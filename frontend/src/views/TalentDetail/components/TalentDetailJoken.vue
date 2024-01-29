@@ -108,10 +108,10 @@ export default {
       this.totalPages = Math.ceil(this.result.length / this.pageSize);
       this.resultCount = this.result.length;
       if(this.result[0].talentName !== null) {
-          this.countFlg = true
+          this.countFlg = true;
       } else {
           this.msg = "対象タレント（" + this.talentId +"）は【" + this.nentsuki.toString().substring(0, 4) + "年" +  this.nentsuki.toString().substring(4) + "月 " + this.shu + "週】に出演予定がありません。";
-          this.countFlg = false
+          this.countFlg = false;
       }
     },
     changePage(pageNumber) {
@@ -125,11 +125,11 @@ export default {
       this.init();
     },
     init(){
-      this.shuFrom = ''
-      this.shuTo = ''
-      this.countFlg = false
-      this.msg = ''
-      this.result= { }
+      this.shuFrom = '';
+      this.shuTo = '';
+      this.countFlg = false;
+      this.msg = '';
+      this.result= { };
     },
     underlineNumber(number) {
       // 数字にアンダーラインをつけるためのスタイルを適用するメソッド

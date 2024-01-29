@@ -129,7 +129,7 @@ export default {
     // 初期化ボタン
     btnClear() {
       this.init();
-      this.$emit('on-message', this.msg)
+      this.$emit('on-message', this.msg);
     },
     // 登録・更新ボタン
     async btnToroku() {

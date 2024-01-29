@@ -31,7 +31,7 @@
             maxlength="1"
             size="5"
             placeholder="例：3"
-          />週目
+          />&nbsp;&nbsp;週目
         </td>
         <td style="font-size:11px;color:red;" >※月と週はセットで必須入力</td>
       </tr>
@@ -49,7 +49,7 @@
             label="タレント名"
             size="30"
             maxlength="30"
-            placeholder="○○太郎"
+            placeholder="例：○○太郎"
           />
         </td>
       </tr>
@@ -157,10 +157,10 @@ export default {
   async created() {
     this.init();
     if(this.propNentsuki && this.propShu && this.propTalentName) {
-      this.nentsuki = this.propNentsuki
-      this.shu = this.propShu.toString()
-      this.name = this.propTalentName
-      this.fetchData()
+      this.nentsuki = this.propNentsuki;
+      this.shu = this.propShu.toString();
+      this.name = this.propTalentName;
+      this.fetchData();
     }
   },
   computed: {
@@ -186,9 +186,9 @@ export default {
     async fetchData() {
       // ① 対象年月、対象週が必須で入力されていること。
       if(this.nentsuki === "" || this.shu  === "") {
-        this.msg = "対象年月、対象週が必須です。"
-        this.$emit('on-message', this.msg)
-        return 
+        this.msg = "対象年月、対象週が必須です。";
+        this.$emit('on-message', this.msg);
+        return;
       }
       // ②対象年月がYYYY / MM形式であること。
 
@@ -204,12 +204,12 @@ export default {
       this.totalPages = Math.ceil(this.result.length / this.pageSize);
       this.resultCount = this.result.length;
       if(this.result[0].talentId !== null) {
-          this.countFlg = true
-          this.$emit('on-message', "")
+          this.countFlg = true;
+          this.$emit('on-message', "");
       } else {
-          this.msg ="検索結果が0件です。"
-          this.$emit('on-message', this.msg)
-          this.countFlg = false
+          this.msg ="検索結果が0件です。";
+          this.$emit('on-message', this.msg);
+          this.countFlg = false;
       }
     },
     changePage(pageNumber) {
@@ -221,17 +221,17 @@ export default {
     },
     btnClear() {
       this.init();
-      this.$emit('on-message', this.msg)
+      this.$emit('on-message', this.msg);
     },
     init(){
-      this.nentsuki = ''
-      this.shu = ''
-      this.name = ''
-      this.shuFrom = ''
-      this.shuTo = ''
-      this.countFlg = false
-      this.msg = ''
-      this.result = {}
+      this.nentsuki = '';
+      this.shu = '';
+      this.name = '';
+      this.shuFrom = '';
+      this.shuTo = '';
+      this.countFlg = false;
+      this.msg = '';
+      this.result = {};
     },
     underlineNumber(number) {
       // 数字にアンダーラインをつけるためのスタイルを適用するメソッド

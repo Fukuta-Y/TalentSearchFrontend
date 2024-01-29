@@ -120,9 +120,9 @@ export default {
       this.init();
     },
     init(){
-      this.countFlg = false
-      this.msg = ''
-      this.result= { }
+      this.countFlg = false;
+      this.msg = '';
+      this.result= { };
     },
     underlineNumber(number) {
       // 数字にアンダーラインをつけるためのスタイルを適用するメソッド
