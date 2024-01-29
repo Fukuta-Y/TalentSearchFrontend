@@ -168,6 +168,7 @@ export default {
       nentsukiShu: null,
       nentsuki: null,
       shu: null,
+      msg: '',
       formattedDate: null,
       nentsukiShuKanri: [],
       idRefDialogComponent: false,
@@ -189,6 +190,7 @@ export default {
   methods: {
     // IDの参照時の戻り
     handleSelectId(selectedData) {
+      this.$emit('on-message', "");
       this.id = selectedData.id
       this.onAirDay = selectedData.onAirDay
       this.programId = selectedData.programId
@@ -201,16 +203,19 @@ export default {
     },
     // 番組IDの参照時の戻り
     handleSelectProgram(selectedData) {
+      this.$emit('on-message', "");
       this.programId =  selectedData.programId
       this.programName = selectedData.programName
     },
     // タレントIDの参照時の戻り
     handleSelectTalent(selectedData) {
+      this.$emit('on-message', "");
       this.talentId = selectedData.talentId
       this.talentName = selectedData.talentName
     },
     // 年月週の参照時の戻り
     handleSelectNentsuki(selectedData) {
+      this.$emit('on-message', "");
       this.nen = selectedData.nentsuki.toString().substring(0, 4);
       this.tsuki = selectedData.nentsuki.toString().substring(4);
       this.shu = selectedData.shu
@@ -262,6 +267,7 @@ export default {
     // 初期化ボタン
     btnClear() {
       this.init();
+      this.$emit('on-message', this.msg)
     },
     // ID参照ボタン
     btnIdRefDialogOpen() {
@@ -345,7 +351,7 @@ export default {
       // POSTリクエストを行う
       axios.post(onAirKanriInfoUrl, postData).then(response => {
           console.log("成功時の戻り値:" + JSON.stringify(response.data));
-          this.$router.push({ name: 'main', })
+          this.$router.push({ name: 'main', });
         })
         .catch(error => {
           // エラー時の処理
@@ -355,13 +361,14 @@ export default {
     },
     // 初期化
     init(){
-      this.id = null
-      this.onAirDay = null
-      this.programId = null
-      this.programName = null
-      this.talentId = null
-      this.talentName = null
-      this.nentsukiShu = null
+      this.id = '';
+      this.onAirDay = null;
+      this.programId = null;
+      this.programName = null;
+      this.talentId = null;
+      this.talentName = null;
+      this.nentsukiShu = null;
+      this.msg = '';
     },
   },
 }

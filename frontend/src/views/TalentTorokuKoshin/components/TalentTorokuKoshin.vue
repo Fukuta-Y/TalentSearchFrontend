@@ -99,6 +99,7 @@ export default {
       talentId: this.propTalentId,
       talentName: null,
       genreInfo: [],
+      msg: '',
       jyunjyo: null, //ジャンルID
       talentRefDialogComponent: false,
     };
@@ -128,13 +129,14 @@ export default {
     // 初期化ボタン
     btnClear() {
       this.init();
+      this.$emit('on-message', this.msg)
     },
     // 登録・更新ボタン
     async btnToroku() {
       // 全項目入力済みでない場合は止める
-      if (this.talentName == null || this.jyunjyo === null) {
-        this.msg = "全項目入力必須"
-        this.$emit('on-message', this.msg)
+      if ((this.talentName == '' || this.talentName === null) || (this.jyunjyo === '' || this.jyunjyo === null)) {
+        this.msg = "全項目入力必須";
+        this.$emit('on-message', this.msg);
         return;
       }
 
@@ -174,16 +176,18 @@ export default {
     },
     // タレントIDの参照時の戻り
     handleSelectTalent(selectedData) {
-      this.talentId = selectedData.talentId
-      this.talentName = selectedData.talentName
-      this.jyunjyo = selectedData.genreId
+      this.$emit('on-message', "");
+      this.talentId = selectedData.talentId;
+      this.talentName = selectedData.talentName;
+      this.jyunjyo = selectedData.genreId;
     },
     // 初期化
     init(){
-      this.talentId = null
-      this.talentName = null
-      this.jyunjyo = null
-      this.channelId = null
+      this.msg = ''
+      this.talentId = undefined;
+      this.talentName = null;
+      this.jyunjyo = null;
+      this.channelId = null;
     },
     // ジャンル名の表示
     getGenreName(jyunjyo) {
