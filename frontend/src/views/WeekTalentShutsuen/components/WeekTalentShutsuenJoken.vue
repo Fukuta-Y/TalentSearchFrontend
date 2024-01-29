@@ -204,12 +204,12 @@ export default {
       this.totalPages = Math.ceil(this.result.length / this.pageSize);
       this.resultCount = this.result.length;
       if(this.result[0].talentId !== null) {
-          this.countFlg = true;
-          this.$emit('on-message', "");
+        this.countFlg = true;
+        this.$emit('on-message', "");
       } else {
-          this.msg ="検索結果が0件です。";
-          this.$emit('on-message', this.msg);
-          this.countFlg = false;
+        this.msg ="検索結果が0件です。";
+        this.$emit('on-message', this.msg);
+        this.countFlg = false;
       }
     },
     changePage(pageNumber) {
