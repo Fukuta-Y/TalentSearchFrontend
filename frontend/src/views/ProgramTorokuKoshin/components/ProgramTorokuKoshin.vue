@@ -33,7 +33,7 @@
         </td>
       </tr>
       <tr>
-        <td>チャンネルID： </td>
+        <td>チャンネル局ID： </td>
         <td>
           <div>
               <select id="channelDropdown" v-model="channelId" class="custom-select">
@@ -99,7 +99,6 @@ export default {
   },
   computed: {
     getProgramId() {
-      console.log(this.programId)
       // this.programIdが空文字の場合とそうでない場合でラベルを変更
       return this.programId === undefined ? '（新規登録）' : this.programId;
     },
@@ -159,7 +158,7 @@ export default {
       console.log('selectedData:' + JSON.stringify(selectedData));
       this.programId = selectedData.programId;
       this.programName = selectedData.programName;
-      this.channelId = selectedData.channelId;
+      this.channelId = selectedData.channelKyokuId;
       this.jyunjyo = selectedData.genreId;
     },
     // 番組参照ボタン

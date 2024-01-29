@@ -145,8 +145,7 @@ export default {
   computed: {
       // ラベルの木切り替え
     getTorokuKoshinName() {
-      // this.modeが1の時は新規登録/2の時は更新モード
-      return this.mode === '1' ? '登録' : '更新';
+      return this.id === '' ? '登録' : '更新';
     },
   },
   components: {
@@ -329,7 +328,7 @@ export default {
 
       // データオブジェクトを作成
       const postData = {
-        id: this.mode != '1' ? this.id : '00000000',
+        id: this.id != '' ? this.id : '00000000',
         onAirDay: this.onAirDay,
         programId: this.programId,
         talentId: this.talentId,
@@ -339,7 +338,7 @@ export default {
         torokuDay: "",
         koushinDay: ""
       };
-      console.log('data:' + JSON.stringify(postData));
+
       // 年月週管理登録・更新BFF（登録・更新モード共通）
       const onAirKanriInfoUrl = "http://localhost:8081/api/onAirKanriInfoBFF";
 

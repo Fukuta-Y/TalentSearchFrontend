@@ -105,7 +105,7 @@ export default {
       type: String,
     },
     propOnAirDay: {
-      type: String,
+      type: Date,
     },
   },
   components: {

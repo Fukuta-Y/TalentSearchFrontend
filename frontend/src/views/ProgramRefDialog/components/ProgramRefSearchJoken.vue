@@ -68,7 +68,7 @@
         </tr>
         <!-- ページごとに表示されるアイテムを反復処理 -->
         <tr v-for="(item, key) in paginatedResult" :key="key">
-          <td><button v-on:click="selectProgram(item.programId, item.programName, item.channelId, item.genreId)">選択</button></td>
+          <td><button v-on:click="selectProgram(item.programId, item.programName, item.channelKyokuId, item.genreId)">選択</button></td>
           <td v-if="isProgramToroku">
             {{ item.programId }}
           </td>
@@ -76,7 +76,7 @@
             <router-link :to="{ name: 'ProgramTorokuKoshin', params: { programId: item.programId } }">{{ item.programId }}</router-link>
           </td>
           <td>{{ item.programName }} </td>
-          <td v-if="isProgramToroku">{{ item.channelId }} </td>
+          <td v-if="isProgramToroku">{{ item.channelKyokuId }} </td>
           <td v-if="isProgramToroku">{{ item.genreId }} </td>
         </tr>
       </table>
@@ -165,7 +165,7 @@ export default {
     },
     async fetchData() {
       const url = "http://localhost:8081/api/programRefBFF?programId=" + this.programId +"&programName=" + this.programName;
-      this.result = await axios.get(url).then(response => (response.data.mProgram));
+      this.result = await axios.get(url).then(response => (response.data.programInfoRef));
       this.totalPages = Math.ceil(this.result.length / this.pageSize);
       this.resultCount = this.result.length;
       if(this.result[0].programId !== null) {
@@ -181,10 +181,10 @@ export default {
       this.currentPage = pageNumber;
       this.fetchData(); // ページ変更時にデータを再取得するなどの処理を追加
     },
-    selectProgram(programId, programName, channelId, genreId) {
+    selectProgram(programId, programName, channelKyokuId, genreId) {
       // 「選択」ボタンがクリックされたときに呼ばれるメソッド
       // programId と programName と channelId と genreId  を親コンポーネントに渡す
-      this.$emit('on-select-program', { programId, programName, channelId, genreId });
+      this.$emit('on-select-program', { programId, programName, channelKyokuId, genreId });
     },
     btnClear() {
       this.init();

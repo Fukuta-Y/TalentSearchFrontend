@@ -28,7 +28,7 @@ export default {
       type: String,
     },
     propShu: {
-      type: String,
+      type: Number,
     },
     isNentsukiShu: {
       type: Boolean,

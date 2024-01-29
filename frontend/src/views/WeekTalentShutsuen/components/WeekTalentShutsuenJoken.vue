@@ -126,7 +126,7 @@ export default {
       type: String,
     },
     propShu: {
-      type: String,
+      type: Number,
     },
     propTalentName: {
       type: String,

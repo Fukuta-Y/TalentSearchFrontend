@@ -97,14 +97,13 @@ export default {
       type: String,
     },
     propShu: {
-      type: String,
+      type: Number,
     },
   },
   computed: {
       // ラベルの木切り替え
     getTorokuKoshinName() {
-      // this.modeが1の時は新規登録/2の時は更新モード
-      return this.mode === '1' ? '登録' : '更新';
+      return this.nen === null && this.nen === null ? '登録' : '更新';
     },
 
   },
