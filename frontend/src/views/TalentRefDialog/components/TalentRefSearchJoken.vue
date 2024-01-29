@@ -65,8 +65,13 @@
           <td style="background-color: greenyellow;">ジャンルID</td>
         </tr>
         <tr v-for="(item, key) in paginatedResult" :key="key">
-          <td><button v-on:click="selectTalent(item.talentId, item.talentName)">選択</button></td>
-          <td><router-link :to="{ name: 'TalentTorokuKoshin', params: { talentId: item.talentId } }">{{ item.talentId }}</router-link></td>
+          <td><button v-on:click="selectTalent(item.talentId, item.talentName, item.genreId)">選択</button></td>
+          <td v-if="isTalentToroku">
+              {{ item.talentId }}
+          </td>
+          <td v-else>
+            <router-link :to="{ name: 'TalentTorokuKoshin', params: { talentId: item.talentId } }">{{ item.talentId }}</router-link>
+          </td>
           <td>{{ item.talentName }} </td>
           <td>{{ item.genreId }} </td>
         </tr>
@@ -104,6 +109,10 @@ export default {
     },
     propTalentName: {
       type: String,
+    },
+    isTalentToroku: {
+      type: Boolean,
+      required: true,
     },
   },
   components: {
@@ -169,10 +178,10 @@ export default {
       this.currentPage = pageNumber;
       this.fetchData(); // ページ変更時にデータを再取得するなどの処理を追加
     },
-    selectTalent(talentId, talentName) {
+    selectTalent(talentId, talentName, genreId) {
       // 「選択」ボタンがクリックされたときに呼ばれるメソッド
       // talentId と talentName を親コンポーネントに渡す
-      this.$emit('on-select-talent', { talentId, talentName });
+      this.$emit('on-select-talent', { talentId, talentName, genreId });
     },
     btnClear() {
       this.init();

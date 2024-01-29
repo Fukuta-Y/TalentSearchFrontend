@@ -68,8 +68,13 @@
         </tr>
         <!-- ページごとに表示されるアイテムを反復処理 -->
         <tr v-for="(item, key) in paginatedResult" :key="key">
-          <td><button v-on:click="selectProgram(item.programId, item.programName)">選択</button></td>
-          <td><router-link :to="{ name: 'ProgramTorokuKoshin', params: { programId: item.programId } }">{{ item.programId }}</router-link></td>
+          <td><button v-on:click="selectProgram(item.programId, item.programName, item.channelId, item.genreId)">選択</button></td>
+          <td v-if="isProgramToroku">
+            {{ item.programId }}
+          </td>
+          <td v-else>
+            <router-link :to="{ name: 'ProgramTorokuKoshin', params: { programId: item.programId } }">{{ item.programId }}</router-link>
+          </td>
           <td>{{ item.programName }} </td>
           <td>{{ item.channelId }} </td>
           <td>{{ item.genreId }} </td>
@@ -108,6 +113,9 @@ export default {
     },
     propProgramName: {
       type: String,
+    },
+    isProgramToroku: {
+      type: Boolean,
     },
   },
   components: {
@@ -173,10 +181,10 @@ export default {
       this.currentPage = pageNumber;
       this.fetchData(); // ページ変更時にデータを再取得するなどの処理を追加
     },
-    selectProgram(programId, programName) {
+    selectProgram(programId, programName, channelId, genreId) {
       // 「選択」ボタンがクリックされたときに呼ばれるメソッド
-      // programId と programName を親コンポーネントに渡す
-      this.$emit('on-select-program', { programId, programName });
+      // programId と programName と channelId と genreId  を親コンポーネントに渡す
+      this.$emit('on-select-program', { programId, programName, channelId, genreId });
     },
     btnClear() {
       this.init();

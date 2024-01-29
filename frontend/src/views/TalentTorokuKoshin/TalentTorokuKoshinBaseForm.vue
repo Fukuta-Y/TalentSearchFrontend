@@ -6,7 +6,7 @@
     v-bind:prop-message="message"
   />
   <TalentTorokuKoshin
-    v-bind:talent-id="talentId"
+    v-bind:prop-talent-id="talentId"
     v-on:on-message="receiveMessage"
   />
 </template>

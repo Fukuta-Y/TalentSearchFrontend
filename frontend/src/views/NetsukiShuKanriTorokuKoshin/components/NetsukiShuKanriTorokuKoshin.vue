@@ -30,6 +30,7 @@
             v-bind:prop-nen="nen"
             v-bind:prop-tsuki="tsuki"
             v-bind:prop-shu="shu"
+            v-bind:is-nentsuki-shu="true"
             :is-open="nentsukiShuRefDialogComponent" 
             @close="btnNentsukiRefDialogClose()" 
             v-on:on-select-nentsuki-shu="handleSelectNentsuki" 

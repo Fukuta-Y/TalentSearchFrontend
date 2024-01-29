@@ -5,6 +5,7 @@
         v-bind:prop-nen="propNen"
         v-bind:prop-tsuki="propTsuki"
         v-bind:prop-shu="propShu"
+        v-bind:is-nentsuki-shu="isNentsukiShu"
         v-on:on-select-nentsuki-shu="receiveSelectNentsukiShu"
         v-on:on-message="receiveMessage"
       />
@@ -28,6 +29,9 @@ export default {
     },
     propShu: {
       type: String,
+    },
+    isNentsukiShu: {
+      type: Boolean,
     },
     isOpen: {
       type: Boolean,

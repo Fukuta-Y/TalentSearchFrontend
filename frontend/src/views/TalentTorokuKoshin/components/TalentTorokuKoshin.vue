@@ -6,6 +6,17 @@
          <td>
           <label>{{ gettalentId }}</label>
         </td>
+        <button v-on:click="btnTalentRefDialogOpen()">
+          <label>参照</label>
+        </button>
+        <TalentRefDialog 
+          v-bind:prop-talent-id="talentId"
+          v-bind:prop-talent-name="talentName"
+          v-bind:is-talent-toroku="true"
+          :is-open="talentRefDialogComponent" 
+          @close="btnTalentRefDialogClose()" 
+          v-on:on-select-talent="handleSelectTalent" 
+        />
       </tr>
       <tr>
         <td>タレント名： </td>
@@ -59,10 +70,11 @@
 <script>
 import { Field } from 'vee-validate'
 import axios from 'axios'
+import TalentRefDialog from '../../TalentRefDialog/TalentRefDialogBaseForm.vue';
 export default {
   name: 'talentTorokuKoshin',
   props: {
-    talentId: {
+    propTalentId: {
       type: String,
     },
   },
@@ -79,13 +91,16 @@ export default {
   },
   components: {
     Field,
+    TalentRefDialog,
   },
   emits: ['on-message'],
   data() {
     return {
+      talentId: this.propTalentId,
       talentName: null,
       genreInfo: [],
       jyunjyo: null, //ジャンルID
+      talentRefDialogComponent: false,
     };
   },
   mounted() {
@@ -98,7 +113,7 @@ export default {
       if (this.talentId !== undefined) {
         // タレント情報BFF（更新時のみ）※
         const talentInfoUrl = "http://localhost:8081/api/talentInfoBFF/" + this.talentId;
-        const talentInfo = await axios.get(talentInfoUrl).then(response => (response.data))
+        const talentInfo = await axios.get(talentInfoUrl).then(response => (response.data));
         if (talentInfo.talentId !== null) {
           this.talentName = talentInfo.talentName;
           this.jyunjyo = talentInfo.genreId;
@@ -147,8 +162,25 @@ export default {
           alert("登録失敗しました！", error);
         });
     },
+    // タレント参照ボタン
+    btnTalentRefDialogOpen() {
+      // ダイアログができたら作成
+      this.talentRefDialogComponent = true;
+    },
+    // タレント参照ボタン
+    btnTalentRefDialogClose() {
+      // ダイアログができたら作成
+      this.talentRefDialogComponent = false;
+    },
+    // タレントIDの参照時の戻り
+    handleSelectTalent(selectedData) {
+      this.talentId = selectedData.talentId
+      this.talentName = selectedData.talentName
+      this.jyunjyo = selectedData.genreId
+    },
     // 初期化
     init(){
+      this.talentId = null
       this.talentName = null
       this.jyunjyo = null
       this.channelId = null

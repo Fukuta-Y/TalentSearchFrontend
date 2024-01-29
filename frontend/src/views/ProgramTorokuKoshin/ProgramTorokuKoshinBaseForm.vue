@@ -6,7 +6,7 @@
     v-bind:prop-message="message"
   />
   <ProgramTorokuKoshin
-    v-bind:program-id="programId"
+    v-bind:prop-program-id="programId"
     v-on:on-message="receiveMessage"
   />
 </template>

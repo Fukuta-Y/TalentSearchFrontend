@@ -4,6 +4,7 @@
     <TalentRefSearchJoken 
         v-bind:prop-talent-id="propTalentId"
         v-bind:prop-talent-name="propTalentName"
+        v-bind:is-talent-toroku="isTalentToroku"
         v-on:on-select-talent="reciveSelectTalent"
         v-on:on-message="receiveMessage"
       />
@@ -23,6 +24,9 @@ export default {
     },
     propTalentName: {
       type: String,
+    },
+    isTalentToroku: {
+      type: Boolean,
     },
     isOpen: {
       type: Boolean,

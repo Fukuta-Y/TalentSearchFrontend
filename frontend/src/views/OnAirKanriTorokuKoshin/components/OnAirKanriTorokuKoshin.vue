@@ -2,30 +2,19 @@
   <table align="center">
       <tr>
         <td>ID： </td>
-        <td v-if="mode === '1'">
-            <label>{{ getOnAirKanriId() }}</label>
+        <td>
+          <label>{{ getId() }}</label>
         </td>
-        <td v-else>
-          <Field 
-            name="id" 
-            v-model="id"
-            size="9"
-            label="ID"
-            rules="required"
-            maxlength="8"
-            :disabled="true" 
-          />
-          </td>
-          <button v-on:click="btnIdRefDialogOpen()">
-            <label>参照</label>
-          </button>
-          <OnAirKanriRefDialog 
-            v-bind:prop-id="id"
-            v-bind:prop-on-air-day="onAirDay"
-            :is-open="idRefDialogComponent" 
-            @close="btnIdRefDialogClose()" 
-            v-on:on-select-id="handleSelectId" 
-          />
+        <button v-on:click="btnIdRefDialogOpen()">
+          <label>参照</label>
+        </button>
+        <OnAirKanriRefDialog 
+          v-bind:prop-id="id"
+          v-bind:prop-on-air-day="onAirDay"
+          :is-open="idRefDialogComponent" 
+          @close="btnIdRefDialogClose()" 
+          v-on:on-select-id="handleSelectId" 
+        />
       </tr>
       <tr>
         <td>オンエア日： </td>
@@ -52,6 +41,7 @@
           <ProgramRefDialog 
             v-bind:prop-program-id="programId"
             v-bind:prop-program-name="programName"
+            v-bind:is-program-toroku="false"
             :is-open="programRefDialogComponent" 
             @close="btnProgramRefDialogClose()" 
             v-on:on-select-program="handleSelectProgram" 
@@ -82,6 +72,7 @@
         <TalentRefDialog 
           v-bind:prop-talent-id="talentId"
           v-bind:prop-talent-name="talentName"
+          v-bind:is-talent-toroku="false"
           :is-open="talentRefDialogComponent" 
           @close="btnTalentRefDialogClose()" 
           v-on:on-select-talent="handleSelectTalent" 
@@ -99,7 +90,7 @@
           <Field 
             name="nentsukiShu" 
             v-model="nentsukiShu"
-            size="9"
+            size="15"
             label="対象年月・週"
             rules="required"
             :disabled="true" 
@@ -226,10 +217,11 @@ export default {
       this.shu = selectedData.shu
       this.shuFrom = selectedData.shuFrom
       this.shuTo = selectedData.shuTo
+      this.nentsukiShu = `${this.nen}/${this.tsuki} ${this.shu}週`;
     },
      getId() {
       // this.idが空文字の場合とそうでない場合でラベルを変更
-      return this.id === undefined ? '（新規登録）' : this.id;
+      return this.id === '' ? '（新規登録）' : this.id;
     },
     // 初期表示時
     async fetchData() {
@@ -261,10 +253,6 @@ export default {
         const week = item.shu;
         return `${year}/${month} ${week}週`;
       });
-    },
-    getOnAirKanriId() {
-      // this.modeが空文字の場合とそうでない場合でラベルを変更
-      return this.mode === '1' ? '（新規登録）' : '';
     },
     updateFormattedDate() {
       this.formattedDate = this.formatDate(this.selectedDate);
