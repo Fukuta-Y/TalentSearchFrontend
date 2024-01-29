@@ -68,15 +68,13 @@
       <table align="center" border="1" style="border-collapse: collapse;" v-if="countFlg">
         <tr>
           <td style="background-color: greenyellow;"></td>
-          <td style="background-color: greenyellow; width:80px;">年月</td>
-          <td style="background-color: greenyellow; width:50px;">週</td>
+          <td style="background-color: greenyellow; width:150px;">年月週</td>
           <td style="background-color: greenyellow; width:180px;">週の開始日（日曜日）</td>
           <td style="background-color: greenyellow; width:180px;">週の終了日（土曜日）</td>
         </tr>
         <tr v-for="(item, key) in paginatedResult" :key="key">
           <td><button v-on:click="selectNentsukiShu(item.nentsuki, item.shu, item.shuFrom, item.shuTo)">選択</button></td>
-          <td>{{ item.nentsuki }} </td>
-          <td>{{ item.shu }} </td>
+          <td>{{ `${String(item.nentsuki).substring(0, 4)}/${String(item.nentsuki).substring(4, 6)} ${item.shu}週` }}</td>
           <td>{{ item.shuFrom }} </td>
           <td>{{ item.shuTo }} </td>
         </tr>
@@ -108,13 +106,7 @@ import axios from 'axios'
 export default {
   name: 'NetsukiShuKanriRefSearchJoken',
   props: {
-    propNen: {
-      type: String,
-    },
-    propTsuki: {
-      type: String,
-    },
-    propShu: {
+    propNentsukiShu: {
       type: String,
     },
   },
@@ -145,10 +137,10 @@ export default {
   },
   async created() {
     this.init();
-    if(this.propNen && this.propTsuki && this.propShu) {
-      this.nen = this.propNen
-      this.tsuki = this.propTsuki
-      this.shu = this.propShu.toString()
+    if(this.propNentsukiShu) {
+      this.nen = this.propNentsukiShu.toString().substring(0, 4);
+      this.tsuki = this.propNentsukiShu.toString().substring(4, 6);
+      this.shu = this.propNentsukiShu.toString().substring(6, 7);
       this.btnSearch()
     }
   },

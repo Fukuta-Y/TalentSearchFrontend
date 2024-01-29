@@ -69,7 +69,7 @@
         <!-- ページごとに表示されるアイテムを反復処理 -->
         <tr v-for="(item, key) in paginatedResult" :key="key">
           <td><button v-on:click="selectProgram(item.programId, item.programName)">選択</button></td>
-          <td>{{ item.programId }} </td>
+          <td><router-link :to="{ name: 'ProgramTorokuKoshin', params: { programId: item.programId } }">{{ item.programId }}</router-link></td>
           <td>{{ item.programName }} </td>
           <td>{{ item.channelId }} </td>
           <td>{{ item.genreId }} </td>

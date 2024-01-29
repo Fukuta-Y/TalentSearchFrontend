@@ -96,15 +96,24 @@
       <tr>
         <td>対象年月・週： </td>
         <td>
-          <div>
-              <select id="nentsukiShuDropDownList" v-model="nentsukiShu" class="custom-select">
-                <option value="" disabled style="display: none;"></option>
-                <option v-for="nentsukiShu in this.nentsukiShuKanri" :key="nentsukiShu" :value="nentsukiShu">
-                  {{ nentsukiShu }}
-                </option>
-              </select>
-          </div>
-        </td>
+          <Field 
+            name="nentsukiShu" 
+            v-model="nentsukiShu"
+            size="9"
+            label="対象年月・週"
+            rules="required"
+            :disabled="true" 
+          />
+          </td>
+          <button v-on:click="btnNentsukiRefDialogOpen()">
+            <label>参照</label>
+          </button>
+          <NetsukiShuKanriRefDialog 
+            v-bind:prop-nentsuki-shu-="nentsukiShu"
+            :is-open="nentsukiShuRefDialogComponent" 
+            @close="btnNentsukiRefDialogClose()" 
+            v-on:on-select-nentsuki-shu="handleSelectNentsuki" 
+          />
       </tr>
     </table>
     <br/>
@@ -124,6 +133,7 @@
 <script>
 import { Field } from 'vee-validate'
 import axios from 'axios'
+import NetsukiShuKanriRefDialog from '../../NetsukiShuKanriRefDialog/NetsukiShuKanriRefDialogBaseForm.vue';
 import OnAirKanriRefDialog from '../../OnAirKanriRefDialog/OnAirKanriRefDialogBaseForm.vue';
 import ProgramRefDialog from '../../ProgramRefDialog/ProgramRefDialogBaseForm.vue';
 import TalentRefDialog from '../../TalentRefDialog/TalentRefDialogBaseForm.vue';
@@ -151,6 +161,7 @@ export default {
   components: {
     Field,
     Datepicker,
+    NetsukiShuKanriRefDialog,
     OnAirKanriRefDialog,
     ProgramRefDialog,
     TalentRefDialog,
@@ -169,9 +180,10 @@ export default {
       shu: null,
       formattedDate: null,
       nentsukiShuKanri: [],
+      idRefDialogComponent: false,
       programRefDialogComponent: false,
       talentRefDialogComponent: false,
-      idRefDialogComponent: false,
+      nentsukiShuRefDialogComponent: false,
     };
   },
   watch: {
@@ -206,6 +218,14 @@ export default {
     handleSelectTalent(selectedData) {
       this.talentId = selectedData.talentId
       this.talentName = selectedData.talentName
+    },
+    // 年月週の参照時の戻り
+    handleSelectNentsuki(selectedData) {
+      this.nen = selectedData.nentsuki.toString().substring(0, 4);
+      this.tsuki = selectedData.nentsuki.toString().substring(4);
+      this.shu = selectedData.shu
+      this.shuFrom = selectedData.shuFrom
+      this.shuTo = selectedData.shuTo
     },
      getId() {
       // this.idが空文字の場合とそうでない場合でラベルを変更
@@ -281,10 +301,20 @@ export default {
       // ダイアログができたら作成
       this.talentRefDialogComponent = true;
     },
-    // 番組参照ボタン
+    // タレント参照ボタン
     btnTalentRefDialogClose() {
       // ダイアログができたら作成
       this.talentRefDialogComponent = false;
+    },
+    // 年月週参照ボタン
+    btnNentsukiRefDialogOpen() {
+      // ダイアログができたら作成
+      this.nentsukiShuRefDialogComponent = true;
+    },
+    // 年月週参照ボタン
+    btnNentsukiRefDialogClose() {
+      // ダイアログができたら作成
+      this.nentsukiShuRefDialogComponent = false;
     },
     // 登録・更新ボタン
     async btnToroku() {

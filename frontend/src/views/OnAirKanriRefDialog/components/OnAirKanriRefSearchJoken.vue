@@ -140,7 +140,7 @@ export default {
     if(this.propId && this.propOnAirDay) {
       this.id = this.propId
       this.onAirDay = this.propOnAirDay
-      this.btnSearch()
+      this.fetchData()
     }
   },
   computed: {

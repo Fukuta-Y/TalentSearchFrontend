@@ -3,7 +3,7 @@
     <table align="center" v-if="countFlg">
       <tr>
         <td>番組名： </td>
-        <td><router-link :to="{ name: 'ProgramTorokuKoshin', params: { programId: this.programId } }">{{ this.result[0].programName }}</router-link></td>
+        <td>{{ this.result[0].programName }}</td>
       </tr>
       <tr>
         <td>オンエア日： </td>
@@ -15,6 +15,11 @@
       </tr>
     </table>
     <br>
+    <table align="center" v-if="countFlg">
+      <tr>
+        <td style="text-align: left;">対象年月・週：<router-link :to="{ name: 'NetsukiShuKanriTorokuKoshin', params: { mode: '2', nentsuki: this.nentsuki, shu: this.shu } }">{{ `${String(this.nentsuki).substring(0, 4)}/${String(this.nentsuki).substring(4, 6)} ${this.shu}週` }}</router-link></td>
+      </tr>
+    </table>
     <table align="center" border="1" style="border-collapse: collapse;" v-if="countFlg">
       <tr>
         <td style="background-color: greenyellow;">タレント名 </td>
@@ -52,8 +57,6 @@ export default {
   },
   data() {
     return {
-      shuFrom: '',
-      shuTo: '',
       msg: '',
       countFlg: false,
       result: {}
@@ -77,8 +80,6 @@ export default {
       this.init();
     },
     init(){
-      this.shuFrom = ''
-      this.shuTo = ''
       this.countFlg = false
       this.msg = ''
       this.result= { }

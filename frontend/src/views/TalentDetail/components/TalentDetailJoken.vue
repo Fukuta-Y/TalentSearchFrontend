@@ -3,7 +3,7 @@
     <table align="center" v-if="countFlg">
       <tr>
         <td>出演者： </td>
-        <td><router-link :to="{ name: 'TalentTorokuKoshin', params: { talentId: this.talentId } }">{{ this.result[0].talentName }}</router-link></td>
+        <td>{{ this.result[0].talentName }}</td>
       </tr>
       <tr>
         <td>出演者ジャンル： </td>
@@ -15,12 +15,11 @@
       <tr>
         <td style="text-align: left;">対象年月・週：<router-link :to="{ name: 'NetsukiShuKanriTorokuKoshin', params: { mode: '2', nentsuki: this.nentsuki, shu: this.shu } }">{{ `${String(this.nentsuki).substring(0, 4)}/${String(this.nentsuki).substring(4, 6)} ${this.shu}週` }}</router-link></td>
         <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
-        <td style="text-align: left;">対象週：   {{ this.result[0].shuFrom }}  ー   {{ this.result[0].shuTo }}</td>
+        <td style="text-align: left;">対象週・日付：   {{ this.result[0].shuFrom }}  ー   {{ this.result[0].shuTo }}</td>
       </tr>
     </table>
     <table align="center" border="1" style="border-collapse: collapse;" v-if="countFlg">
       <tr>
-        <td style="background-color: greenyellow;">ID </td>
         <td style="background-color: greenyellow;">出演番組 </td>
         <td style="background-color: greenyellow;">放送局（チャンネル） </td>
         <td style="background-color: greenyellow;">オンエア日</td>
@@ -28,7 +27,6 @@
         <td style="background-color: greenyellow;">番組ジャンル</td>
       </tr>
       <tr v-for="(item, key) in result" :key="key">
-        <td><router-link :to="{ name: 'OnAirKanriTorokuKoshin', params: { mode: '2', id: item.id } }">{{ item.id }}</router-link></td>
         <td><router-link :to="{ name: 'ProgramDetail', params: { programId: item.programId, onAirDay: item.onAirDay + ' ' + item.onAirTime, nentsuki: this.nentsuki, shu: this.shu } }">{{ item.shutsuenProgram }}</router-link></td>
         <td>{{ item.hosokyokuChannel }} </td>
         <td>{{ item.onAirDay }} </td>

@@ -66,7 +66,7 @@
         </tr>
         <tr v-for="(item, key) in paginatedResult" :key="key">
           <td><button v-on:click="selectTalent(item.talentId, item.talentName)">選択</button></td>
-          <td>{{ item.talentId }} </td>
+          <td><router-link :to="{ name: 'TalentTorokuKoshin', params: { talentId: item.talentId } }">{{ item.talentId }}</router-link></td>
           <td>{{ item.talentName }} </td>
           <td>{{ item.genreId }} </td>
         </tr>

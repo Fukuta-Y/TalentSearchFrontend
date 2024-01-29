@@ -74,25 +74,44 @@
     <br>
     <table align="center" v-if="countFlg">
       <tr>
-        <td style="text-align: left;">対象年月・週：<router-link :to="{ name: 'NetsukiShuKanriTorokuKoshin', params: { mode:'2' , nentsuki: this.nentsuki, shu: this.shu } }">{{ `${String(this.nentsuki).substring(0, 4)}/${String(this.nentsuki).substring(4, 6)} ${this.shu}週` }}</router-link></td>
+        <td style="text-align: left;">対象年月・週：<router-link :to="{ name: 'NetsukiShuKanriTorokuKoshin', params: { mode: '2', nentsuki: this.nentsuki, shu: this.shu } }">{{ `${String(this.nentsuki).substring(0, 4)}/${String(this.nentsuki).substring(4, 6)} ${this.shu}週` }}</router-link></td>
         <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
-        <td style="text-align: left;">対象週：   {{ this.result[0].shuFrom }}  ー   {{ this.result[0].shuTo }}</td>
+        <td style="text-align: left;">対象週・日付：   {{ this.result[0].shuFrom }}  ー   {{ this.result[0].shuTo }}</td>
       </tr>
     </table>
-    <table align="center" border="1" style="border-collapse: collapse;" v-if="countFlg">
-      <tr>
-        <td style="background-color: greenyellow;">タレント名 </td>
-        <td style="background-color: greenyellow;">週間出演番組本数 </td>
-        <td style="background-color: greenyellow;">出演番組（直近） </td>
-        <td style="background-color: greenyellow;">オンエア日（直近） </td>
-      </tr>
-      <tr v-for="(item, key) in result" :key="key">
-        <td><router-link :to="{ name: 'TalentDetail', params: { nentsuki: this.nentsuki, shu: this.shu, talentId: item.talentId } }">{{ item.talentName }}</router-link></td>
-        <td>{{ item.shukanShutsuenProgramHonsu + "本"}} </td>
-        <td><router-link :to="{ name: 'ProgramDetail', params: { programId: item.shutsuenProgramIdChokin, onAirDay: item.onAirDayChokin, nentsuki: this.nentsuki, shu: this.shu } }">{{ item.shutsuenProgramChokin  }}</router-link></td>
-        <td>{{ getOnAirDayFormat(item.onAirDayChokin)}} </td>
-      </tr>
-    </table>
+    <div style="overflow-y: auto;">
+      <table align="center" border="1" style="border-collapse: collapse;" v-if="countFlg">
+        <tr>
+          <td style="background-color: greenyellow;">タレント名 </td>
+          <td style="background-color: greenyellow;">週間出演番組本数 </td>
+          <td style="background-color: greenyellow;">出演番組（直近） </td>
+          <td style="background-color: greenyellow;">オンエア日（直近） </td>
+        </tr>
+        <tr v-for="(item, key) in result" :key="key">
+          <td><router-link :to="{ name: 'TalentDetail', params: { nentsuki: this.nentsuki, shu: this.shu, talentId: item.talentId } }">{{ item.talentName }}</router-link></td>
+          <td>{{ item.shukanShutsuenProgramHonsu + "本"}} </td>
+          <td><router-link :to="{ name: 'ProgramDetail', params: { programId: item.shutsuenProgramIdChokin, onAirDay: item.onAirDayChokin, nentsuki: this.nentsuki, shu: this.shu } }">{{ item.shutsuenProgramChokin  }}</router-link></td>
+          <td>{{ getOnAirDayFormat(item.onAirDayChokin)}} </td>
+        </tr>
+      </table>
+      <div v-if="countFlg">
+        <div class="pagination-container">
+          <a @click="changePage(1)" :disabled="currentPage === 1" class="pagination-link">最初</a>
+          <a
+            v-for="pageNumber in totalPageLinks"
+            :key="pageNumber"
+            @click="pageNumber !== '...' ? changePage(pageNumber) : null"
+            class="pagination-link"
+          >
+            <span v-if="pageNumber !== '...'">
+              <span class="underlined">{{ pageNumber }}</span>
+            </span>
+            <span v-else>...</span>
+          </a>
+          <a @click="changePage(totalPages)" :disabled="currentPage === totalPages" class="pagination-link">最後</a>
+        </div>
+      </div>
+    </div>
     <br>
   </div>
 </template>
@@ -127,7 +146,10 @@ export default {
       shuTo: '',
       msg: '',
       countFlg: false,
-      result: {}
+      result: {},
+      currentPage: 1,
+      pageSize: 10, // 1ページあたりのアイテム数
+      totalPages: 0,
     }
   },
   async created() {
@@ -136,12 +158,30 @@ export default {
       this.nentsuki = this.propNentsuki
       this.shu = this.propShu.toString()
       this.name = this.propTalentName
-      this.btnSearch()
+      this.fetchData()
     }
+  },
+   computed: {
+    paginatedResult() {
+      // ページングされた結果を返すように変更
+      const startIndex = (this.currentPage - 1) * this.pageSize;
+      const endIndex = startIndex + this.pageSize;
+      return this.result.slice(startIndex, endIndex);
+    },
+    totalPageLinks() {
+      const maxPageLinks = 10;
+      const currentGroup = Math.ceil(this.currentPage / maxPageLinks);
+      const startPage = (currentGroup - 1) * maxPageLinks + 1;
+      const endPage = Math.min(currentGroup * maxPageLinks, this.totalPages);
+
+      return Array.from({ length: endPage - startPage + 1 }, (_, index) => startPage + index);
+    },
   },
   methods: {
     async btnSearch() {
-
+      this.fetchData();
+    },
+    async fetchData() {
       // ① 対象年月、対象週が必須で入力されていること。
       if(this.nentsuki === "" || this.shu  === "") {
         this.msg = "対象年月、対象週が必須です。"
@@ -156,6 +196,8 @@ export default {
 
       const url = "http://localhost:8081/api/shukanTalentJohoBFF?nentsuki=" + this.nentsuki + "&shu=" + this.shu + "&talentName=" + this.name;
       this.result = await axios.get(url).then(response => (response.data.shukanTalent))
+      this.totalPages = Math.ceil(this.result.length / this.pageSize);
+      this.resultCount = this.result.length;
       if(this.result[0].talentId !== null) {
           this.countFlg = true
           this.$emit('on-message', "")
@@ -164,6 +206,10 @@ export default {
           this.$emit('on-message', this.msg)
           this.countFlg = false
       }
+    },
+    changePage(pageNumber) {
+      this.currentPage = pageNumber;
+      this.fetchData(); // ページ変更時にデータを再取得するなどの処理を追加
     },
     getOnAirDayFormat(onAirDay) {
       return moment(onAirDay).format('YYYY-MM-DD HH:mm');
@@ -182,8 +228,27 @@ export default {
       this.msg = ''
       this.result = {}
     },
+    underlineNumber(number) {
+      // 数字にアンダーラインをつけるためのスタイルを適用するメソッド
+      return `<span class="underlined">${number}</span>`;
+    },
   },
 }
 </script>
 <style scoped>
+.pagination-container {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  /* 画面中央に寄せる */
+}
+
+.pagination-link {
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.underlined {
+  text-decoration: underline;
+}
 </style>
