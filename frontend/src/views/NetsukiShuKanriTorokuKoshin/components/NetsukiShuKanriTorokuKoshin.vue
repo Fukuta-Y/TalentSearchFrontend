@@ -79,11 +79,13 @@
 <script>
 import { Field } from 'vee-validate'
 import axios from 'axios'
-
 import NetsukiShuKanriRefDialog from '../../NetsukiShuKanriRefDialog/NetsukiShuKanriRefDialogBaseForm.vue'
 import Datepicker from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
 import { format } from 'date-fns';
+import isValid from "date-fns/isValid";
+import parseISO from "date-fns/parseISO";
+import msgList from '../../../router/msgList';
 
 export default {
   name: 'NetsukiShuKanriTorokuKoshin',
@@ -129,7 +131,7 @@ export default {
       this.formattedDate = this.formatDate(newDate);
     },
   },
-  mounted() {
+  async created() {
     this.fetchData();
   },
   methods: {
@@ -153,8 +155,8 @@ export default {
       this.nen = selectedData.nentsuki.toString().substring(0, 4);
       this.tsuki = selectedData.nentsuki.toString().substring(4);
       this.shu = selectedData.shu;
-      this.shuFrom = selectedData.shuFrom;
-      this.shuTo = selectedData.shuTo;
+      this.shuFrom = selectedData.shuFrom.toString().substring(0, 8);
+      this.shuTo = selectedData.shuTo.toString().substring(0, 8);
       this.nentsukiShu = this.nen + this.tsuki + this.shu;
     },
     updateFormattedDate() {
@@ -183,6 +185,49 @@ export default {
       // 全項目入力済みでない場合は止める
       if (this.nen == null || this.tsuki === null || this.shu === null || this.shuFrom === null || this.shuTo === null) {
         this.msg = "全項目入力必須";
+        this.$emit('on-message', this.msg);
+        return;
+      }
+
+      // ①年が入力されている場合は、月と必須で入力であること。
+      if (this.nen.trim() !== '') {
+        if (this.tsuki.trim() === '') {
+          this.msg = msgList['MSG002'].replace('{0}', "年と月");
+          this.$emit('on-message', this.msg);
+          return;
+        }
+      }
+
+      // ②月が入力されている場合は、年と必須で入力であること。
+      if (this.tsuki.trim() !== '') {
+        if (this.nen.trim() === '') {
+          this.msg = msgList['MSG002'].replace('{0}', "年と月");
+          this.$emit('on-message', this.msg);
+          return;
+        }
+      }
+      // ③年月がYYYYMM形式であること。
+      // ④ 年月がYYYY/MM/01で有効な日付であること。
+      if (this.nen.trim() !== '' && this.tsuki.trim() !== '' && !this.isValidateDate(this.nen + this.tsuki + "01")) {
+        this.msg = msgList['MSG003'].replace('{0}', "年月");
+        this.msg = this.msg.replace('{1}', "有効な日付の年月（YYYYMM)");
+        this.$emit('on-message', this.msg);
+        return;
+      }
+
+      // ⑤ 週が数値であること。
+      if (this.shu.trim() !== '' && !this.isValidNumber(Number(this.shu))) {
+        this.msg = msgList['MSG003'].replace('{0}', "週");
+        this.msg = this.msg.replace('{1}', "数値");
+        this.$emit('on-message', this.msg);
+        return;
+      }
+
+      // ⑥ 週が1～5の数値のいずれかであること。
+      if (this.shu.trim() !== '' && !this.isValidRange(Number(this.shu), 1, 5)) {
+        this.msg = msgList['MSG004'].replace('{0}', "週");
+        this.msg = this.msg.replace('{1}', "1");
+        this.msg = this.msg.replace('{2}', "5");
         this.$emit('on-message', this.msg);
         return;
       }
@@ -230,6 +275,18 @@ export default {
       this.shuFrom = null;
       this.shuTo = null;
       this.msg = '';
+    },
+    isValidDate(dateString) {
+      return isNaN(Date.parse(dateString));
+    },
+    isValidateDate(dateString) {
+      // 有効日付チェック
+      const parsedDate = parseISO(dateString.replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3"));
+      return isValid(parsedDate);
+    },
+    isValidNumber(value) {
+      // 数値であるかどうかをチェック
+      return typeof value === 'number';
     },
   },
 }

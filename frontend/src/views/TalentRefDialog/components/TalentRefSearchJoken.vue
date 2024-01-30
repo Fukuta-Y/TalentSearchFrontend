@@ -101,6 +101,8 @@
 <script>
 import { Field, ErrorMessage } from 'vee-validate'
 import axios from 'axios'
+import msgList from '../../../router/msgList';
+
 export default {
   name: 'TalentRefSearchJoken',
   props: {
@@ -161,6 +163,20 @@ export default {
       this.fetchData();
     },
     async fetchData() {
+      // ① タレントIDが入力されている場合は、タレントIDが8桁以内であること。
+      if (this.talentId.trim() !== '' && !this.isValidMaxLength(this.talentId, 8)) {
+        this.msg = msgList['MSG005'].replace('{0}', "タレントID");
+        this.msg = this.msg.replace('{1}', "8文字");
+        this.$emit('on-message', this.msg);
+        return;
+      }
+      // ② タレント名が入力されている場合は、タレント名が30桁以内であること。
+      if (this.talentName.trim() !== '' && !this.isValidMaxLength(this.talentName, 30)) {
+        this.msg = msgList['MSG005'].replace('{0}', "タレント名");
+        this.msg = this.msg.replace('{1}', "30文字");
+        this.$emit('on-message', this.msg);
+        return;
+      }
       const url = "http://localhost:8081/api/talentRefBFF?talentId=" + this.talentId +"&talentName=" + this.talentName;
       this.result = await axios.get(url).then(response => (response.data.mTalent));
       this.resultCount = this.result.length; // 件数を更新
@@ -193,6 +209,10 @@ export default {
       this.countFlg = false;
       this.msg = '';
       this.result = {};
+    },
+    isValidMaxLength(value, maxLength) {
+      // 文字列の長さが【maxLength】文字以内であるかどうかをチェック
+      return value.length <= maxLength;
     },
     underlineNumber(number) {
       // 数字にアンダーラインをつけるためのスタイルを適用するメソッド

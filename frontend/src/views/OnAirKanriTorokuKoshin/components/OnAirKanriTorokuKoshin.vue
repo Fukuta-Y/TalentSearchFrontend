@@ -132,6 +132,9 @@ import TalentRefDialog from '../../TalentRefDialog/TalentRefDialogBaseForm.vue';
 import Datepicker from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
 import { format } from 'date-fns';
+import isValid from "date-fns/isValid";
+import parseISO from "date-fns/parseISO";
+import msgList from '../../../router/msgList';
 
 export default {
   name: 'OnAirKanriTorokuKoshin',
@@ -163,9 +166,9 @@ export default {
       id: this.propId,
       onAirDay: null,
       programId: null,
-      programName: null,
+      programName: '',
       talentId: null,
-      talentName: null,
+      talentName: '',
       nentsukiShu: null,
       propNentsukiShu: null,
       nentsuki: null,
@@ -185,11 +188,55 @@ export default {
       this.formattedDate = this.formatDate(newDate);
     },
   },
-  async mounted() {
-    // APIからデータを取得するメソッドを呼び出す
-    this.fetchData();
+  async created() {
+      // 初期化
+      this.init();
+      // ① 更新モードの場合は、前画面からのパラメータはタレントIDは必須で入力されていること。
+      if (this.mode !== '1') {
+        if (this.propId.trim() === '') {
+          this.$emit('on-message', msgList['MSG006']);
+          return;
+        }
+        // ② IDが8桁以内であること。
+        if (!this.isValidMaxLength(this.propId, 8)) {
+          this.msg = msgList['MSG005'].replace('{0}', "ID");
+          this.msg = this.msg.replace('{1}', "8文字");
+          this.$emit('on-message', this.msg);
+          return;
+        }
+        // 番組情報BFF（更新時のみ）※
+        const onAirKanriUrl = "http://localhost:8081/api/onAirKanriRefBFF?id=" + this.propId + "&onAirDay=";
+        const onAirKanri = await axios.get(onAirKanriUrl).then(response => (response.data.tOnAirKanriRef[0]))
+        if (onAirKanri.id !== '') {
+          this.id = onAirKanri.id;
+          this.onAirDay = onAirKanri.onAirDay;
+          this.programId = onAirKanri.programId;
+          this.programName = onAirKanri.programName;
+          this.talentId = onAirKanri.talentId;
+          this.talentName = onAirKanri.talentName;
+          this.netuski = onAirKanri.netuski;
+          this.shu = onAirKanri.shu;
+          this.nentsukiShu = `${String(onAirKanri.nentsuki).substring(0, 4)}/${String(onAirKanri.nentsuki).substring(4, 6)} ${onAirKanri.shu}週`;
+        }
+      }
+      // 前画面からの値で検索処理を行う。
+      this.fetchData();
   },
   methods: {
+    // 初期表示時
+    async fetchData() {
+      // 年月週管理マスタ検索BFF
+      const nentsukiShuKanriUrl = "http://localhost:8081/api/nentsukiShuKanriBFF";
+      this.nentsukiShuKanriTmp = await axios.get(nentsukiShuKanriUrl).then(response => response.data.mNentsukiShuKanri);
+      this.nentsukiShuKanriTmp = this.nentsukiShuKanriTmp.map(item => ({ nentsuki: item.nentsuki, shu: item.shu }));
+      // nentsukiの前の４文字を○年、後ろの２文字を△月、shuを□週として結合
+      this.nentsukiShuKanri = this.nentsukiShuKanriTmp.map(item => {
+        const year = String(item.nentsuki).substring(0, 4);
+        const month = String(item.nentsuki).substring(4, 6);
+        const week = item.shu;
+        return `${year}/${month} ${week}週`;
+      });
+    },
     // IDの参照時の戻り
     handleSelectId(selectedData) {
       this.$emit('on-message', "");
@@ -229,37 +276,6 @@ export default {
      getId() {
       // this.idが空文字の場合とそうでない場合でラベルを変更
       return this.id === '' ? '（新規登録）' : this.id;
-    },
-    // 初期表示時
-    async fetchData() {
-      // 更新時の場合
-      if (this.id !== '') {
-        // 番組情報BFF（更新時のみ）※
-        const onAirKanriUrl  = "http://localhost:8081/api/onAirKanriRefBFF?id=" + this.propId + "&onAirDay=";
-        const onAirKanri = await axios.get(onAirKanriUrl).then(response => (response.data.tOnAirKanriRef[0]))
-        if (onAirKanri.id !== '') {
-          this.id = onAirKanri.id;
-          this.onAirDay = onAirKanri.onAirDay;
-          this.programId = onAirKanri.programId;
-          this.programName = onAirKanri.programName;
-          this.talentId = onAirKanri.talentId;
-          this.talentName = onAirKanri.talentName;
-          this.netuski = onAirKanri.netuski;
-          this.shu = onAirKanri.shu;
-          this.nentsukiShu = `${String(onAirKanri.nentsuki).substring(0, 4)}/${String(onAirKanri.nentsuki).substring(4, 6)} ${onAirKanri.shu}週`;
-        }
-      }
-      // 年月週管理マスタ検索BFF
-      const nentsukiShuKanriUrl = "http://localhost:8081/api/nentsukiShuKanriBFF";
-      this.nentsukiShuKanriTmp = await axios.get(nentsukiShuKanriUrl).then(response => response.data.mNentsukiShuKanri);
-      this.nentsukiShuKanriTmp = this.nentsukiShuKanriTmp.map(item => ({ nentsuki: item.nentsuki, shu: item.shu }));
-       // nentsukiの前の４文字を○年、後ろの２文字を△月、shuを□週として結合
-      this.nentsukiShuKanri =  this.nentsukiShuKanriTmp.map(item => {
-        const year = String(item.nentsuki).substring(0, 4);
-        const month = String(item.nentsuki).substring(4, 6);
-        const week = item.shu;
-        return `${year}/${month} ${week}週`;
-      });
     },
     updateFormattedDate() {
       this.formattedDate = this.formatDate(this.selectedDate);
@@ -314,12 +330,72 @@ export default {
     },
     // 登録・更新ボタン
     async btnToroku() {
-      // 全項目入力済みでない場合は止める
-      if (this.onAirDay === null || this.programId === null || this.talentId === null || this.nentsukiShu === null) {
-        this.msg = "全項目入力必須";
+
+      // ① 全項目が必須で入力されていること。
+      if (this.onAirDay === '' ||
+          this.programId === '' || this.programName.trim() === '' ||
+          this.talentId === '' || this.talentName.trim() === '' ||
+          this.nentsukiShu === '') {
+        this.msg = msgList['MSG007'];
         this.$emit('on-message', this.msg);
         return;
       }
+
+      // 更新時の場合
+      if (this.mode !== '1') {
+        // ② IDが8桁以内であること。
+        if (!this.isValidMaxLength(this.id, 8)) {
+          this.msg = msgList['MSG005'].replace('{0}', "ID");
+          this.msg = this.msg.replace('{1}', "8文字");
+          this.$emit('on-message', this.msg);
+          return;
+        }
+      }
+
+      // ③ オンエア日がYYYY-MM-DD HH:MM形式であること。
+      if (!this.isCheckDateTime(this.onAirDay)) {
+        this.msg = msgList['MSG003'].replace('{0}', "オンエア日時");
+        this.msg = this.msg.replace('{1}', "YYYY-MM-DD HH:MM");
+        this.$emit('on-message', this.msg);
+        return;
+      }
+
+      // ④ 番組IDが8桁以内であること。
+      if (!this.isValidMaxLength(this.programId, 8)) {
+        this.msg = msgList['MSG005'].replace('{0}', "番組ID");
+        this.msg = this.msg.replace('{1}', "8文字");
+        this.$emit('on-message', this.msg);
+        return;
+      }
+
+      // ⑤ 番組名が30桁以内であること。
+      if (!this.isValidMaxLength(this.programName, 30)) {
+        this.msg = msgList['MSG005'].replace('{0}', "番組名");
+        this.msg = this.msg.replace('{1}', "30文字");
+        this.$emit('on-message', this.msg);
+        return;
+      }
+
+      // ⑥ タレントIDが8桁以内であること。
+      if (!this.isValidMaxLength(this.talentId, 8)) {
+        this.msg = msgList['MSG005'].replace('{0}', "タレントID");
+        this.msg = this.msg.replace('{1}', "8文字");
+        this.$emit('on-message', this.msg);
+        return;
+      }
+
+      // ⑦ タレント名が30桁以内であること。
+      if (!this.isValidMaxLength(this.talentName, 30)) {
+        this.msg = msgList['MSG005'].replace('{0}', "タレント名");
+        this.msg = this.msg.replace('{1}', "30文字");
+        this.$emit('on-message', this.msg);
+        return;
+      }
+
+      // TODO
+      // ⑧年月・週がYYYY/MM W週形式であること。
+      // MSG003（年月・週、YYYY / MM W週）
+
 
       // Dateオブジェクトを作成
       const dateObject = new Date(this.onAirDay);
@@ -367,12 +443,45 @@ export default {
       this.id = '';
       this.onAirDay = null;
       this.programId = null;
-      this.programName = null;
+      this.programName = '',
       this.talentId = null;
-      this.talentName = null;
+      this.talentName = '',
       this.nentsukiShu = null;
       this.propNentsukiShu = null;
       this.msg = '';
+    },
+    isValidDate(dateString) {
+      return isNaN(Date.parse(dateString));
+    },
+    isValidateDate(dateString) {
+      // 有効日付チェック
+      const parsedDate = parseISO(dateString.replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3"));
+      return isValid(parsedDate);
+    },
+    isValidNumber(value) {
+      // 数値であるかどうかをチェック
+      return typeof value === 'number';
+    },
+    isValidRange(value, min, max) {
+      // minからmaxの範囲内にあるかどうかをチェック
+      return value >= min && value <= max;
+    },
+    isValidMaxLength(value, maxLength) {
+      // 文字列の長さが【maxLength】文字以内であるかどうかをチェック
+      return value.length <= maxLength;
+    },
+    isCheckDateTime(onAirDay) {
+      // 日時の正規表現パターン
+      const dateTimePattern = /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/;
+
+      // 入力された日時がパターンに一致するかどうかを確認
+      if (!dateTimePattern.test(onAirDay)) {
+        return false; // パターンに一致しない場合は無効な日時
+      }
+
+      // 日付の妥当性を検証
+      const inputDate = new Date(onAirDay);
+      return !isNaN(inputDate.getTime()); // インスタンスが有効な日時であるかどうか
     },
   },
 }

@@ -15,15 +15,15 @@ const routes = [
     component: MenuBaseForm
   },
   {
-    path: '/WeekTalentShutsuenBaseForm',
+    path: '/WeekTalentShutsuenBaseForm/1',
     name: 'WeekTalentShutsuenTop',
-    component: WeekTalentShutsuenBaseForm
+    component: WeekTalentShutsuenBaseForm,
   },
   {
-    path: '/WeekTalentShutsuenBaseForm/:nentsuki/:shu/:talentName',
+    path: '/WeekTalentShutsuenBaseForm/:nentsuki/:shu/:talentName/:mode',
     name: 'WeekTalentShutsuen',
     component: WeekTalentShutsuenBaseForm,
-    props: route => ({ nentsuki: route.params.nentsuki, shu: route.params.shu, talentName: route.params.talentName })
+    props: route => ({ nentsuki: route.params.nentsuki, shu: route.params.shu, talentName: route.params.talentName, mode: route.params.mode || '2' })
   },
   {
     path: '/TalentDetailBaseForm/:nentsuki/:shu/:talentId',
