@@ -105,7 +105,7 @@ export default {
       return;
     }
     // ⑤ 週が1～5の数値のいずれかであること。
-    if (!this.isValidRange(Number(this.shu))) {
+    if (!this.isValidRange(Number(this.shu), 1, 5)) {
       this.msg = msgList['MSG004'].replace('{0}', "週");
       this.msg = this.msg.replace('{1}', "1");
       this.msg = this.msg.replace('{2}', "5");
