@@ -134,7 +134,7 @@ export default {
   async created() {
     // 更新モードの場合
     if (this.programId !== undefined) {
-      // ① 前画面からのパラメータは番組ID、オンエア日、年月、週は必須で入力されていること。
+      // ① 前画面からのパラメータは番組IDは必須で入力されていること。
       if (this.programId.trim() === '') {
         this.$emit('on-message', msgList['MSG006']);
         return;
@@ -146,36 +146,20 @@ export default {
         this.$emit('on-message', this.msg);
         return;
       }
+      // 番組情報BFF（更新時のみ）※
+      const programInfoUrl = "http://localhost:8081/api/programInfoBFF/" + this.programId;
+      const programInfo = await axios.get(programInfoUrl).then(response => (response.data))
+      if (programInfo.talentId !== null) {
+        this.programName = programInfo.programName;
+        this.channelId = programInfo.channelId;
+        this.jyunjyo = programInfo.genreId;
+      }
    }
     // 前画面からの値で検索処理を行う。
     this.fetchData();
   },
   methods: {
     async fetchData() {
-      // 更新時の場合
-      if (this.programId !== undefined) {
-        // ① 全項目が必須で入力されていること。
-        if (this.programId.trim() === '') {
-          this.msg = msgList['MSG002'].replace('{0}', "プログラムID");
-          this.$emit('on-message', this.msg);
-          return;
-        }
-        // ② 番組IDが8桁以内であること。
-        if (!this.isValidMaxLength(this.programId, 8)) {
-          this.msg = msgList['MSG005'].replace('{0}', "番組ID");
-          this.msg = this.msg.replace('{1}', "8文字");
-          this.$emit('on-message', this.msg);
-          return;
-        }
-        // 番組情報BFF（更新時のみ）※
-        const programInfoUrl = "http://localhost:8081/api/programInfoBFF/" + this.programId;
-        const programInfo = await axios.get(programInfoUrl).then(response => (response.data))
-        if (programInfo.talentId !== null) {
-          this.programName = programInfo.programName;
-          this.channelId = programInfo.channelId;
-          this.jyunjyo = programInfo.genreId;
-        }
-      }
       // チャンネル情報BFF（登録・更新時）
       const channelInfoUrl = "http://localhost:8081/api/channelInfoBFF";
       this.channelInfo = await axios.get(channelInfoUrl).then(response => response.data.channelInfo);

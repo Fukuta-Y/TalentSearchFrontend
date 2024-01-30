@@ -52,18 +52,18 @@
       <table align="center" border="1" style="border-collapse: collapse;" v-if="countFlg">
         <tr>
           <td style="background-color: greenyellow;"></td>
-          <td style="background-color: greenyellow;">ID </td>
-          <td style="background-color: greenyellow;width:170px;">オンエア日時</td>
-          <td style="background-color: greenyellow;">番組ID</td>
+          <td style="background-color: greenyellow;width:80px;">ID </td>
+          <td style="background-color: greenyellow;width:160px;">オンエア日時</td>
+          <td style="background-color: greenyellow;width:80px;">番組ID</td>
           <td style="background-color: greenyellow; width:130px;">番組名</td>
           <td style="background-color: greenyellow;">タレントID</td>
-          <td style="background-color: greenyellow; width:130px;">タレント名</td>
+          <td style="background-color: greenyellow; width:150px;">タレント名</td>
           <td style="background-color: greenyellow; width:115px;">年月・週</td>
         </tr>
         <tr v-for="(item, key) in paginatedResult" :key="key">
           <td><button v-on:click="selectId(item.id, item.onAirDay, item.programId, item.programName, item.talentId, item.talentName, item.nentsuki, item.shu)">選択</button></td>
           <td>{{ item.id }} </td>
-          <td>{{ item.onAirDay }} </td>
+          <td>{{ item.onAirDay.toString().substring(0, 16) }} </td>
           <td><router-link :to="{ name: 'ProgramTorokuKoshin', params: { programId: item.programId } }">{{ item.programId }}</router-link></td>
           <td>{{ item.programName }} </td>
           <td><router-link :to="{ name: 'TalentTorokuKoshin', params: { talentId: item.talentId } }">{{ item.talentId }}</router-link></td>
@@ -98,6 +98,8 @@ import axios from 'axios'
 import Datepicker from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
 import { format } from 'date-fns';
+import msgList from '../../../router/msgList';
+
 export default {
   name: 'OnAirKanriRefSearchJoken',
   props: {
@@ -162,15 +164,28 @@ export default {
       this.fetchData();
     },
     async fetchData() {
-      if (this.onAirDay !== '') {
-        const dateObject = new Date(this.onAirDay);
+      // ① IDが入力されている場合は、IDが8桁以内であること。
+      if (this.propId !== '' && !this.isValidMaxLength(this.propId, 8)) {
+        this.msg = msgList['MSG005'].replace('{0}', "ID");
+        this.msg = this.msg.replace('{1}', "8文字");
+        this.$emit('on-message', this.msg);
+        return;
+      }
+      // ② オンエア日が入力されている場合は、オンエア日がYYYY-MM-DD HH:MM形式であること。
+      if (this.propOnAirDay !== '' && !this.isCheckDateTime(this.propOnAirDay)) {
+        this.msg = msgList['MSG003'].replace('{0}', "オンエア日時");
+        this.msg = this.msg.replace('{1}', "YYYY-MM-DD HH:MM");
+        this.$emit('on-message', this.msg);
+        return;
+      }
+      if (this.propOnAirDay !== '') {
+        const dateObject = new Date(this.propOnAirDay);
         const year = dateObject.getFullYear();
         const month = `0${dateObject.getMonth() + 1}`.slice(-2);
         const day = `0${dateObject.getDate()}`.slice(-2);
         const hours = `0${dateObject.getHours()}`.slice(-2);
         const minutes = `0${dateObject.getMinutes()}`.slice(-2);
-        const seconds = `0${dateObject.getSeconds()}`.slice(-2);
-        this.onAirDay = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+        this.onAirDay = `${year}-${month}-${day} ${hours}:${minutes}`;
       }
       const url = "http://localhost:8081/api/onAirKanriRefBFF?id=" + this.id +"&onAirDay=" + this.onAirDay;
       this.result = await axios.get(url).then(response => (response.data.tOnAirKanriRef));
@@ -210,6 +225,23 @@ export default {
       this.countFlg = false;
       this.msg = '';
       this.result = {};
+    },
+    isValidMaxLength(value, maxLength) {
+      // 文字列の長さが【maxLength】文字以内であるかどうかをチェック
+      return value.length <= maxLength;
+    },
+    isCheckDateTime(onAirDay) {
+      // 日時の正規表現パターン
+      const dateTimePattern = /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/;
+
+      // 入力された日時がパターンに一致するかどうかを確認
+      if (!dateTimePattern.test(onAirDay)) {
+        return false; // パターンに一致しない場合は無効な日時
+      }
+
+      // 日付の妥当性を検証
+      const inputDate = new Date(onAirDay);
+      return !isNaN(inputDate.getTime()); // インスタンスが有効な日時であるかどうか
     },
     underlineNumber(number) {
       // 数字にアンダーラインをつけるためのスタイルを適用するメソッド

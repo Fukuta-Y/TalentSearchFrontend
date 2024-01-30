@@ -105,6 +105,8 @@
 <script>
 import { Field, ErrorMessage } from 'vee-validate'
 import axios from 'axios'
+import msgList from '../../../router/msgList';
+
 export default {
   name: 'ProgramRefSearchJoken',
   props: {
@@ -164,6 +166,20 @@ export default {
       this.fetchData();
     },
     async fetchData() {
+      // ① 番組IDが入力されている場合は、番組IDが8桁以内であること。
+      if (this.programId.trim() !== '' && !this.isValidMaxLength(this.programId, 8)) {
+        this.msg = msgList['MSG005'].replace('{0}', "番組ID");
+        this.msg = this.msg.replace('{1}', "8文字");
+        this.$emit('on-message', this.msg);
+        return;
+      }
+      // ② 番組名が入力されている場合は、番組名が30桁以内であること。
+      if (this.programName.trim() !== '' && !this.isValidMaxLength(this.programName, 30)) {
+        this.msg = msgList['MSG005'].replace('{0}', "番組名");
+        this.msg = this.msg.replace('{1}', "30文字");
+        this.$emit('on-message', this.msg);
+        return;
+      }
       const url = "http://localhost:8081/api/programRefBFF?programId=" + this.programId +"&programName=" + this.programName;
       this.result = await axios.get(url).then(response => (response.data.programInfoRef));
       this.totalPages = Math.ceil(this.result.length / this.pageSize);
@@ -196,6 +212,10 @@ export default {
       this.countFlg = false;
       this.msg = '';
       this.result = [];
+    },
+    isValidMaxLength(value, maxLength) {
+      // 文字列の長さが【maxLength】文字以内であるかどうかをチェック
+      return value.length <= maxLength;
     },
     underlineNumber(number) {
       // 数字にアンダーラインをつけるためのスタイルを適用するメソッド
