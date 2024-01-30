@@ -1,13 +1,13 @@
 <template>
   <div>
-    <table align="center" v-if="countFlg">
+    <table align="center">
       <tr>
-        <td>出演者： </td>
-        <td>{{ this.result[0].talentName }}</td>
+        <td>出演者：</td>
+        <td v-if="countFlg">{{ this.result[0].talentName }}</td>
       </tr>
       <tr>
         <td>出演者ジャンル： </td>
-        <td>{{ this.result[0].shutsuenshaGenre }}</td>
+        <td v-if="countFlg">{{ this.result[0].shutsuenshaGenre }}</td>
       </tr>
     </table>
     <br>
@@ -27,7 +27,7 @@
         <td style="background-color: greenyellow;">番組ジャンル</td>
       </tr>
       <tr v-for="(item, key) in result" :key="key">
-        <td><router-link :to="{ name: 'ProgramDetail', params: { programId: item.programId, onAirDay: item.onAirDay + ' ' + item.onAirTime, nentsuki: this.nentsuki, shu: this.shu } }">{{ item.shutsuenProgram }}</router-link></td>
+        <td><router-link :to="{ name: 'ProgramDetail', params: { programId: item.programId, onAirDay: item.onAirDay + ' ' + item.onAirTime.substring(0, 5), nentsuki: this.nentsuki, shu: this.shu } }">{{ item.shutsuenProgram }}</router-link></td>
         <td>{{ item.hosokyokuChannel }} </td>
         <td>{{ item.onAirDay }} </td>
         <td>{{ getOnAirDayFormat(item.onAirTime) }} </td>
@@ -57,6 +57,10 @@
 
 <script>
 import axios from 'axios'
+import isValid from "date-fns/isValid";
+import parseISO from "date-fns/parseISO";
+import msgList from '../../../router/msgList';
+
 export default {
   name: 'TalentProgramJoken',
   props: {
@@ -84,6 +88,43 @@ export default {
     }
   },
   async created() {
+    // ① 前画面からのパラメータは年月、週、タレントIDは必須で入力されていること。
+    if (this.nentsuki.trim() === '' || this.shu.trim() === '' || this.talentId.trim() === '') {
+      this.$emit('on-message', msgList['MSG006']);
+      return;
+    }
+    // ② 年月がYYYYMM形式であること。
+    // ③ 年月がYYYY/MM/01で有効な日付であること。
+    if (!this.isValidateDate(this.nentsuki + "01")) {
+      this.msg = msgList['MSG003'].replace('{0}', "年月");
+      this.msg = this.msg.replace('{1}', "有効な日付の年月（YYYYMM)");
+      this.$emit('on-message', this.msg);
+      return;
+    }
+    // ④ 週が数値であること。
+    if (!this.isValidNumber(Number(this.shu))) {
+      this.msg = msgList['MSG003'].replace('{0}', "週");
+      this.msg = this.msg.replace('{1}', "数値");
+      this.$emit('on-message', this.msg);
+      return;
+    }
+    // ⑤ 週が1～5の数値のいずれかであること。
+    if (!this.isValidRange(Number(this.shu))) {
+      this.msg = msgList['MSG004'].replace('{0}', "週");
+      this.msg = this.msg.replace('{1}', "1");
+      this.msg = this.msg.replace('{2}', "5");
+      this.$emit('on-message', this.msg);
+      return;
+    }
+    // ⑥ タレントIDが8桁以内であること。
+    if (!this.isValidMaxLength(this.talentId, 8)) {
+      this.msg = msgList['MSG005'].replace('{0}', "タレントID");
+      this.msg = this.msg.replace('{1}', "8文字");
+      this.$emit('on-message', this.msg);
+      return;
+    }
+
+    // 前画面からの値で検索処理を行う。
     this.fetchData();
   },
   computed: {
@@ -106,12 +147,12 @@ export default {
     async fetchData() {
       const url = "http://localhost:8081/api/talentShukanShutsuenJohoBFF?nentsuki=" + this.nentsuki + "&shu=" + this.shu + "&talentId=" + this.talentId;
       this.result = await axios.get(url).then(response => (response.data.talentShukanShutsuen));
-      this.totalPages = Math.ceil(this.result.length / this.pageSize);
-      this.resultCount = this.result.length;
-      if(this.result[0].talentName !== null) {
+      if(this.result != null && this.result[0].talentName !== null) {
         this.countFlg = true;
+        this.totalPages = Math.ceil(this.result.length / this.pageSize);
+        this.resultCount = this.result.length;
       } else {
-        this.msg = "対象タレント（" + this.talentId +"）は【" + this.nentsuki.toString().substring(0, 4) + "年" +  this.nentsuki.toString().substring(4) + "月 " + this.shu + "週】に出演予定がありません。";
+        this.msg = "対象タレントID（" + this.talentId +"）は【" + this.nentsuki.toString().substring(0, 4) + "年" +  this.nentsuki.toString().substring(4) + "月 " + this.shu + "週】に出演予定がありません。";
         this.countFlg = false;
         this.$emit('on-message', this.msg);
       }
@@ -132,6 +173,26 @@ export default {
       this.countFlg = false;
       this.msg = '';
       this.result= { };
+    },
+    isValidDate(dateString) {
+      return isNaN(Date.parse(dateString));
+    },
+    isValidateDate(dateString) {
+      // 有効日付チェック
+      const parsedDate = parseISO(dateString.replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3"));
+      return isValid(parsedDate);
+    },
+    isValidNumber(value) {
+      // 数値であるかどうかをチェック
+      return typeof value === 'number';
+    },
+    isValidRange(value) {
+      // 1から5の範囲内にあるかどうかをチェック
+      return value >= 1 && value <= 5;
+    },
+    isValidMaxLength(value, maxLength) {
+      // 文字列の長さが【maxLength】文字以内であるかどうかをチェック
+      return value.length <= maxLength;
     },
     underlineNumber(number) {
       // 数字にアンダーラインをつけるためのスタイルを適用するメソッド

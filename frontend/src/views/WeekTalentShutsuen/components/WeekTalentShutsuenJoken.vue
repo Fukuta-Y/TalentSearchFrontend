@@ -90,7 +90,7 @@
         <tr v-for="(item, key) in result" :key="key">
           <td><router-link :to="{ name: 'TalentDetail', params: { nentsuki: this.labelNentsuki, shu: this.labelShu, talentId: item.talentId } }">{{ item.talentName }}</router-link></td>
           <td>{{ item.shukanShutsuenProgramHonsu + "本"}} </td>
-          <td><router-link :to="{ name: 'ProgramDetail', params: { programId: item.shutsuenProgramIdChokin, onAirDay: item.onAirDayChokin, nentsuki: this.labelNentsuki, shu: this.labelShu } }">{{ item.shutsuenProgramChokin  }}</router-link></td>
+          <td><router-link :to="{ name: 'ProgramDetail', params: { programId: item.shutsuenProgramIdChokin, onAirDay: getOnAirDayFormat(item.onAirDayChokin), nentsuki: this.labelNentsuki, shu: this.labelShu } }">{{ item.shutsuenProgramChokin  }}</router-link></td>
           <td>{{ getOnAirDayFormat(item.onAirDayChokin)}} </td>
         </tr>
       </table>
@@ -273,11 +273,11 @@ export default {
       this.url = this.url.replace('{1}', this.shu);
       this.url = this.url.replace('{2}', this.talentName);
       this.result = await axios.get(this.url).then(response => (response.data.shukanTalent))
-      this.totalPages = Math.ceil(this.result.length / this.pageSize);
-      this.resultCount = this.result.length;
-      if(this.result[0].talentId !== null) {
+      if (this.result != null && this.result[0].talentId !== null) {
         this.countFlg = true;
         this.$emit('on-message', "");
+        this.totalPages = Math.ceil(this.result.length / this.pageSize);
+        this.resultCount = this.result.length;
       } else {
         this.msg ="検索結果が0件です。";
         this.$emit('on-message', this.msg);
@@ -314,7 +314,6 @@ export default {
     isValidateDate(dateString) {
       // 有効日付チェック
       const parsedDate = parseISO(dateString.replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3"));
-      console.log(isValid(parsedDate));
       return isValid(parsedDate);
     },
     isValidNumber(value) {

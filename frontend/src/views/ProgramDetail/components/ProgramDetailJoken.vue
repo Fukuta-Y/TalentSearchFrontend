@@ -1,17 +1,17 @@
 <template>
   <div>
-    <table align="center" v-if="countFlg">
+    <table align="center">
       <tr>
         <td>番組名： </td>
-        <td>{{ this.result[0].programName }}</td>
+        <td v-if="countFlg">{{ this.result[0].programName }}</td>
       </tr>
       <tr>
         <td>オンエア日時： </td>
-        <td>{{ this.onAirDay }}</td>
+        <td v-if="countFlg">{{ this.onAirDay }}</td>
       </tr>
       <tr>
         <td>番組ジャンル： </td>
-        <td>{{ this.result[0].programGenre }}</td>
+        <td v-if="countFlg">{{ this.result[0].programGenre }}</td>
       </tr>
     </table>
     <br>
@@ -51,6 +51,10 @@
 
 <script>
 import axios from 'axios'
+import isValid from "date-fns/isValid";
+import parseISO from "date-fns/parseISO";
+import msgList from '../../../router/msgList';
+
 export default {
   name: 'ProgramDetailJoken',
   props: {
@@ -79,6 +83,53 @@ export default {
     }
   },
   async created() {
+
+    // ① 前画面からのパラメータは番組ID、オンエア日、年月、週は必須で入力されていること。
+    if (this.programId.trim() === '' || this.onAirDay.trim() === '' || this.nentsuki.trim() === '' || this.shu.trim() === '') {
+      this.$emit('on-message', msgList['MSG006']);
+      return;
+    }
+    // ② 年月がYYYYMM形式であること。
+    // ③ 年月がYYYY/MM/01で有効な日付であること。
+    if (!this.isValidateDate(this.nentsuki + "01")) {
+      this.msg = msgList['MSG003'].replace('{0}', "年月");
+      this.msg = this.msg.replace('{1}', "有効な日付の年月（YYYYMM)");
+      this.$emit('on-message', this.msg);
+      return;
+    }
+    // ④ 週が数値であること。
+    if (!this.isValidNumber(Number(this.shu))) {
+      this.msg = msgList['MSG003'].replace('{0}', "週");
+      this.msg = this.msg.replace('{1}', "数値");
+      this.$emit('on-message', this.msg);
+      return;
+    }
+    // ⑤ 週が1～5の数値のいずれかであること。
+    if (!this.isValidRange(Number(this.shu))) {
+      this.msg = msgList['MSG004'].replace('{0}', "週");
+      this.msg = this.msg.replace('{1}', "1");
+      this.msg = this.msg.replace('{2}', "5");
+      this.$emit('on-message', this.msg);
+      return;
+    }
+
+    // ⑥ オンエア日がYYYY-MM-DD HH:MM形式であること。
+    if (!this.isCheckDateTime(this.onAirDay)){
+      this.msg = msgList['MSG003'].replace('{0}', "オンエア日時");
+      this.msg = this.msg.replace('{1}', "YYYY-MM-DD HH:MM");
+      this.$emit('on-message', this.msg);
+      return;
+    }
+
+    // ⑦ 番組IDが8桁以内であること。
+    if (!this.isValidMaxLength(this.programId, 8)) {
+      this.msg = msgList['MSG005'].replace('{0}', "番組ID");
+      this.msg = this.msg.replace('{1}', "8文字");
+      this.$emit('on-message', this.msg);
+      return;
+    }
+
+    // 前画面からの値で検索処理を行う。
     this.fetchData();
   },
   computed: {
@@ -101,15 +152,15 @@ export default {
     async fetchData() {
       const url = "http://localhost:8081/api/programShutsuenBFF?programId=" + this.programId + "&onAirDay=" + this.onAirDay +"&nentsuki=" + this.nentsuki + "&shu=" + this.shu;
       this.result = await axios.get(url).then(response => (response.data.programShutsuen));
-      this.totalPages = Math.ceil(this.result.length / this.pageSize);
-      this.resultCount = this.result.length;
-      if(this.result[0].talentId !== null) {
+      if (this.result != '' && this.result[0].programName !== null) {
         this.countFlg = true;
         this.$emit('on-message', "");
+        this.totalPages = Math.ceil(this.result.length / this.pageSize);
+        this.resultCount = this.result.length;
       } else {
-        this.msg = "検索結果が0件です。";
-        this.$emit('on-message', this.msg);
+        this.msg = "対象番組ID（" + this.programId + "）は【" + this.nentsuki.toString().substring(0, 4) + "年" + this.nentsuki.toString().substring(4) + "月 " + this.shu + "週】に放送予定がありません。";
         this.countFlg = false;
+        this.$emit('on-message', this.msg);
       }
     },
     changePage(pageNumber) {
@@ -126,6 +177,39 @@ export default {
       this.countFlg = false;
       this.msg = '';
       this.result= { };
+    },
+    isValidDate(dateString) {
+      return isNaN(Date.parse(dateString));
+    },
+    isValidateDate(dateString) {
+      // 有効日付チェック
+      const parsedDate = parseISO(dateString.replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3"));
+      return isValid(parsedDate);
+    },
+    isValidNumber(value) {
+      // 数値であるかどうかをチェック
+      return typeof value === 'number';
+    },
+    isValidRange(value) {
+      // 1から5の範囲内にあるかどうかをチェック
+      return value >= 1 && value <= 5;
+    },
+    isValidMaxLength(value, maxLength) {
+      // 文字列の長さが【maxLength】文字以内であるかどうかをチェック
+      return value.length <= maxLength;
+    },
+    isCheckDateTime(onAirDay) {
+      // 日時の正規表現パターン
+      const dateTimePattern = /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/;
+
+      // 入力された日時がパターンに一致するかどうかを確認
+      if (!dateTimePattern.test(onAirDay)) {
+        return false; // パターンに一致しない場合は無効な日時
+      }
+
+      // 日付の妥当性を検証
+      const inputDate = new Date(onAirDay);
+      return !isNaN(inputDate.getTime()); // インスタンスが有効な日時であるかどうか
     },
     underlineNumber(number) {
       // 数字にアンダーラインをつけるためのスタイルを適用するメソッド
