@@ -119,6 +119,8 @@
 import { Field, ErrorMessage } from 'vee-validate'
 import axios from 'axios'
 import moment from 'moment';
+import isValid from "date-fns/isValid";
+import parseISO from "date-fns/parseISO";
 import msgList from '../../../router/msgList';
 
 export default {
@@ -157,6 +159,7 @@ export default {
       currentPage: 1,
       pageSize: 10, // 1ページあたりのアイテム数
       totalPages: 0,
+      url: '',
     }
   },
   async created() {
@@ -166,12 +169,39 @@ export default {
       this.nentsuki = this.propNentsuki;
       this.shu = this.propShu;
       this.talentName = this.propTalentName;
-      console.log(this.nentsuki);
-      console.log(this.shu);
-
-      // 年月については前画面からの値が全て入っている場合は検索処理を行う。
-      if (this.nentsuki.trim() == '' || this.shu.trim() == '') {
+      // ① 前画面からのパラメータは年月は必須で入力されていること。
+      if (this.nentsuki.trim() === '' || this.shu.trim() === '') {
         this.$emit('on-message', msgList['MSG006']);
+        return;
+      }
+      // ② 年月がYYYYMM形式であること。
+      // ③ 年月がYYYY/MM/01で有効な日付であること。
+      if (!this.isValidateDate(this.nentsuki + "01")) {
+        this.msg = msgList['MSG003'].replace('{0}', "年月");
+        this.msg = this.msg.replace('{1}', "有効な日付の年月（YYYYMM)");
+        this.$emit('on-message', this.msg);
+        return;
+      }
+      // ④ 週が数値であること。
+      if (!this.isValidNumber(Number(this.shu))) {
+        this.msg = msgList['MSG003'].replace('{0}', "週");
+        this.msg = this.msg.replace('{1}', "数値");
+        this.$emit('on-message', this.msg);
+        return;
+      }
+      // ⑤ 週が1～5の数値のいずれかであること。
+      if (!this.isValidRange(Number(this.shu))) {
+        this.msg = msgList['MSG004'].replace('{0}', "週");
+        this.msg = this.msg.replace('{1}', "1");
+        this.msg = this.msg.replace('{2}', "5");
+        this.$emit('on-message', this.msg);
+        return;
+      }
+      // ⑥ タレント名が設定されている場合は、30桁以内であること。
+      if (this.talentName.trim() !== '' && !this.isValidMaxLength(this.talentName, 30)) {
+        this.msg = msgList['MSG005'].replace('{0}', "タレント名");
+        this.msg = this.msg.replace('{1}', "30文字");
+        this.$emit('on-message', this.msg);
         return;
       }
 
@@ -201,23 +231,48 @@ export default {
       this.fetchData();
     },
     async fetchData() {
-      // ① 年月、対象週が必須で入力されていること。
-      if(this.nentsuki === "" || this.shu  === "") {
-        this.msg = "年月、週が必須です。";
+      // ① 年月、週が必須で入力されていること。
+      if (this.nentsuki.trim() === '' || this.shu.trim() === '') {
+        this.msg = msgList['MSG002'].replace('{0}', "年月と週");
         this.$emit('on-message', this.msg);
         return;
       }
-      // ②年月がYYYY / MM形式であること。
-
-      // ③週が数値かつ、1～5の数値のいずれかであること。 
-
-      // ④タレントが30桁以内であること。
-
-      this.labelNentsuki = this.nentsuki;
-      this.labelShu = this.shu;
-
-      const url = "http://localhost:8081/api/shukanTalentJohoBFF?nentsuki=" + this.nentsuki + "&shu=" + this.shu + "&talentName=" + this.talentName;
-      this.result = await axios.get(url).then(response => (response.data.shukanTalent))
+      // ②年月がYYYYMM形式であること。
+      // ③ 年月がYYYY/MM/01で有効な日付であること。
+      if (!this.isValidateDate(this.nentsuki + "01")) {
+        this.msg = msgList['MSG003'].replace('{0}', "年月");
+        this.msg = this.msg.replace('{1}', "有効な日付の年月（YYYYMM)");
+        this.$emit('on-message', this.msg);
+        return;
+      }
+      // ④ 週が数値であること。
+      if(!this.isValidNumber(Number(this.shu))){
+        this.msg = msgList['MSG003'].replace('{0}', "週");
+        this.msg = this.msg.replace('{1}', "数値");
+        this.$emit('on-message', this.msg);
+        return;
+      }
+      // ⑤ 週が1～5の数値のいずれかであること。
+      if (!this.isValidRange(Number(this.shu))) {
+        this.msg = msgList['MSG004'].replace('{0}', "週");
+        this.msg = this.msg.replace('{1}', "1");
+        this.msg = this.msg.replace('{2}', "5");
+        this.$emit('on-message', this.msg);
+        return;
+      }
+      // ⑥ タレント名が設定されている場合は、30桁以内であること。
+      if (this.talentName.trim() !== '' && !this.isValidMaxLength(this.talentName, 30)){
+        this.msg = msgList['MSG005'].replace('{0}', "タレント名");
+        this.msg = this.msg.replace('{1}', "30文字");
+        this.$emit('on-message', this.msg);
+        return;
+      }
+      // 取得処理を開始
+      const shukanTalentJohoURL = "http://localhost:8081/api/shukanTalentJohoBFF?nentsuki={0}&shu={1}&talentName={2}";
+      this.url = shukanTalentJohoURL.replace('{0}', this.nentsuki);
+      this.url = this.url.replace('{1}', this.shu);
+      this.url = this.url.replace('{2}', this.talentName);
+      this.result = await axios.get(this.url).then(response => (response.data.shukanTalent))
       this.totalPages = Math.ceil(this.result.length / this.pageSize);
       this.resultCount = this.result.length;
       if(this.result[0].talentId !== null) {
@@ -228,6 +283,9 @@ export default {
         this.$emit('on-message', this.msg);
         this.countFlg = false;
       }
+      // 検索結果のラベルの内容に設定
+      this.labelNentsuki = this.nentsuki;
+      this.labelShu = this.shu;
     },
     changePage(pageNumber) {
       this.currentPage = pageNumber;
@@ -249,6 +307,27 @@ export default {
       this.countFlg = false;
       this.msg = '';
       this.result = {};
+    },
+    isValidDate(dateString) {
+      return isNaN(Date.parse(dateString));
+    },
+    isValidateDate(dateString) {
+      // 有効日付チェック
+      const parsedDate = parseISO(dateString.replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3"));
+      console.log(isValid(parsedDate));
+      return isValid(parsedDate);
+    },
+    isValidNumber(value) {
+      // 数値であるかどうかをチェック
+      return typeof value === 'number';
+    },
+    isValidRange(value) {
+      // 1から5の範囲内にあるかどうかをチェック
+      return value >= 1 && value <= 5;
+    },
+    isValidMaxLength(value, maxLength) {
+      // 文字列の長さが【maxLength】文字以内であるかどうかをチェック
+      return value.length <= maxLength;
     },
     underlineNumber(number) {
       // 数字にアンダーラインをつけるためのスタイルを適用するメソッド
