@@ -6,7 +6,7 @@
         <td>{{ this.result[0].programName }}</td>
       </tr>
       <tr>
-        <td>オンエア日： </td>
+        <td>オンエア日時： </td>
         <td>{{ this.onAirDay }}</td>
       </tr>
       <tr>
@@ -17,7 +17,7 @@
     <br>
     <table align="center" v-if="countFlg">
       <tr>
-        <td style="text-align: left;">【対象年月・週】：{{ `${String(this.nentsuki).substring(0, 4)}/${String(this.nentsuki).substring(4, 6)} ${this.shu}週目` }}</td>
+        <td style="text-align: left;">【年月・週】：{{ `${String(this.nentsuki).substring(0, 4)}/${String(this.nentsuki).substring(4, 6)} ${this.shu}週目` }}</td>
       </tr>
     </table>
     <table align="center" border="1" style="border-collapse: collapse;" v-if="countFlg">

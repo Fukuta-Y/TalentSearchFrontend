@@ -20,9 +20,9 @@
         </td> 
       </tr>
       <tr>
-        <td>オンエア日： </td>
+        <td>オンエア日時： </td>
         <td class="date-picker">
-          <Datepicker v-model="onAirDay" @input="updateFormattedDate" :style="{ width: '250px' }"  language="ja" placeholder="例：2023-04-18 11:50:00"></Datepicker>
+          <Datepicker v-model="onAirDay" @input="updateFormattedDate" :style="{ width: '250px' }"  language="ja" placeholder="例：2023-04-18 11:50"></Datepicker>
         </td>
       </tr>
       <tr>
@@ -53,7 +53,7 @@
         <tr>
           <td style="background-color: greenyellow;"></td>
           <td style="background-color: greenyellow;">ID </td>
-          <td style="background-color: greenyellow;width:170px;">オンエア日</td>
+          <td style="background-color: greenyellow;width:170px;">オンエア日時</td>
           <td style="background-color: greenyellow;">番組ID</td>
           <td style="background-color: greenyellow; width:130px;">番組名</td>
           <td style="background-color: greenyellow;">タレントID</td>
