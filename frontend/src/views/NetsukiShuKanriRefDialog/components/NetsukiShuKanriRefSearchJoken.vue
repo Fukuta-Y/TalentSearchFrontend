@@ -8,7 +8,7 @@
             name="nen" 
             v-model="nen"
             size="9"
-            label="対象年"
+            label="年"
             rules="required"
             maxlength="4"
             placeholder="例：2023"
@@ -19,12 +19,13 @@
             name="tsuki" 
             v-model="tsuki"
             size="6"
-            label="対象月"
+            label="月"
             rules="required"
             maxlength="2"
             placeholder="例：04"
           />月
         </td>
+        <td style="font-size:11px;color:red;" >※年と月は入力時はセットで必須入力</td>
       </tr>
       <tr>
         <td>週： </td>

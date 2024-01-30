@@ -2,13 +2,13 @@
   <div>
     <table align="center">
       <tr>
-        <td>対象年月： </td>
+        <td>年月： </td>
         <td>
           <Field 
             name="nentsuki" 
             v-model="nentsuki"
             size="11"
-            label="対象年月"
+            label="年月"
             rules="required"
             maxlength="6"
             placeholder="例：202304"
@@ -21,13 +21,13 @@
         </td> 
       </tr>
       <tr>
-        <td>対象週： </td>
+        <td>週： </td>
         <td>
           <Field 
             name="shu" 
             rules="required"
             v-model="shu"
-            label="対象週"
+            label="週"
             maxlength="1"
             size="5"
             placeholder="例：3"
@@ -74,9 +74,9 @@
     <br>
     <table align="center" v-if="countFlg">
       <tr>
-        <td style="text-align: left;">【対象年月・週】：{{ `${String(this.labelNentsuki).substring(0, 4)}/${String(this.labelNentsuki).substring(4, 6)} ${this.labelShu}週目` }}</td>
+        <td style="text-align: left;">【年月・週】：{{ `${String(this.labelNentsuki).substring(0, 4)}/${String(this.labelNentsuki).substring(4, 6)} ${this.labelShu}週目` }}</td>
         <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
-        <td style="text-align: left;">【対象週・日付】：   {{ this.result[0].shuFrom }}  ー   {{ this.result[0].shuTo }}</td>
+        <td style="text-align: left;">【週・日付】：   {{ this.result[0].shuFrom }}  ー   {{ this.result[0].shuTo }}</td>
       </tr>
     </table>
     <div style="overflow-y: auto;">
@@ -85,7 +85,7 @@
           <td style="background-color: greenyellow;">タレント名 </td>
           <td style="background-color: greenyellow;">週間出演番組本数 </td>
           <td style="background-color: greenyellow;">出演番組（直近） </td>
-          <td style="background-color: greenyellow;">オンエア日（直近） </td>
+          <td style="background-color: greenyellow;">オンエア日時（直近） </td>
         </tr>
         <tr v-for="(item, key) in result" :key="key">
           <td><router-link :to="{ name: 'TalentDetail', params: { nentsuki: this.labelNentsuki, shu: this.labelShu, talentId: item.talentId } }">{{ item.talentName }}</router-link></td>
@@ -184,15 +184,15 @@ export default {
       this.fetchData();
     },
     async fetchData() {
-      // ① 対象年月、対象週が必須で入力されていること。
+      // ① 年月、対象週が必須で入力されていること。
       if(this.nentsuki === "" || this.shu  === "") {
-        this.msg = "対象年月、対象週が必須です。";
+        this.msg = "年月、週が必須です。";
         this.$emit('on-message', this.msg);
         return;
       }
-      // ②対象年月がYYYY / MM形式であること。
+      // ②年月がYYYY / MM形式であること。
 
-      // ③対象週が数値かつ、1～5の数値のいずれかであること。 
+      // ③週が数値かつ、1～5の数値のいずれかであること。 
 
       // ④タレントが30桁以内であること。
 

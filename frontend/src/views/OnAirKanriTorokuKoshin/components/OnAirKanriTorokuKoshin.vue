@@ -17,7 +17,7 @@
         />
       </tr>
       <tr v-if="!idRefDialogComponent">
-        <td>オンエア日： </td>
+        <td>オンエア日時： </td>
         <td class="date-picker">
           <Datepicker v-model="onAirDay" @input="updateFormattedDate" :style="{ width: '250px' }" language="ja" v-show="mode === '1' || !idRefDialogComponent"></Datepicker>
         </td>
@@ -85,13 +85,13 @@
         </td>
       </tr>
       <tr>
-        <td>対象年月・週： </td>
+        <td>年月・週： </td>
         <td>
           <Field 
             name="nentsukiShu" 
             v-model="nentsukiShu"
             size="15"
-            label="対象年月・週"
+            label="年月・週"
             rules="required"
             :disabled="true" 
           />

@@ -13,16 +13,16 @@
     <br>
     <table align="center" v-if="countFlg">
       <tr>
-        <td style="text-align: left;">【対象年月・週】：{{ `${String(this.nentsuki).substring(0, 4)}/${String(this.nentsuki).substring(4, 6)} ${this.shu}週目` }}</td>
+        <td style="text-align: left;">【年月・週】：{{ `${String(this.nentsuki).substring(0, 4)}/${String(this.nentsuki).substring(4, 6)} ${this.shu}週目` }}</td>
         <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
-        <td style="text-align: left;">【対象週・日付】：   {{ this.result[0].shuFrom }}  ー   {{ this.result[0].shuTo }}</td>
+        <td style="text-align: left;">【週・日付】：   {{ this.result[0].shuFrom }}  ー   {{ this.result[0].shuTo }}</td>
       </tr>
     </table>
     <table align="center" border="1" style="border-collapse: collapse;" v-if="countFlg">
       <tr>
         <td style="background-color: greenyellow;">出演番組 </td>
         <td style="background-color: greenyellow;">放送局（チャンネル） </td>
-        <td style="background-color: greenyellow;">オンエア日</td>
+        <td style="background-color: greenyellow;">オンエア日時</td>
         <td style="background-color: greenyellow;">放送時間</td>
         <td style="background-color: greenyellow;">番組ジャンル</td>
       </tr>
