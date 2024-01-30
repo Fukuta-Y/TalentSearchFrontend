@@ -16,6 +16,7 @@
               v-bind:prop-nentsuki="nentsuki"
               v-bind:prop-shu="shu"
               v-bind:prop-talent-name="talentName"
+              v-bind:mode="mode"
               v-on:on-message="receiveMessage"
           />
         </div>
@@ -38,6 +39,9 @@ export default {
       type: String,
     },
     talentName: {
+      type: String,
+    },
+    mode: {
       type: String,
     },
   },

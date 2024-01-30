@@ -44,8 +44,8 @@
         <td>タレント名： </td>
         <td>
           <Field 
-            name="name" 
-            v-model="name"
+            name="talentName" 
+            v-model="talentName"
             label="タレント名"
             size="30"
             maxlength="30"
@@ -55,7 +55,7 @@
       </tr>
       <tr>
         <td colspan="2"> 
-          <ErrorMessage name="name" />
+          <ErrorMessage name="talentName" />
         </td> 
       </tr>
     </table>
@@ -119,6 +119,8 @@
 import { Field, ErrorMessage } from 'vee-validate'
 import axios from 'axios'
 import moment from 'moment';
+import msgList from '../../../router/msgList';
+
 export default {
   name: 'WeekTalentShutsuenJoken',
   props: {
@@ -129,6 +131,9 @@ export default {
       type: Number,
     },
     propTalentName: {
+      type: String,
+    },
+    mode: {
       type: String,
     },
   },
@@ -143,7 +148,7 @@ export default {
       shu: '',
       labelNentsuki: '',
       labelShu: '',
-      name: '',
+      talentName: '',
       shuFrom: '',
       shuTo: '',
       msg: '',
@@ -156,11 +161,23 @@ export default {
   },
   async created() {
     this.init();
-    if(this.propNentsuki && this.propShu && this.propTalentName) {
+    //（初期表示時【値が渡されている来ている場合のみ】）
+    if (this.mode === '2') {
       this.nentsuki = this.propNentsuki;
-      this.shu = this.propShu.toString();
-      this.name = this.propTalentName;
+      this.shu = this.propShu;
+      this.talentName = this.propTalentName;
+      console.log(this.nentsuki);
+      console.log(this.shu);
+
+      // 年月については前画面からの値が全て入っている場合は検索処理を行う。
+      if (this.nentsuki.trim() == '' || this.shu.trim() == '') {
+        this.$emit('on-message', msgList['MSG006']);
+        return;
+      }
+
+      // 前画面からの値で検索処理を行う。
       this.fetchData();
+
     }
   },
   computed: {
@@ -199,7 +216,7 @@ export default {
       this.labelNentsuki = this.nentsuki;
       this.labelShu = this.shu;
 
-      const url = "http://localhost:8081/api/shukanTalentJohoBFF?nentsuki=" + this.nentsuki + "&shu=" + this.shu + "&talentName=" + this.name;
+      const url = "http://localhost:8081/api/shukanTalentJohoBFF?nentsuki=" + this.nentsuki + "&shu=" + this.shu + "&talentName=" + this.talentName;
       this.result = await axios.get(url).then(response => (response.data.shukanTalent))
       this.totalPages = Math.ceil(this.result.length / this.pageSize);
       this.resultCount = this.result.length;
@@ -226,7 +243,7 @@ export default {
     init(){
       this.nentsuki = '';
       this.shu = '';
-      this.name = '';
+      this.talentName = '';
       this.shuFrom = '';
       this.shuTo = '';
       this.countFlg = false;

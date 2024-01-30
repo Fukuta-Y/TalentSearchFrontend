@@ -26,7 +26,7 @@ export default {
                     id: 1,
                     text: '業務',
                     children: [
-                        { id: 2, text: '週間タレント出演検索', url: 'http://localhost:8080/WeekTalentShutsuenBaseForm' },
+                        { id: 2, text: '週間タレント出演検索', url: 'http://localhost:8080/WeekTalentShutsuenBaseForm/mode=1' },
                     ]
                 },
                 {
