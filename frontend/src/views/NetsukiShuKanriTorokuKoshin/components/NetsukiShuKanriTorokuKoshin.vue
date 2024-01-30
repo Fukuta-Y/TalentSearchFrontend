@@ -218,7 +218,7 @@ export default {
       }
 
       // ⑤ 週が数値であること。
-      if (this.shu.trim() !== '' && !this.isValidNumber(Number(this.shu))) {
+      if (this.shu.toString().trim() !== '' && !this.isValidNumber(Number(this.shu))) {
         this.msg = msgList['MSG003'].replace('{0}', "週");
         this.msg = this.msg.replace('{1}', "数値");
         this.$emit('on-message', this.msg);
@@ -226,7 +226,7 @@ export default {
       }
 
       // ⑥ 週が1～5の数値のいずれかであること。
-      if (this.shu.trim() !== '' && !this.isValidRange(Number(this.shu), 1, 5)) {
+      if (this.shu.toString().trim() !== '' && !this.isValidRange(Number(this.shu), 1, 5)) {
         this.msg = msgList['MSG004'].replace('{0}', "週");
         this.msg = this.msg.replace('{1}', "1");
         this.msg = this.msg.replace('{2}', "5");
@@ -289,6 +289,10 @@ export default {
     isValidNumber(value) {
       // 数値であるかどうかをチェック
       return typeof value === 'number';
+    },
+    isValidRange(value) {
+      // 1から5の範囲内にあるかどうかをチェック
+      return value >= 1 && value <= 5;
     },
   },
 }

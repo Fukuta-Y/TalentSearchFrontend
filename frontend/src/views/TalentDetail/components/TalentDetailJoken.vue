@@ -91,7 +91,7 @@ export default {
     // 初期化
     this.btnClear();
     // ① 前画面からのパラメータは年月、週、タレントIDは必須で入力されていること。
-    if (this.nentsuki.trim() === '' || this.shu.trim() === '' || this.talentId.trim() === '') {
+    if (this.nentsuki.trim() === '' || this.shu.toString().trim() === '' || this.talentId.trim() === '') {
       this.$emit('on-message', msgList['MSG006']);
       return;
     }

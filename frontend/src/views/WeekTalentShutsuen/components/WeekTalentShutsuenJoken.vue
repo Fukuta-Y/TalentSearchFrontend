@@ -171,7 +171,7 @@ export default {
       this.shu = this.propShu;
       this.talentName = this.propTalentName;
       // ① 前画面からのパラメータは年月は必須で入力されていること。
-      if (this.nentsuki.trim() === '' || this.shu.trim() === '') {
+      if (this.nentsuki.trim() === '' || this.shu.toString().trim() === '') {
         this.$emit('on-message', msgList['MSG006']);
         return;
       }
@@ -233,7 +233,7 @@ export default {
     },
     async fetchData() {
       // ① 年月、週が必須で入力されていること。
-      if (this.nentsuki.trim() === '' || this.shu.trim() === '') {
+      if (this.nentsuki.trim() === '' || this.shu.toString().trim() === '') {
         this.msg = msgList['MSG002'].replace('{0}', "年月と週");
         this.$emit('on-message', this.msg);
         return;
