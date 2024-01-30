@@ -165,21 +165,21 @@ export default {
     },
     async fetchData() {
       // ① IDが入力されている場合は、IDが8桁以内であること。
-      if (this.propId !== '' && !this.isValidMaxLength(this.propId, 8)) {
+      if (this.id !== '' && !this.isValidMaxLength(this.id, 8)) {
         this.msg = msgList['MSG005'].replace('{0}', "ID");
         this.msg = this.msg.replace('{1}', "8文字");
         this.$emit('on-message', this.msg);
         return;
       }
       // ② オンエア日が入力されている場合は、オンエア日がYYYY-MM-DD HH:MM形式であること。
-      if (this.propOnAirDay !== '' && !this.isCheckDateTime(this.propOnAirDay)) {
+      if (this.onAirDay !== '' && !this.isCheckDateTime(this.onAirDay)) {
         this.msg = msgList['MSG003'].replace('{0}', "オンエア日時");
         this.msg = this.msg.replace('{1}', "YYYY-MM-DD HH:MM");
         this.$emit('on-message', this.msg);
         return;
       }
-      if (this.propOnAirDay !== '') {
-        const dateObject = new Date(this.propOnAirDay);
+      if (this.onAirDay !== '') {
+        const dateObject = new Date(this.onAirDay);
         const year = dateObject.getFullYear();
         const month = `0${dateObject.getMonth() + 1}`.slice(-2);
         const day = `0${dateObject.getDate()}`.slice(-2);
