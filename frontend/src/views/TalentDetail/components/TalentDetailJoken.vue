@@ -88,6 +88,8 @@ export default {
     }
   },
   async created() {
+    // 初期化
+    this.btnClear();
     // ① 前画面からのパラメータは年月、週、タレントIDは必須で入力されていること。
     if (this.nentsuki.trim() === '' || this.shu.trim() === '' || this.talentId.trim() === '') {
       this.$emit('on-message', msgList['MSG006']);
@@ -166,6 +168,7 @@ export default {
     },
     btnClear() {
       this.init();
+      this.$emit('on-message', this.msg);
     },
     init(){
       this.shuFrom = '';

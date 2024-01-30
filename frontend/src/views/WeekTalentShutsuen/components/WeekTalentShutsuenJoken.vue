@@ -163,7 +163,8 @@ export default {
     }
   },
   async created() {
-    this.init();
+    // 初期化
+    this.btnClear();
     //（初期表示時【値が渡されている来ている場合のみ】）
     if (this.mode === '2') {
       this.nentsuki = this.propNentsuki;
@@ -279,7 +280,7 @@ export default {
         this.totalPages = Math.ceil(this.result.length / this.pageSize);
         this.resultCount = this.result.length;
       } else {
-        this.msg ="検索結果が0件です。";
+        this.msg =  msgList['INFO001'];
         this.$emit('on-message', this.msg);
         this.countFlg = false;
       }

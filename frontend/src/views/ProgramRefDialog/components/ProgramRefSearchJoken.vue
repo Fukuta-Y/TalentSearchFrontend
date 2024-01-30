@@ -132,13 +132,15 @@ export default {
       msg: '',
       countFlg: false,
       result: [],
+      url: '',
       currentPage: 1,
       pageSize: 10, // 1ページあたりのアイテム数
       totalPages: 0,
     }
   },
   async created() {
-    this.init();
+    // 初期化
+    this.btnClear();
     if(this.propProgramId && this.propProgramName) {
       this.programId = this.propProgramId
       this.programName = this.propProgramName
@@ -180,15 +182,18 @@ export default {
         this.$emit('on-message', this.msg);
         return;
       }
-      const url = "http://localhost:8081/api/programRefBFF?programId=" + this.programId +"&programName=" + this.programName;
-      this.result = await axios.get(url).then(response => (response.data.programInfoRef));
-      this.totalPages = Math.ceil(this.result.length / this.pageSize);
-      this.resultCount = this.result.length;
-      if(this.result[0].programId !== null) {
+      // 取得処理を開始
+      const programRefBFFUrl= "http://localhost:8081/api/programRefBFF?programId={0}&programName={1}";
+      this.url = programRefBFFUrl.replace('{0}', this.programId);
+      this.url = this.url.replace('{1}', this.programName);
+      this.result = await axios.get(this.url).then(response => (response.data.programInfoRef));
+      if (this.result != null && this.result[0].programId !== null) {
         this.countFlg = true;
         this.$emit('on-message', "");
+        this.totalPages = Math.ceil(this.result.length / this.pageSize);
+        this.resultCount = this.result.length;
       } else {
-        this.msg = "検索結果が0件です。";
+        this.msg = msgList['INFO001'];
         this.$emit('on-message', this.msg);
         this.countFlg = false;
       }

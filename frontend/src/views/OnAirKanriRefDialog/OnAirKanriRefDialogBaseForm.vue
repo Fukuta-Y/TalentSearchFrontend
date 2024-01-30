@@ -1,6 +1,7 @@
 <template>
   <div class="modal-container dialog-overlay" v-if="isOpen">
     <div class="modal-content dialog-content">
+      <ErrorMessage v-if="message" v-bind:prop-message="message" />
       <OnAirKanriRefSearchJoken 
           v-bind:prop-id="propId"
           v-bind:prop-on-air-day="propOnAirDay"
@@ -12,8 +13,7 @@
   </div>
 </template>
 <script>
-// import CommonHeader from '../common/CommonHeader.vue'
-// import ErrorMessage from '../common/ErrorMessage.vue'
+import ErrorMessage from '../common/ErrorMessage.vue'
 import OnAirKanriRefSearchJoken from './components/OnAirKanriRefSearchJoken.vue'
 export default {
   name: 'OnAirKanriRefDialogBaseForm',
@@ -30,8 +30,7 @@ export default {
     },
   },
   components: {
-    // CommonHeader,
-    // ErrorMessage,
+    ErrorMessage,
     OnAirKanriRefSearchJoken,
   },
   emits: ['on-select-id', 'close'],

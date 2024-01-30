@@ -132,6 +132,8 @@ export default {
     };
   },
   async created() {
+    // 初期化
+    this.btnClear();
     // 更新モードの場合
     if (this.programId !== undefined) {
       // ① 前画面からのパラメータは番組IDは必須で入力されていること。

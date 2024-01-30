@@ -1,20 +1,20 @@
 <template>
   <div class="modal-container dialog-overlay" v-if="isOpen">
     <div class="modal-content dialog-content">
-    <NetsukiShuKanriRefSearchJoken 
-        v-bind:prop-nentsuki-shu="propNentsukiShu"
-        v-bind:is-nentsuki-shu="isNentsukiShu"
-        v-on:on-select-nentsuki-shu="receiveSelectNentsukiShu"
-        v-on:on-message="receiveMessage"
-      />
+      <ErrorMessage v-if="message" v-bind:prop-message="message" />
+      <NetsukiShuKanriRefSearchJoken 
+          v-bind:prop-nentsuki-shu="propNentsukiShu"
+          v-bind:is-nentsuki-shu="isNentsukiShu"
+          v-on:on-select-nentsuki-shu="receiveSelectNentsukiShu"
+          v-on:on-message="receiveMessage"
+        />
       <button @click="closeDialog">閉じる</button>
     </div>
   </div>
 </template>
 
 <script>
-// import CommonHeader from '../common/CommonHeader.vue'
-// import ErrorMessage from '../common/ErrorMessage.vue'
+import ErrorMessage from '../common/ErrorMessage.vue'
 import NetsukiShuKanriRefSearchJoken from './components/NetsukiShuKanriRefSearchJoken.vue'
 export default {
   name: 'NetsukiShuKanriRefDialogBaseForm',
@@ -31,8 +31,7 @@ export default {
     },
   },
   components: {
-    // CommonHeader,
-    // ErrorMessage,
+    ErrorMessage,
     NetsukiShuKanriRefSearchJoken,
   },
   emits: ['on-select-nentsuki-shu', 'close'],

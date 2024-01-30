@@ -190,7 +190,7 @@ export default {
   },
   async created() {
       // 初期化
-      this.init();
+      this.btnClear();
       // ① 更新モードの場合は、前画面からのパラメータはタレントIDは必須で入力されていること。
       if (this.mode !== '1') {
         if (this.propId.trim() === '') {
@@ -353,6 +353,15 @@ export default {
       }
 
       // ③ オンエア日がYYYY-MM-DD HH:MM形式であること。
+      if (this.onAirDay !== '') {
+        const dateObject = new Date(this.onAirDay);
+        const year = dateObject.getFullYear();
+        const month = `0${dateObject.getMonth() + 1}`.slice(-2);
+        const day = `0${dateObject.getDate()}`.slice(-2);
+        const hours = `0${dateObject.getHours()}`.slice(-2);
+        const minutes = `0${dateObject.getMinutes()}`.slice(-2);
+        this.onAirDay = `${year}-${month}-${day} ${hours}:${minutes}`;
+      }
       if (!this.isCheckDateTime(this.onAirDay)) {
         this.msg = msgList['MSG003'].replace('{0}', "オンエア日時");
         this.msg = this.msg.replace('{1}', "YYYY-MM-DD HH:MM");

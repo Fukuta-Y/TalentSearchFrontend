@@ -1,6 +1,7 @@
 <template>
   <div class="modal-container dialog-overlay" v-if="isOpen">
     <div class="modal-content dialog-content">
+    <ErrorMessage v-if="message" v-bind:prop-message="message" />
     <TalentRefSearchJoken 
         v-bind:prop-talent-id="propTalentId"
         v-bind:prop-talent-name="propTalentName"
@@ -14,8 +15,7 @@
 </template>
 
 <script>
-// import CommonHeader from '../common/CommonHeader.vue'
-// import ErrorMessage from '../common/ErrorMessage.vue'
+import ErrorMessage from '../common/ErrorMessage.vue'
 import TalentRefSearchJoken from './components/TalentRefSearchJoken.vue'
 export default {
   props: {
@@ -34,8 +34,7 @@ export default {
     },
   },
   components: {
-    // CommonHeader,
-    // ErrorMessage,
+    ErrorMessage,
     TalentRefSearchJoken,
   },
   emits: ['on-select-talent', 'close'],

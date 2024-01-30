@@ -1,6 +1,7 @@
 <template>
   <div class="modal-container dialog-overlay" v-if="isOpen">
     <div class="modal-content dialog-content">
+    <ErrorMessage v-if="message" v-bind:prop-message="message" />
     <ProgramRefSearchJoken 
         v-bind:prop-program-id="propProgramId"
         v-bind:prop-program-name="propProgramName"
@@ -14,8 +15,7 @@
 </template>
 
 <script>
-// import CommonHeader from '../common/CommonHeader.vue'
-// import ErrorMessage from '../common/ErrorMessage.vue'
+import ErrorMessage from '../common/ErrorMessage.vue'
 import ProgramRefSearchJoken from './components/ProgramRefSearchJoken.vue'
 export default {
   name: 'ProgramRefDialogBaseForm',
@@ -35,8 +35,7 @@ export default {
     },
   },
   components: {
-    // CommonHeader,
-    // ErrorMessage,
+    ErrorMessage,
     ProgramRefSearchJoken,
   },
   emits: ['on-select-program', 'close'],

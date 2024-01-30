@@ -132,6 +132,8 @@ export default {
     },
   },
   async created() {
+    this.init();
+    this.$emit('on-message', this.msg);
     this.fetchData();
   },
   methods: {
@@ -144,8 +146,8 @@ export default {
           this.nen = result.nentsuki.toString().substring(0, 4);
           this.tsuki = result.nentsuki.toString().substring(4);
           this.shu = result.shu;
-          this.shuFrom = result.shuFrom;
-          this.shuTo = result.shuTo;
+          this.shuFrom = result.shuFrom.toString().substring(0, 8);
+          this.shuTo = result.shuTo.toString().substring(0, 8);
         }
       }
     },

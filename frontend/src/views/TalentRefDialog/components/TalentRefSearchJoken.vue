@@ -127,15 +127,17 @@ export default {
       talentId: '',
       talentName: '',
       msg: '',
+      url: '',
       countFlg: false,
       result: {},
       currentPage: 1,
-      pageSize: 10, // Update to 10 items per page
+      pageSize: 10,
       totalPages: 0,
     }
   },
   async created() {
-    this.init();
+    // 初期化
+    this.btnClear();
     if(this.propTalentId && this.propTalentName) {
       this.talentId = this.propTalentId;
       this.talentName = this.propTalentName;
@@ -177,15 +179,18 @@ export default {
         this.$emit('on-message', this.msg);
         return;
       }
-      const url = "http://localhost:8081/api/talentRefBFF?talentId=" + this.talentId +"&talentName=" + this.talentName;
-      this.result = await axios.get(url).then(response => (response.data.mTalent));
-      this.resultCount = this.result.length; // 件数を更新
-      this.totalPages = Math.ceil(this.result.length / this.pageSize);
-      if(this.result[0].talentId !== null) {
+      // 取得処理を開始
+      const talentRefBFFUrl = "http://localhost:8081/api/talentRefBFF?talentId={0}&talentName={1}";
+      this.url = talentRefBFFUrl.replace('{0}', this.talentId);
+      this.url = this.url.replace('{1}', this.talentName);
+      this.result = await axios.get(this.url).then(response => (response.data.mTalent));
+      if (this.result.length !== 0) {
         this.countFlg = true;
         this.$emit('on-message', "");
+        this.resultCount = this.result.length; // 件数を更新
+        this.totalPages = Math.ceil(this.result.length / this.pageSize);
       } else {
-        this.msg ="検索結果が0件です。"
+        this.msg = msgList['INFO001'];
         this.$emit('on-message', this.msg)
         this.countFlg = false
       }

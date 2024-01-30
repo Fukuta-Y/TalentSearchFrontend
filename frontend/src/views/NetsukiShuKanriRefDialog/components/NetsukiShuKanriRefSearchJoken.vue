@@ -109,6 +109,8 @@
 <script>
 import { Field, ErrorMessage } from 'vee-validate'
 import axios from 'axios'
+import msgList from '../../../router/msgList';
+
 export default {
   name: 'NetsukiShuKanriRefSearchJoken',
   props: {
@@ -134,15 +136,17 @@ export default {
       shu: '',
       nentsuki: '',
       msg: '',
+      url: '',
       countFlg: false,
       result: {},
       currentPage: 1,
-      pageSize: 10, // Update to 10 items per page
+      pageSize: 10,
       totalPages: 0,
     }
   },
   async created() {
-    this.init();
+    // 初期化
+    this.btnClear();
     if(this.propNentsukiShu) {
       this.nen = this.propNentsukiShu.toString().substring(0, 4);
       this.tsuki = this.propNentsukiShu.toString().substring(4, 6);
@@ -174,16 +178,19 @@ export default {
       if (this.tsuki !== '') {
         this.nentsuki = this.nen + this.tsuki.padStart(2, '0');
       }
-      const url = "http://localhost:8081/api/nentsukiShuKanrRefBFF?nentsuki=" + this.nentsuki + "&shu=" + this.shu;
-      this.result = await axios.get(url).then(response => (response.data.mNentsukiShuKanri));
-      this.resultCount = this.result.length; // 件数を更新
-      this.totalPages = Math.ceil(this.result.length / this.pageSize);
-      this.resultCount = this.result.length;
-      if(this.result[0].nentsuki !== null) {
+      // 取得処理を開始
+      const nentsukiShuKanrRefURL = "http://localhost:8081/api/nentsukiShuKanrRefBFF?nentsuki={0}&shu={1}";
+      this.url = nentsukiShuKanrRefURL.replace('{0}', this.nentsuki);
+      this.url = this.url.replace('{1}', this.shu);
+      this.result = await axios.get(this.url).then(response => (response.data.mNentsukiShuKanri));
+      if (this.result.length !== 0) {
         this.countFlg = true;
         this.$emit('on-message', "");
+        this.resultCount = this.result.length; // 件数を更新
+        this.totalPages = Math.ceil(this.result.length / this.pageSize);
+        this.resultCount = this.result.length;
       } else {
-        this.msg ="検索結果が0件です。";
+        this.msg = msgList['INFO001'];
         this.$emit('on-message', this.msg);
         this.countFlg = false;
       }

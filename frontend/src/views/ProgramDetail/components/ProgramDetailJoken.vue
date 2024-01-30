@@ -83,7 +83,8 @@ export default {
     }
   },
   async created() {
-
+    // 初期化
+    this.btnClear();
     // ① 前画面からのパラメータは番組ID、オンエア日、年月、週は必須で入力されていること。
     if (this.programId.trim() === '' || this.onAirDay.trim() === '' || this.nentsuki.trim() === '' || this.shu.trim() === '') {
       this.$emit('on-message', msgList['MSG006']);
@@ -172,6 +173,7 @@ export default {
     },
     btnClear() {
       this.init();
+      this.$emit('on-message', this.msg);
     },
     init(){
       this.countFlg = false;

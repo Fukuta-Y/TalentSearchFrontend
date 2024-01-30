@@ -127,6 +127,7 @@ export default {
       id: '',
       onAirDay: '',
       msg: '',
+      url: '',
       countFlg: false,
       result: {},
       formattedDate: null,
@@ -172,12 +173,6 @@ export default {
         return;
       }
       // ② オンエア日が入力されている場合は、オンエア日がYYYY-MM-DD HH:MM形式であること。
-      if (this.onAirDay !== '' && !this.isCheckDateTime(this.onAirDay)) {
-        this.msg = msgList['MSG003'].replace('{0}', "オンエア日時");
-        this.msg = this.msg.replace('{1}', "YYYY-MM-DD HH:MM");
-        this.$emit('on-message', this.msg);
-        return;
-      }
       if (this.onAirDay !== '') {
         const dateObject = new Date(this.onAirDay);
         const year = dateObject.getFullYear();
@@ -187,15 +182,23 @@ export default {
         const minutes = `0${dateObject.getMinutes()}`.slice(-2);
         this.onAirDay = `${year}-${month}-${day} ${hours}:${minutes}`;
       }
-      const url = "http://localhost:8081/api/onAirKanriRefBFF?id=" + this.id +"&onAirDay=" + this.onAirDay;
-      this.result = await axios.get(url).then(response => (response.data.tOnAirKanriRef));
-      this.totalPages = Math.ceil(this.result.length / this.pageSize);
-      this.resultCount = this.result.length;
-      if(this.result[0].id !== null) {
+      if (this.onAirDay !== '' && !this.isCheckDateTime(this.onAirDay)) {
+        this.msg = msgList['MSG003'].replace('{0}', "オンエア日時");
+        this.msg = this.msg.replace('{1}', "YYYY-MM-DD HH:MM");
+        this.$emit('on-message', this.msg);
+        return;
+      }
+      const onAirKanriRefBFFUrl = "http://localhost:8081/api/onAirKanriRefBFF?id={0}&onAirDay={1}";
+      this.url = onAirKanriRefBFFUrl.replace('{0}', this.id);
+      this.url = this.url.replace('{1}', this.onAirDay);
+      this.result = await axios.get(this.url).then(response => (response.data.tOnAirKanriRef));
+      if (this.result.length !== 0) {
         this.countFlg = true;
         this.$emit('on-message', "");
+        this.totalPages = Math.ceil(this.result.length / this.pageSize);
+        this.resultCount = this.result.length;
       } else {
-        this.msg = "検索結果が0件です。";
+        this.msg = msgList['INFO001'];
         this.$emit('on-message', this.msg);
         this.countFlg = false;
       }
