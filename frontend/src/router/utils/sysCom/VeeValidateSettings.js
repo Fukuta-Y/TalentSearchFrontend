@@ -5,7 +5,10 @@ import { parseISO, isValid } from 'date-fns';
 export const commonUtils = {
     // 日付型チェック
     isValidateDate(dateString) {
+        // 引数が8桁でない場合はエラーとする
+        if (!this.isValidJustLength(dateString, 8)) return false;
         const parsedDate = parseISO(dateString.replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3"));
+        console.log(isValid(parsedDate));
         return isValid(parsedDate);
     },
     // 数値型チェック
@@ -19,6 +22,10 @@ export const commonUtils = {
     // 桁数チェック
     isValidMaxLength(value, maxLength) {
         return value.length <= maxLength;
+    },
+    // 桁数チェック
+    isValidJustLength(value, length) {
+        return value.length == length;
     },
     // 有効日付のチェック
     isCheckDateTime(targetDate) {

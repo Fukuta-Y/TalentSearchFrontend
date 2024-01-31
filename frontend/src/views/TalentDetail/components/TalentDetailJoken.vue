@@ -3,22 +3,22 @@
     <table align="center">
       <tr>
         <td>出演者：</td>
-        <td v-if="countFlg">{{ this.result[0].talentName }}</td>
+        <td v-if="isCount">{{ this.result[0].talentName }}</td>
       </tr>
       <tr>
         <td>出演者ジャンル： </td>
-        <td v-if="countFlg">{{ this.result[0].shutsuenshaGenre }}</td>
+        <td v-if="isCount">{{ this.result[0].shutsuenshaGenre }}</td>
       </tr>
     </table>
     <br>
-    <table align="center" v-if="countFlg">
+    <table align="center" v-if="isCount">
       <tr>
         <td style="text-align: left;">【年月・週】：{{ `${String(this.nentsuki).substring(0, 4)}/${String(this.nentsuki).substring(4, 6)} ${this.shu}週目` }}</td>
         <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
         <td style="text-align: left;">【週・日付】：   {{ this.result[0].shuFrom }}  ー   {{ this.result[0].shuTo }}</td>
       </tr>
     </table>
-    <table align="center" border="1" style="border-collapse: collapse;" v-if="countFlg">
+    <table align="center" border="1" style="border-collapse: collapse;" v-if="isCount">
       <tr>
         <td style="background-color: greenyellow;">出演番組 </td>
         <td style="background-color: greenyellow;">放送局（チャンネル） </td>
@@ -34,7 +34,7 @@
         <td>{{ item.programGenre }} </td>
       </tr>
     </table>
-    <div v-if="countFlg">
+    <div v-if="isCount">
       <div class="pagination-container">
         <a @click="changePage(1)" :disabled="currentPage === 1" class="pagination-link">最初</a>
         <a
@@ -81,7 +81,7 @@ export default {
       shuTo: '',
       msg: '',
       url: '',
-      countFlg: false,
+      isCount: false,
       result: {},
       currentPage: 1,
       pageSize: 10, // 1ページあたりのアイテム数
@@ -155,12 +155,12 @@ export default {
       this.url = this.url.replace('{3}', this.talentId);
       this.result = await axios.get(this.url).then(response => (response.data.talentShukanShutsuen));
       if(this.result != null && this.result[0].talentName !== null) {
-        this.countFlg = true;
+        this.isCount = true;
         this.totalPages = Math.ceil(this.result.length / this.pageSize);
         this.resultCount = this.result.length;
       } else {
         this.msg = "対象タレントID（" + this.talentId +"）は【" + this.nentsuki.toString().substring(0, 4) + "年" +  this.nentsuki.toString().substring(4) + "月 " + this.shu + "週】に出演予定がありません。";
-        this.countFlg = false;
+        this.isCount = false;
         this.$emit('on-message', this.msg);
       }
     },
@@ -178,7 +178,7 @@ export default {
     init(){
       this.shuFrom = '';
       this.shuTo = '';
-      this.countFlg = false;
+      this.isCount = false;
       this.msg = '';
       this.result= { };
     },

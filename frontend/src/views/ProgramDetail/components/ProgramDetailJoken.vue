@@ -3,24 +3,24 @@
     <table align="center">
       <tr>
         <td>番組名： </td>
-        <td v-if="countFlg">{{ this.result[0].programName }}</td>
+        <td v-if="isCount">{{ this.result[0].programName }}</td>
       </tr>
       <tr>
         <td>オンエア日時： </td>
-        <td v-if="countFlg">{{ this.onAirDay }}</td>
+        <td v-if="isCount">{{ this.onAirDay }}</td>
       </tr>
       <tr>
         <td>番組ジャンル： </td>
-        <td v-if="countFlg">{{ this.result[0].programGenre }}</td>
+        <td v-if="isCount">{{ this.result[0].programGenre }}</td>
       </tr>
     </table>
     <br>
-    <table align="center" v-if="countFlg">
+    <table align="center" v-if="isCount">
       <tr>
         <td style="text-align: left;">【年月・週】：{{ `${String(this.nentsuki).substring(0, 4)}/${String(this.nentsuki).substring(4, 6)} ${this.shu}週目` }}</td>
       </tr>
     </table>
-    <table align="center" border="1" style="border-collapse: collapse;" v-if="countFlg">
+    <table align="center" border="1" style="border-collapse: collapse;" v-if="isCount">
       <tr>
         <td style="background-color: greenyellow;">タレント名 </td>
       </tr>
@@ -28,7 +28,7 @@
         <td><router-link :to="{ name: 'TalentDetail', params: { nentsuki: this.nentsuki, shu: this.shu, talentId: item.talentId }}">{{ item.talentName }}</router-link></td>
       </tr>
     </table>
-    <div v-if="countFlg">
+    <div v-if="isCount">
       <div class="pagination-container">
         <a @click="changePage(1)" :disabled="currentPage === 1" class="pagination-link">最初</a>
         <a
@@ -76,7 +76,7 @@ export default {
     return {
       msg: '',
       url: '',
-      countFlg: false,
+      isCount: false,
       result: {},
       currentPage: 1,
       pageSize: 10, // 1ページあたりのアイテム数
@@ -160,13 +160,13 @@ export default {
       this.url = this.url.replace('{4}', this.shu);
       this.result = await axios.get(this.url).then(response => (response.data.programShutsuen));
       if (this.result != '' && this.result[0].programName !== null) {
-        this.countFlg = true;
+        this.isCount = true;
         this.$emit('on-message', "");
         this.totalPages = Math.ceil(this.result.length / this.pageSize);
         this.resultCount = this.result.length;
       } else {
         this.msg = "対象番組ID（" + this.programId + "）は【" + this.nentsuki.toString().substring(0, 4) + "年" + this.nentsuki.toString().substring(4) + "月 " + this.shu + "週】に放送予定がありません。";
-        this.countFlg = false;
+        this.isCount = false;
         this.$emit('on-message', this.msg);
       }
     },
@@ -182,7 +182,7 @@ export default {
       this.$emit('on-message', this.msg);
     },
     init(){
-      this.countFlg = false;
+      this.isCount = false;
       this.msg = '';
       this.result= { };
     },
