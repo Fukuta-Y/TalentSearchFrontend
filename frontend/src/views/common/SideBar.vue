@@ -12,6 +12,7 @@
 <script>
 import HamburgerMenu from './HamburgerMenu.vue';
 import SidebarMenu from './SideBarMenu.vue';
+import { WEEK_TALENT_SHUTSUEN, PROGRAM_TOROKU_KOSHIN, TALENT_TOROKUKOSHIN, NETSUKI_SHU_KANRI_TOROKU_KOSHIN, ON_AIR_KANRI_TOROKU_KOSHIN } from '../../router/constList'
 export default {
     components: {
         HamburgerMenu,
@@ -26,17 +27,17 @@ export default {
                     id: 1,
                     text: '業務',
                     children: [
-                        { id: 2, text: '週間タレント出演検索', url: 'http://localhost:8080/WeekTalentShutsuenBaseForm/1' },
+                        { id: 2, text: '週間タレント出演検索', url: WEEK_TALENT_SHUTSUEN },
                     ]
                 },
                 {
                     id: 10,
                     text: 'マスタ',
                     children: [
-                        { id: 11, text: '番組登録', url: 'http://localhost:8080/ProgramTorokuKoshinBaseForm' },
-                        { id: 12, text: 'タレント登録', url: 'http://localhost:8080/TalentTorokuKoshinBaseForm' },
-                        { id: 13, text: '年月週管理登録', url: 'http://localhost:8080/NetsukiShuKanriTorokuKoshinBaseForm' },
-                        { id: 14, text: 'オンエア管理登録', url: 'http://localhost:8080/OnAirKanriTorokuKoshinBaseForm' },
+                        { id: 11, text: '番組登録', url: PROGRAM_TOROKU_KOSHIN },
+                        { id: 12, text: 'タレント登録', url: TALENT_TOROKUKOSHIN },
+                        { id: 13, text: '年月週管理登録', url: NETSUKI_SHU_KANRI_TOROKU_KOSHIN },
+                        { id: 14, text: 'オンエア管理登録', url: ON_AIR_KANRI_TOROKU_KOSHIN },
                     ]
                 }
             ],
