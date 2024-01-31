@@ -171,9 +171,11 @@ export default {
       talentId: null,
       talentName: '',
       nentsukiShu: null,
+      nen: null,
+      tsuki: null,
+      shu: null,
       propNentsukiShu: null,
       nentsuki: null,
-      shu: null,
       msg: '',
       url: '',
       formattedDate: null,
@@ -405,10 +407,35 @@ export default {
         return;
       }
 
-      // TODO
-      // ⑧年月・週がYYYY/MM W週形式であること。
-      // MSG003（年月・週、YYYY / MM W週）
+      // 年月・週チェック
+      // ⑧ 年月がYYYY/MM/01で有効な日付であること。
+      this.nen =  this.nentsukiShu.toString().slice(0, 4);
+      this.tsuki = this.nentsukiShu.toString().slice(5, 7).padStart(2, '0')
+      this.shu = this.nentsukiShu.toString().slice(-2, -1)
 
+      if (!this.isValidateDate(this.nen + this.tsuki + "01")) {
+        this.msg = msgList['MSG003'].replace('{0}', "年月");
+        this.msg = this.msg.replace('{1}', "有効な日付の年月（YYYYMM)");
+        this.$emit('on-message', this.msg);
+        return;
+      }
+
+      // ⑨ 週が数値であること。
+      if (this.shu !== '' && !this.isValidNumber(Number(this.shu))) {
+        this.msg = msgList['MSG003'].replace('{0}', "週");
+        this.msg = this.msg.replace('{1}', "数値");
+        this.$emit('on-message', this.msg);
+        return;
+      }
+
+      // 10.週が1～5の数値のいずれかであること。
+      if (this.shu !== '' && !this.isValidRange(Number(this.shu), 1, 5)) {
+        this.msg = msgList['MSG004'].replace('{0}', "週");
+        this.msg = this.msg.replace('{1}', "1");
+        this.msg = this.msg.replace('{2}', "5");
+        this.$emit('on-message', this.msg);
+        return;
+      }
 
       // Dateオブジェクトを作成
       const dateObject = new Date(this.onAirDay);
@@ -430,8 +457,8 @@ export default {
         onAirDay: this.onAirDay,
         programId: this.programId,
         talentId: this.talentId,
-        nentsuki: this.nentsukiShu.toString().slice(0, 4) + this.nentsukiShu.toString().slice(5, 7),
-        shu: this.nentsukiShu.toString().slice(-2, -1),
+        nentsuki: this.nen + this.tsuki,
+        shu: this.shu,
         deleteFlg: "0",
         torokuDay: "",
         koushinDay: ""

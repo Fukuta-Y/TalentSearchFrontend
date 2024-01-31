@@ -220,15 +220,17 @@ export default {
         this.$emit('on-message', this.msg);
         return;
       }
+      
 
       // 年月を0埋め形式へ変換
-      if (this.tsuki.trim() === '') {
+      if (this.tsuki.trim() !== '') {
         this.nentsuki = this.nen + this.tsuki.padStart(2, '0');
       }
       // 取得処理を開始
       this.url = NENTSUKI_SHU_KANRI_REF_URL;
       this.url = this.url.replace('{1}', this.nentsuki);
       this.url = this.url.replace('{2}', this.shu);
+      console.log(this.url);
       this.result = await axios.get(this.url).then(response => (response.data.mNentsukiShuKanri));
       if (this.result.length !== 0) {
         this.countFlg = true;
