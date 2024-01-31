@@ -86,6 +86,8 @@ import { format } from 'date-fns';
 import isValid from "date-fns/isValid";
 import parseISO from "date-fns/parseISO";
 import msgList from '../../../router/msgList';
+import constList from '../../../router/constList';
+import { NENTSUKISHUKANRI_URL } from '../../../router/constList';
 
 export default {
   name: 'NetsukiShuKanriTorokuKoshin',
@@ -121,6 +123,7 @@ export default {
       nentsukiShu: null,
       shuFrom: null, 
       shuTo: null,
+      url: '',
       formattedDate: null,
       nentsukiShuRefDialogComponent: false,
     };
@@ -140,8 +143,9 @@ export default {
     async fetchData() {
       // 更新時の場合
       if (this.mode !== '1' && this.propNentsuki !== '' && this.propShu != '')  {
-        const url = "http://localhost:8081/api/nentsukiShuKanrRefBFF?nentsuki=" + this.propNentsuki + "&shu=" + this.propShu;
-        const result = await axios.get(url).then(response => (response.data.mNentsukiShuKanri[0]));
+        this.url = NENTSUKISHUKANRI_URL.replace("{1}", this.propNentsuki);
+        this.url = this.url.replace("{2}", this.propShu);
+        const result = await axios.get(this.url).then(response => (response.data.mNentsukiShuKanri[0]));
         if (result && result.nentsuki !== null) {
           this.nen = result.nentsuki.toString().substring(0, 4);
           this.tsuki = result.nentsuki.toString().substring(4);

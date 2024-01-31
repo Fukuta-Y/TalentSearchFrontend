@@ -54,6 +54,7 @@ import axios from 'axios'
 import isValid from "date-fns/isValid";
 import parseISO from "date-fns/parseISO";
 import msgList from '../../../router/msgList';
+import { PROGRAM_SHUTSUEN_URL } from '../../../router/constList';
 
 export default {
   name: 'ProgramDetailJoken',
@@ -75,6 +76,7 @@ export default {
   data() {
     return {
       msg: '',
+      url: '',
       countFlg: false,
       result: {},
       currentPage: 1,
@@ -151,8 +153,12 @@ export default {
   },
   methods: {
     async fetchData() {
-      const url = "http://localhost:8081/api/programShutsuenBFF?programId=" + this.programId + "&onAirDay=" + this.onAirDay +"&nentsuki=" + this.nentsuki + "&shu=" + this.shu;
-      this.result = await axios.get(url).then(response => (response.data.programShutsuen));
+      // 取得処理を開始
+      this.url = PROGRAM_SHUTSUEN_URL.replace('{1}', this.programId);
+      this.url = this.url.replace('{2}', this.onAirDay);
+      this.url = this.url.replace('{3}', this.nentsuki);
+      this.url = this.url.replace('{4}', this.shu);
+      this.result = await axios.get(this.url).then(response => (response.data.programShutsuen));
       if (this.result != '' && this.result[0].programName !== null) {
         this.countFlg = true;
         this.$emit('on-message', "");

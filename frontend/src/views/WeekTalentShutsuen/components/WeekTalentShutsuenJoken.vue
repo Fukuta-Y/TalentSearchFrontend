@@ -122,6 +122,7 @@ import moment from 'moment';
 import isValid from "date-fns/isValid";
 import parseISO from "date-fns/parseISO";
 import msgList from '../../../router/msgList';
+import { SHUKAN_TALENT_JOHO_URL } from '../../../router/constList';
 
 export default {
   name: 'WeekTalentShutsuenJoken',
@@ -269,10 +270,9 @@ export default {
         return;
       }
       // 取得処理を開始
-      const shukanTalentJohoURL = "http://localhost:8081/api/shukanTalentJohoBFF?nentsuki={0}&shu={1}&talentName={2}";
-      this.url = shukanTalentJohoURL.replace('{0}', this.nentsuki);
-      this.url = this.url.replace('{1}', this.shu);
-      this.url = this.url.replace('{2}', this.talentName);
+      this.url = SHUKAN_TALENT_JOHO_URL.replace('{1}', this.nentsuki);
+      this.url = this.url.replace('{2}', this.shu);
+      this.url = this.url.replace('{3}', this.talentName);
       this.result = await axios.get(this.url).then(response => (response.data.shukanTalent))
       if (this.result != null && this.result[0].talentId !== null) {
         this.countFlg = true;

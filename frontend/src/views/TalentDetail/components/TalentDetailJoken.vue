@@ -60,6 +60,7 @@ import axios from 'axios'
 import isValid from "date-fns/isValid";
 import parseISO from "date-fns/parseISO";
 import msgList from '../../../router/msgList';
+import { TALENT_SHUKAN_SHUTSUEN_JOHO_URL } from '../../../router/constList';
 
 export default {
   name: 'TalentProgramJoken',
@@ -80,6 +81,7 @@ export default {
       shuFrom: '',
       shuTo: '',
       msg: '',
+      url: '',
       countFlg: false,
       result: {},
       currentPage: 1,
@@ -147,8 +149,11 @@ export default {
   },
   methods: {
     async fetchData() {
-      const url = "http://localhost:8081/api/talentShukanShutsuenJohoBFF?nentsuki=" + this.nentsuki + "&shu=" + this.shu + "&talentId=" + this.talentId;
-      this.result = await axios.get(url).then(response => (response.data.talentShukanShutsuen));
+      // 取得処理を開始
+      this.url = TALENT_SHUKAN_SHUTSUEN_JOHO_URL.replace('{1}', this.nentsuki);
+      this.url = this.url.replace('{2}', this.shu);
+      this.url = this.url.replace('{3}', this.talentId);
+      this.result = await axios.get(this.url).then(response => (response.data.talentShukanShutsuen));
       if(this.result != null && this.result[0].talentName !== null) {
         this.countFlg = true;
         this.totalPages = Math.ceil(this.result.length / this.pageSize);
