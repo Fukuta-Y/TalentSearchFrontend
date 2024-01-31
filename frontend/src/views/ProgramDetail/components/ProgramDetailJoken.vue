@@ -207,17 +207,17 @@ export default {
       // 文字列の長さが【maxLength】文字以内であるかどうかをチェック
       return value.length <= maxLength;
     },
-    isCheckDateTime(onAirDay) {
+    isCheckDateTime(targetDate) {
       // 日時の正規表現パターン
       const dateTimePattern = /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/;
 
       // 入力された日時がパターンに一致するかどうかを確認
-      if (!dateTimePattern.test(onAirDay)) {
+      if (!dateTimePattern.test(targetDate)) {
         return false; // パターンに一致しない場合は無効な日時
       }
 
       // 日付の妥当性を検証
-      const inputDate = new Date(onAirDay);
+      const inputDate = new Date(targetDate);
       return !isNaN(inputDate.getTime()); // インスタンスが有効な日時であるかどうか
     },
     underlineNumber(number) {

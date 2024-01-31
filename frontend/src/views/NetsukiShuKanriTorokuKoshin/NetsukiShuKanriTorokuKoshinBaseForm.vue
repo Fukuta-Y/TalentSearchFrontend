@@ -34,7 +34,8 @@ export default {
       type: String,
     },
     shu: {
-      type: String,
+      type: Number,
+      deault: 0,
     },
   },
   components: {

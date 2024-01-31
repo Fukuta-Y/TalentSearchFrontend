@@ -118,6 +118,7 @@ export default {
     return {
       nen: null,
       tsuki: null,
+      nentsuki: null,
       shu: null,
       nentsukiShu: null,
       shuFrom: null, 
@@ -125,6 +126,8 @@ export default {
       url: '',
       formattedDate: null,
       nentsukiShuRefDialogComponent: false,
+      targetFromNentsuki: '',
+      targetToNentsuki: '',
     };
   },
   watch: {
@@ -189,54 +192,174 @@ export default {
     },
     // 登録・更新ボタン
     async btnToroku() {
-      // 全項目入力済みでない場合は止める
-      if (this.nen == null || this.tsuki === null || this.shu === null || this.shuFrom === null || this.shuTo === null) {
-        this.msg = "全項目入力必須";
+
+      //① 全項目が必須で入力されていること。
+      if (this.nen == null || this.tsuki == null || this.shu === null || 
+          this.shuFrom == null || this.shuTo === null) {
+        this.msg = msgList['MSG007'];
         this.$emit('on-message', this.msg);
         return;
       }
 
-      // ①年が入力されている場合は、月と必須で入力であること。
-      if (this.nen.trim() !== '') {
-        if (this.tsuki.trim() === '') {
-          this.msg = msgList['MSG002'].replace('{0}', "年と月");
-          this.$emit('on-message', this.msg);
-          return;
-        }
-      }
-
-      // ②月が入力されている場合は、年と必須で入力であること。
-      if (this.tsuki.trim() !== '') {
-        if (this.nen.trim() === '') {
-          this.msg = msgList['MSG002'].replace('{0}', "年と月");
-          this.$emit('on-message', this.msg);
-          return;
-        }
-      }
-      // ③年月がYYYYMM形式であること。
-      // ④ 年月がYYYY/MM/01で有効な日付であること。
-      if (this.nen.trim() !== '' && this.tsuki.trim() !== '' && !this.isValidateDate(this.nen + this.tsuki + "01")) {
+      // ② 年月がYYYYMM形式であること。
+      // ③ 年月がYYYY/MM/01で有効な日付であること。
+      this.tsuki = this.tsuki.toString().padStart(2, '0')
+      if (!this.isValidateDate(this.nen + this.tsuki + "01")) {
         this.msg = msgList['MSG003'].replace('{0}', "年月");
         this.msg = this.msg.replace('{1}', "有効な日付の年月（YYYYMM)");
         this.$emit('on-message', this.msg);
         return;
       }
 
-      // ⑤ 週が数値であること。
-      if (this.shu.toString().trim() !== '' && !this.isValidNumber(Number(this.shu))) {
+      // ④ 週が数値であること。
+      if (this.shu !== '' && !this.isValidNumber(Number(this.shu))) {
         this.msg = msgList['MSG003'].replace('{0}', "週");
         this.msg = this.msg.replace('{1}', "数値");
         this.$emit('on-message', this.msg);
         return;
       }
 
-      // ⑥ 週が1～5の数値のいずれかであること。
-      if (this.shu.toString().trim() !== '' && !this.isValidRange(Number(this.shu), 1, 5)) {
+      // ⑤ 週が1～5の数値のいずれかであること。
+      if (this.shu !== '' && !this.isValidRange(Number(this.shu), 1, 5)) {
         this.msg = msgList['MSG004'].replace('{0}', "週");
         this.msg = this.msg.replace('{1}', "1");
         this.msg = this.msg.replace('{2}', "5");
         this.$emit('on-message', this.msg);
         return;
+      }
+
+      // ⑥ 週の開始日（日曜日）がYYYY - MM - DD HH: MM形式であること。
+      if (this.shuFrom !== '') {
+        const dateObject = new Date(this.shuFrom);
+        const year = dateObject.getFullYear();
+        const month = `0${dateObject.getMonth() + 1}`.slice(-2);
+        const day = `0${dateObject.getDate()}`.slice(-2);
+        const hours = `0${dateObject.getHours()}`.slice(-2);
+        const minutes = `0${dateObject.getMinutes()}`.slice(-2);
+        this.shuFrom = `${year}-${month}-${day} ${hours}:${minutes}`;
+      }
+      if (!this.isCheckDateTime(this.shuFrom)) {
+        this.msg = msgList['MSG003'].replace('{0}', "週の開始日（日曜日）");
+        this.msg = this.msg.replace('{1}', "YYYY/MM/DD HH:MM");
+        this.$emit('on-message', this.msg);
+        return;
+      }
+
+      // ⑦ 週の終了日（土曜日）がYYYY - MM - DD HH: MM形式であること。
+      if (this.shuTo !== '') {
+        const dateObject = new Date(this.shuTo);
+        const year = dateObject.getFullYear();
+        const month = `0${dateObject.getMonth() + 1}`.slice(-2);
+        const day = `0${dateObject.getDate()}`.slice(-2);
+        const hours = `0${dateObject.getHours()}`.slice(-2);
+        const minutes = `0${dateObject.getMinutes()}`.slice(-2);
+        this.shuTo = `${year}-${month}-${day} ${hours}:${minutes}`;
+      }
+      if (!this.isCheckDateTime(this.shuTo)) {
+        this.msg = msgList['MSG003'].replace('{0}', "週の終了日（土曜日）");
+        this.msg = this.msg.replace('{1}', "YYYY/MM/DD HH:MM");
+        this.$emit('on-message', this.msg);
+        return;
+      }
+
+      // ⑧週の開始日（日曜日）と週の終了日（土曜日）を比較して以下であること。
+      // ・週の開始日（日曜日）より週の終了日（土曜日）の方が日付が後であること。
+      const dateFrom = new Date(this.shuFrom).getTime();
+      const dateTo = new Date(this.shuTo).getTime();
+      if(dateFrom > dateTo) {
+        this.msg = msgList['MSG008'].replace('{0}', "週の終了日（土曜日）");
+        this.msg = this.msg.replace('{1}', "週の開始日（日曜日）");
+        this.$emit('on-message', this.msg);
+        return;
+      }
+      // 週の開始日（日曜日）と週の終了日（土曜日）の日付間隔が6日間であること。
+      if (this.isDateDifferenceDays(dateTo, dateFrom) !== 6) {
+        this.msg = msgList['MSG009'].replace('{0}', "週の開始日（日曜日）");
+        this.msg = this.msg.replace('{1}', "週の終了日（土曜日）");
+        this.msg = this.msg.replace('{2}', "6日間");
+        this.$emit('on-message', this.msg);
+        return;
+      }
+
+      // 年月の変換処理
+      const targetNentsuki = this.nen + "-" + this.tsuki;
+      const targetFromDay = this.shuFrom.toString().substring(8, 10);
+      const targetToDay = this.shuTo.toString().substring(8, 10);
+
+      // 週の開始日が25日以降でない、かつ週の終了日が6日以内でない場合は、
+      // 週の開始日、週の終了日ともに、チェックする年月は入力した年月とする。
+      if(Number(targetFromDay) < 25 && Number(targetToDay) > 6) {
+
+        // ⑥週の開始日（日曜日）のYYYY / MMの内容が年月と合致すること。
+        if (targetNentsuki !== this.shuFrom.substring(0, 7)) {
+          this.msg = msgList['MSG010'].replace('{0}', "週の開始日（日曜日）");
+          this.$emit('on-message', this.msg);
+          return;
+        }
+
+        // ⑦週の終了日（土曜日）のYYYY/MMの内容が年月と合致すること。
+        // →MSG010（週の終了日（土曜日））
+        if (targetNentsuki !== this.shuTo.substring(0, 7)) {
+          this.msg = msgList['MSG010'].replace('{0}', "週の終了日（土曜日）");
+          this.$emit('on-message', this.msg);
+          return;
+        }
+
+      } else {
+
+        // 週の終了日が1-6日未満の場合は、週の開始日の年月チェックする時は、チェックする年月は入力した年月とする。
+        // 週の終了日の年月チェックする時は、チェックする年月は入力した年月の翌月とする。
+        if (targetToDay <= 6) {
+          // 1ヶ月進める
+          const originalDate = new Date(this.nen + "-" + this.tsuki + "-01");
+          originalDate.setMonth(originalDate.getMonth() + 1);
+          // フォーマットされた結果を取得
+          const formattedResult = originalDate.toISOString().slice(0, 7);
+          // 1ヶ月先の年月
+          this.targetToNentsuki = formattedResult
+
+          // ⑥週の開始日（日曜日）のYYYY / MMの内容が年月と合致すること。
+          if (targetNentsuki !== this.shuFrom.substring(0, 7)) {
+            this.msg = msgList['MSG010'].replace('{0}', "週の開始日（日曜日）");
+            this.$emit('on-message', this.msg);
+            return;
+          }
+
+          // ⑦週の終了日（土曜日）のYYYY/MMの内容が年月と合致すること。
+          // →MSG010（週の終了日（土曜日））
+          if (this.targetToNentsuki !== this.shuTo.substring(0, 7)) {
+            this.msg = msgList['MSG010'].replace('{0}', "週の終了日（土曜日）");
+            this.$emit('on-message', this.msg);
+            return;
+          }
+
+        // ※週の開始日が25-31日未満の場合は、週の開始日の年月チェックする時は、チェックする年月は入力した前月とする。
+        // 週の終了日の年月チェック時は、チェックする年月は入力した年月とする。
+        } else if (targetFromDay >= 25) {
+
+            // 1ヶ月戻す
+            const originalDate = new Date(this.nen + "-" + this.tsuki + "-01");
+            originalDate.setMonth(originalDate.getMonth() - 1);
+            // フォーマットされた結果を取得
+            const formattedResult = originalDate.toISOString().slice(0, 7);
+            // 1ヶ月前の年月
+            this.targetFromNentsuki = formattedResult
+
+            // ⑥週の開始日（日曜日）のYYYY / MMの内容が年月と合致すること。
+            if (this.targetFromNentsuki !== this.shuFrom.substring(0, 7)) {
+              this.msg = msgList['MSG010'].replace('{0}', "週の開始日（日曜日）");
+              this.$emit('on-message', this.msg);
+              return;
+            }
+
+            // ⑦週の終了日（土曜日）のYYYY/MMの内容が年月と合致すること。
+            // →MSG010（週の終了日（土曜日））
+            if (targetNentsuki !== this.shuTo.substring(0, 7)) {
+              this.msg = msgList['MSG010'].replace('{0}', "週の終了日（土曜日）");
+              this.$emit('on-message', this.msg);
+              return;
+            }
+        }
       }
 
       // FROMとTOをyyyy-mm-ddに形式変換
@@ -252,7 +375,7 @@ export default {
 
       // データオブジェクトを作成
       const postData = {
-        nentsuki: this.nen + this.tsuki.toString().padStart(2, '0'),
+        nentsuki: this.nen + this.tsuki,
         shu: this.shu,
         shuFrom: fromData,
         shuTo: toData,
@@ -296,6 +419,25 @@ export default {
     isValidRange(value) {
       // 1から5の範囲内にあるかどうかをチェック
       return value >= 1 && value <= 5;
+    },
+    isCheckDateTime(targetDate) {
+      // 日時の正規表現パターン
+      const dateTimePattern = /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/;
+
+      // 入力された日時がパターンに一致するかどうかを確認
+      if (!dateTimePattern.test(targetDate)) {
+        return false; // パターンに一致しない場合は無効な日時
+      }
+
+      // 日付の妥当性を検証
+      const inputDate = new Date(targetDate);
+      return !isNaN(inputDate.getTime()); // インスタンスが有効な日時であるかどうか
+    },
+    isDateDifferenceDays(targerDate1, targetDate2) {
+      const differenceInMilliseconds = Math.abs(targerDate1 - targetDate2);
+      const differenceInDays = differenceInMilliseconds / (1000 * 60 * 60 * 24);
+
+      return differenceInDays;
     },
   },
 }

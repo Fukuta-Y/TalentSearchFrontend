@@ -110,6 +110,8 @@
 import { Field, ErrorMessage } from 'vee-validate'
 import axios from 'axios'
 import msgList from '../../../router/msgList';
+import isValid from "date-fns/isValid";
+import parseISO from "date-fns/parseISO";
 import { NENTSUKI_SHU_KANRI_REF_URL } from '../../../router/constList';
 
 export default {
@@ -176,7 +178,51 @@ export default {
       this.fetchData();
     },
     async fetchData() {
-      if (this.tsuki !== '') {
+      // ①年が入力されている場合は、月と必須で入力であること。
+      if (this.nen.trim() !== '') {
+        if (this.tsuki.trim() === '') {
+          this.msg = msgList['MSG002'].replace('{0}', "年と月");
+          this.$emit('on-message', this.msg);
+          return;
+        }
+      }
+
+      // ②月が入力されている場合は、年と必須で入力であること。
+      if (this.tsuki.trim() !== '') {
+        if (this.nen.trim() === '') {
+          this.msg = msgList['MSG002'].replace('{0}', "年と月");
+          this.$emit('on-message', this.msg);
+          return;
+        }
+      }
+      // ③年月がYYYYMM形式であること。
+      // ④ 年月がYYYY/MM/01で有効な日付であること。
+      if (this.nen.trim() !== '' && this.tsuki.trim() !== '' && !this.isValidateDate(this.nen + this.tsuki + "01")) {
+        this.msg = msgList['MSG003'].replace('{0}', "年月");
+        this.msg = this.msg.replace('{1}', "有効な日付の年月（YYYYMM)");
+        this.$emit('on-message', this.msg);
+        return;
+      }
+
+      // ⑤ 週が数値であること。
+      if (this.shu.toString().trim() !== '' && !this.isValidNumber(Number(this.shu))) {
+        this.msg = msgList['MSG003'].replace('{0}', "週");
+        this.msg = this.msg.replace('{1}', "数値");
+        this.$emit('on-message', this.msg);
+        return;
+      }
+
+      // ⑥ 週が1～5の数値のいずれかであること。
+      if (this.shu.toString().trim() !== '' && !this.isValidRange(Number(this.shu), 1, 5)) {
+        this.msg = msgList['MSG004'].replace('{0}', "週");
+        this.msg = this.msg.replace('{1}', "1");
+        this.msg = this.msg.replace('{2}', "5");
+        this.$emit('on-message', this.msg);
+        return;
+      }
+
+      // 年月を0埋め形式へ変換
+      if (this.tsuki.trim() === '') {
         this.nentsuki = this.nen + this.tsuki.padStart(2, '0');
       }
       // 取得処理を開始
@@ -217,6 +263,22 @@ export default {
       this.countFlg = false;
       this.msg = '';
       this.result = {};
+    },
+    isValidDate(dateString) {
+      return isNaN(Date.parse(dateString));
+    },
+    isValidateDate(dateString) {
+      // 有効日付チェック
+      const parsedDate = parseISO(dateString.replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3"));
+      return isValid(parsedDate);
+    },
+    isValidNumber(value) {
+      // 数値であるかどうかをチェック
+      return typeof value === 'number';
+    },
+    isValidRange(value) {
+      // 1から5の範囲内にあるかどうかをチェック
+      return value >= 1 && value <= 5;
     },
     underlineNumber(number) {
       // 数字にアンダーラインをつけるためのスタイルを適用するメソッド
