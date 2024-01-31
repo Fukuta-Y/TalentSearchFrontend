@@ -57,7 +57,7 @@
     <br>
     <br>
     <div style="overflow-y: auto;">
-      <table align="center" border="1" style="border-collapse: collapse;" v-if="countFlg">
+      <table align="center" border="1" style="border-collapse: collapse;" v-if="isCount">
         <tr>
           <td style="background-color: greenyellow;"></td>
           <td style="background-color: greenyellow;">タレントID </td>
@@ -76,7 +76,7 @@
           <td v-if="isTalentToroku">{{ item.genreId }} </td>
         </tr>
       </table>
-      <div v-if="countFlg">
+      <div v-if="isCount">
         <div class="pagination-container">
           <a @click="changePage(1)" :disabled="currentPage === 1" class="pagination-link">最初</a>
           <a
@@ -130,7 +130,7 @@ export default {
       talentName: '',
       msg: '',
       url: '',
-      countFlg: false,
+      isCount: false,
       result: {},
       currentPage: 1,
       pageSize: 10,
@@ -187,14 +187,14 @@ export default {
       this.url = this.url.replace('{2}', this.talentName);
       this.result = await axios.get(this.url).then(response => (response.data.mTalent));
       if (this.result.length !== 0) {
-        this.countFlg = true;
+        this.isCount = true;
         this.$emit('on-message', "");
         this.resultCount = this.result.length; // 件数を更新
         this.totalPages = Math.ceil(this.result.length / this.pageSize);
       } else {
         this.msg = msgList['INFO001'];
         this.$emit('on-message', this.msg)
-        this.countFlg = false
+        this.isCount = false
       }
     },
     changePage(pageNumber) {
@@ -213,7 +213,7 @@ export default {
     init(){
       this.talentId = '';
       this.talentName = '';
-      this.countFlg = false;
+      this.isCount = false;
       this.msg = '';
       this.result = {};
     },

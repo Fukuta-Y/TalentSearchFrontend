@@ -57,7 +57,7 @@
     <br>
     <br>
     <div style="overflow-y: auto;">
-      <table align="center" border="1" style="border-collapse: collapse;" v-if="countFlg">
+      <table align="center" border="1" style="border-collapse: collapse;" v-if="isCount">
         <!-- テーブルのヘッダー部分 -->
         <tr>
           <td style="background-color: greenyellow;"></td>
@@ -80,7 +80,7 @@
           <td v-if="isProgramToroku">{{ item.genreId }} </td>
         </tr>
       </table>
-      <div v-if="countFlg">
+      <div v-if="isCount">
         <div class="pagination-container">
           <a @click="changePage(1)" :disabled="currentPage === 1" class="pagination-link">最初</a>
           <a
@@ -132,7 +132,7 @@ export default {
       programId: '',
       programName: '',
       msg: '',
-      countFlg: false,
+      isCount: false,
       result: [],
       url: '',
       currentPage: 1,
@@ -190,14 +190,14 @@ export default {
       this.url = this.url.replace('{2}', this.programName);
       this.result = await axios.get(this.url).then(response => (response.data.programInfoRef));
       if (this.result != null && this.result[0].programId !== null) {
-        this.countFlg = true;
+        this.isCount = true;
         this.$emit('on-message', "");
         this.totalPages = Math.ceil(this.result.length / this.pageSize);
         this.resultCount = this.result.length;
       } else {
         this.msg = msgList['INFO001'];
         this.$emit('on-message', this.msg);
-        this.countFlg = false;
+        this.isCount = false;
       }
     },
     changePage(pageNumber) {
@@ -216,7 +216,7 @@ export default {
     init(){
       this.programId = '';
       this.programName = '';
-      this.countFlg = false;
+      this.isCount = false;
       this.msg = '';
       this.result = [];
     },

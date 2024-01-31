@@ -72,7 +72,7 @@
     </div>
     <br>
     <br>
-    <table align="center" v-if="countFlg">
+    <table align="center" v-if="isCount">
       <tr>
         <td style="text-align: left;">【年月・週】：{{ `${String(this.labelNentsuki).substring(0, 4)}/${String(this.labelNentsuki).substring(4, 6)} ${this.labelShu}週目` }}</td>
         <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
@@ -80,7 +80,7 @@
       </tr>
     </table>
     <div style="overflow-y: auto;">
-      <table align="center" border="1" style="border-collapse: collapse;" v-if="countFlg">
+      <table align="center" border="1" style="border-collapse: collapse;" v-if="isCount">
         <tr>
           <td style="background-color: greenyellow;">タレント名 </td>
           <td style="background-color: greenyellow;">週間出演番組本数 </td>
@@ -94,7 +94,7 @@
           <td>{{ getOnAirDayFormat(item.onAirDayChokin)}} </td>
         </tr>
       </table>
-      <div v-if="countFlg">
+      <div v-if="isCount">
         <div class="pagination-container">
           <a @click="changePage(1)" :disabled="currentPage === 1" class="pagination-link">最初</a>
           <a
@@ -154,7 +154,7 @@ export default {
       shuFrom: '',
       shuTo: '',
       msg: '',
-      countFlg: false,
+      isCount: false,
       result: {},
       currentPage: 1,
       pageSize: 10, // 1ページあたりのアイテム数
@@ -205,9 +205,8 @@ export default {
         this.$emit('on-message', this.msg);
         return;
       }
-
       // 前画面からの値で検索処理を行う。
-      this.fetchData();
+      this.fetchData(false);
 
     }
   },
@@ -229,44 +228,47 @@ export default {
   },
   methods: {
     async btnSearch() {
-      this.fetchData();
+      this.fetchData(true);
     },
-    async fetchData() {
-      // ① 年月、週が必須で入力されていること。
-      if (this.nentsuki.trim() === '' || this.shu.toString().trim() === '') {
-        this.msg = msgList['MSG002'].replace('{0}', "年月と週");
-        this.$emit('on-message', this.msg);
-        return;
-      }
-      // ②年月がYYYYMM形式であること。
-      // ③ 年月がYYYY/MM/01で有効な日付であること。
-      if (!commonUtils.isValidateDate(this.nentsuki + "01")) {
-        this.msg = msgList['MSG003'].replace('{0}', "年月");
-        this.msg = this.msg.replace('{1}', "有効な日付の年月（YYYYMM)");
-        this.$emit('on-message', this.msg);
-        return;
-      }
-      // ④ 週が数値であること。
-      if(!commonUtils.isValidNumber(Number(this.shu))){
-        this.msg = msgList['MSG003'].replace('{0}', "週");
-        this.msg = this.msg.replace('{1}', "数値");
-        this.$emit('on-message', this.msg);
-        return;
-      }
-      // ⑤ 週が1～5の数値のいずれかであること。
-      if (!commonUtils.isValidRange(Number(this.shu), 1, 5)) {
-        this.msg = msgList['MSG004'].replace('{0}', "週");
-        this.msg = this.msg.replace('{1}', "1");
-        this.msg = this.msg.replace('{2}', "5");
-        this.$emit('on-message', this.msg);
-        return;
-      }
-      // ⑥ タレント名が設定されている場合は、30桁以内であること。
-      if (this.talentName.trim() !== '' && !commonUtils.isValidMaxLength(this.talentName, 30)){
-        this.msg = msgList['MSG005'].replace('{0}', "タレント名");
-        this.msg = this.msg.replace('{1}', "30文字");
-        this.$emit('on-message', this.msg);
-        return;
+    async fetchData(isValCheck) {
+      // バリデーションチェックが必要な場合
+      if (isValCheck) {
+        // ① 年月、週が必須で入力されていること。
+        if (this.nentsuki.trim() === '' || this.shu.toString().trim() === '') {
+          this.msg = msgList['MSG002'].replace('{0}', "年月と週");
+          this.$emit('on-message', this.msg);
+          return;
+        }
+        // ② 年月がYYYYMM形式であること。
+        // ③ 年月がYYYY/MM/01で有効な日付であること。
+        if (!commonUtils.isValidateDate(this.nentsuki + "01")) {
+          this.msg = msgList['MSG003'].replace('{0}', "年月");
+          this.msg = this.msg.replace('{1}', "有効な日付の年月（YYYYMM)");
+          this.$emit('on-message', this.msg);
+          return;
+        }
+        // ④ 週が数値であること。
+        if(!commonUtils.isValidNumber(Number(this.shu))){
+          this.msg = msgList['MSG003'].replace('{0}', "週");
+          this.msg = this.msg.replace('{1}', "数値");
+          this.$emit('on-message', this.msg);
+          return;
+        }
+        // ⑤ 週が1～5の数値のいずれかであること。
+        if (!commonUtils.isValidRange(Number(this.shu), 1, 5)) {
+          this.msg = msgList['MSG004'].replace('{0}', "週");
+          this.msg = this.msg.replace('{1}', "1");
+          this.msg = this.msg.replace('{2}', "5");
+          this.$emit('on-message', this.msg);
+          return;
+        }
+        // ⑥ タレント名が設定されている場合は、30桁以内であること。
+        if (this.talentName.trim() !== '' && !commonUtils.isValidMaxLength(this.talentName, 30)){
+          this.msg = msgList['MSG005'].replace('{0}', "タレント名");
+          this.msg = this.msg.replace('{1}', "30文字");
+          this.$emit('on-message', this.msg);
+          return;
+        }
       }
       // 取得処理を開始
       this.url = SHUKAN_TALENT_JOHO_URL;
@@ -275,14 +277,14 @@ export default {
       this.url = this.url.replace('{3}', this.talentName);
       this.result = await axios.get(this.url).then(response => (response.data.shukanTalent))
       if (this.result != null && this.result[0].talentId !== null) {
-        this.countFlg = true;
+        this.isCount = true;
         this.$emit('on-message', "");
         this.totalPages = Math.ceil(this.result.length / this.pageSize);
         this.resultCount = this.result.length;
       } else {
         this.msg =  msgList['INFO001'];
         this.$emit('on-message', this.msg);
-        this.countFlg = false;
+        this.isCount = false;
       }
       // 検索結果のラベルの内容に設定
       this.labelNentsuki = this.nentsuki;
@@ -290,7 +292,7 @@ export default {
     },
     changePage(pageNumber) {
       this.currentPage = pageNumber;
-      this.fetchData(); // ページ変更時にデータを再取得するなどの処理を追加
+      this.fetchData(false); // ページ変更時にデータを再取得するなどの処理を追加
     },
     getOnAirDayFormat(onAirDay) {
       return moment(onAirDay).format('YYYY-MM-DD HH:mm');
@@ -305,7 +307,7 @@ export default {
       this.talentName = '';
       this.shuFrom = '';
       this.shuTo = '';
-      this.countFlg = false;
+      this.isCount = false;
       this.msg = '';
       this.result = {};
     },
