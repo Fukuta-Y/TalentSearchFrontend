@@ -230,7 +230,6 @@ export default {
       this.url = NENTSUKI_SHU_KANRI_REF_URL;
       this.url = this.url.replace('{1}', this.nentsuki);
       this.url = this.url.replace('{2}', this.shu);
-      console.log(this.url);
       this.result = await axios.get(this.url).then(response => (response.data.mNentsukiShuKanri));
       if (this.result.length !== 0) {
         this.countFlg = true;
