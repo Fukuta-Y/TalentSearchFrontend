@@ -100,9 +100,10 @@
 
 <script>
 import { Field, ErrorMessage } from 'vee-validate'
+import { commonUtils } from '../../../router/utils/sysCom/VeeValidateSettings';
+import { TALENT_REF_URL } from '../../../router/constList';
 import axios from 'axios'
 import msgList from '../../../router/msgList';
-import { TALENT_REF_URL } from '../../../router/constList';
 
 export default {
   name: 'TalentRefSearchJoken',
@@ -167,14 +168,14 @@ export default {
     },
     async fetchData() {
       // ① タレントIDが入力されている場合は、タレントIDが8桁以内であること。
-      if (this.talentId.trim() !== '' && !this.isValidMaxLength(this.talentId, 8)) {
+      if (this.talentId.trim() !== '' && !commonUtils.isValidMaxLength(this.talentId, 8)) {
         this.msg = msgList['MSG005'].replace('{0}', "タレントID");
         this.msg = this.msg.replace('{1}', "8文字");
         this.$emit('on-message', this.msg);
         return;
       }
       // ② タレント名が入力されている場合は、タレント名が30桁以内であること。
-      if (this.talentName.trim() !== '' && !this.isValidMaxLength(this.talentName, 30)) {
+      if (this.talentName.trim() !== '' && !commonUtils.isValidMaxLength(this.talentName, 30)) {
         this.msg = msgList['MSG005'].replace('{0}', "タレント名");
         this.msg = this.msg.replace('{1}', "30文字");
         this.$emit('on-message', this.msg);
@@ -202,7 +203,7 @@ export default {
     },
     selectTalent(talentId, talentName, genreId) {
       // 「選択」ボタンがクリックされたときに呼ばれるメソッド
-      // talentId と talentName を親コンポーネントに渡す
+      // talentIdとtalentNameとgenreIdを親コンポーネントに渡す
       this.$emit('on-select-talent', { talentId, talentName, genreId });
     },
     btnClear() {
@@ -215,14 +216,6 @@ export default {
       this.countFlg = false;
       this.msg = '';
       this.result = {};
-    },
-    isValidMaxLength(value, maxLength) {
-      // 文字列の長さが【maxLength】文字以内であるかどうかをチェック
-      return value.length <= maxLength;
-    },
-    underlineNumber(number) {
-      // 数字にアンダーラインをつけるためのスタイルを適用するメソッド
-      return `<span class="underlined">${number}</span>`;
     },
   },
 }

@@ -104,9 +104,10 @@
 
 <script>
 import { Field, ErrorMessage } from 'vee-validate'
+import { PROGRAM_REF_URL } from '../../../router/constList';
+import { commonUtils } from '../../../router/utils/sysCom/VeeValidateSettings';
 import axios from 'axios'
 import msgList from '../../../router/msgList';
-import { PROGRAM_REF_URL } from '../../../router/constList';
 
 export default {
   name: 'ProgramRefSearchJoken',
@@ -170,14 +171,14 @@ export default {
     },
     async fetchData() {
       // ① 番組IDが入力されている場合は、番組IDが8桁以内であること。
-      if (this.programId.trim() !== '' && !this.isValidMaxLength(this.programId, 8)) {
+      if (this.programId.trim() !== '' && !commonUtils.isValidMaxLength(this.programId, 8)) {
         this.msg = msgList['MSG005'].replace('{0}', "番組ID");
         this.msg = this.msg.replace('{1}', "8文字");
         this.$emit('on-message', this.msg);
         return;
       }
       // ② 番組名が入力されている場合は、番組名が30桁以内であること。
-      if (this.programName.trim() !== '' && !this.isValidMaxLength(this.programName, 30)) {
+      if (this.programName.trim() !== '' && !commonUtils.isValidMaxLength(this.programName, 30)) {
         this.msg = msgList['MSG005'].replace('{0}', "番組名");
         this.msg = this.msg.replace('{1}', "30文字");
         this.$emit('on-message', this.msg);
@@ -205,7 +206,7 @@ export default {
     },
     selectProgram(programId, programName, channelKyokuId, genreId) {
       // 「選択」ボタンがクリックされたときに呼ばれるメソッド
-      // programId と programName と channelId と genreId  を親コンポーネントに渡す
+      // programId と programName と channelKyokuId と genreId  を親コンポーネントに渡す
       this.$emit('on-select-program', { programId, programName, channelKyokuId, genreId });
     },
     btnClear() {
@@ -218,14 +219,6 @@ export default {
       this.countFlg = false;
       this.msg = '';
       this.result = [];
-    },
-    isValidMaxLength(value, maxLength) {
-      // 文字列の長さが【maxLength】文字以内であるかどうかをチェック
-      return value.length <= maxLength;
-    },
-    underlineNumber(number) {
-      // 数字にアンダーラインをつけるためのスタイルを適用するメソッド
-      return `<span class="underlined">${number}</span>`;
     },
   },
 }

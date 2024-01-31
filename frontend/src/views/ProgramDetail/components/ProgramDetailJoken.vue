@@ -51,10 +51,9 @@
 
 <script>
 import axios from 'axios'
-import isValid from "date-fns/isValid";
-import parseISO from "date-fns/parseISO";
 import msgList from '../../../router/msgList';
 import { PROGRAM_SHUTSUEN_URL } from '../../../router/constList';
+import { commonUtils } from '../../../router/utils/sysCom/VeeValidateSettings';
 
 export default {
   name: 'ProgramDetailJoken',
@@ -94,21 +93,21 @@ export default {
     }
     // ② 年月がYYYYMM形式であること。
     // ③ 年月がYYYY/MM/01で有効な日付であること。
-    if (!this.isValidateDate(this.nentsuki + "01")) {
+    if (!commonUtils.isValidateDate(this.nentsuki + "01")) {
       this.msg = msgList['MSG003'].replace('{0}', "年月");
       this.msg = this.msg.replace('{1}', "有効な日付の年月（YYYYMM)");
       this.$emit('on-message', this.msg);
       return;
     }
     // ④ 週が数値であること。
-    if (!this.isValidNumber(Number(this.shu))) {
+    if (!commonUtils.isValidNumber(Number(this.shu))) {
       this.msg = msgList['MSG003'].replace('{0}', "週");
       this.msg = this.msg.replace('{1}', "数値");
       this.$emit('on-message', this.msg);
       return;
     }
     // ⑤ 週が1～5の数値のいずれかであること。
-    if (!this.isValidRange(Number(this.shu), 1, 5)) {
+    if (!commonUtils.isValidRange(Number(this.shu), 1, 5)) {
       this.msg = msgList['MSG004'].replace('{0}', "週");
       this.msg = this.msg.replace('{1}', "1");
       this.msg = this.msg.replace('{2}', "5");
@@ -117,7 +116,7 @@ export default {
     }
 
     // ⑥ オンエア日がYYYY-MM-DD HH:MM形式であること。
-    if (!this.isCheckDateTime(this.onAirDay)){
+    if (!commonUtils.isCheckDateTime(this.onAirDay)){
       this.msg = msgList['MSG003'].replace('{0}', "オンエア日時");
       this.msg = this.msg.replace('{1}', "YYYY-MM-DD HH:MM");
       this.$emit('on-message', this.msg);
@@ -125,7 +124,7 @@ export default {
     }
 
     // ⑦ 番組IDが8桁以内であること。
-    if (!this.isValidMaxLength(this.programId, 8)) {
+    if (!commonUtils.isValidMaxLength(this.programId, 8)) {
       this.msg = msgList['MSG005'].replace('{0}', "番組ID");
       this.msg = this.msg.replace('{1}', "8文字");
       this.$emit('on-message', this.msg);
@@ -186,43 +185,6 @@ export default {
       this.countFlg = false;
       this.msg = '';
       this.result= { };
-    },
-    isValidDate(dateString) {
-      return isNaN(Date.parse(dateString));
-    },
-    isValidateDate(dateString) {
-      // 有効日付チェック
-      const parsedDate = parseISO(dateString.replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3"));
-      return isValid(parsedDate);
-    },
-    isValidNumber(value) {
-      // 数値であるかどうかをチェック
-      return typeof value === 'number';
-    },
-    isValidRange(value) {
-      // 1から5の範囲内にあるかどうかをチェック
-      return value >= 1 && value <= 5;
-    },
-    isValidMaxLength(value, maxLength) {
-      // 文字列の長さが【maxLength】文字以内であるかどうかをチェック
-      return value.length <= maxLength;
-    },
-    isCheckDateTime(targetDate) {
-      // 日時の正規表現パターン
-      const dateTimePattern = /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/;
-
-      // 入力された日時がパターンに一致するかどうかを確認
-      if (!dateTimePattern.test(targetDate)) {
-        return false; // パターンに一致しない場合は無効な日時
-      }
-
-      // 日付の妥当性を検証
-      const inputDate = new Date(targetDate);
-      return !isNaN(inputDate.getTime()); // インスタンスが有効な日時であるかどうか
-    },
-    underlineNumber(number) {
-      // 数字にアンダーラインをつけるためのスタイルを適用するメソッド
-      return `<span class="underlined">${number}</span>`;
     },
   },
 }

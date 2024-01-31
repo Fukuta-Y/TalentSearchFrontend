@@ -88,12 +88,11 @@
 
 <script>
 import { Field } from 'vee-validate'
+import { PROGRAM_INFO_URL, CHANNEL_INFO_URL, KBN_MASTER_URL, PROGRAM_TOROKU_KOSHIN_URL } from '../../../router/constList';
+import { commonUtils } from '../../../router/utils/sysCom/VeeValidateSettings';
 import axios from 'axios'
 import ProgramRefDialog from '../../ProgramRefDialog/ProgramRefDialogBaseForm.vue';
-import isValid from "date-fns/isValid";
-import parseISO from "date-fns/parseISO";
 import msgList from '../../../router/msgList';
-import { PROGRAM_INFO_URL, CHANNEL_INFO_URL, KBN_MASTER_URL, PROGRAM_TOROKU_KOSHIN_URL } from '../../../router/constList';
 
 export default {
   name: 'ProgramTorokuKoshin',
@@ -145,7 +144,7 @@ export default {
         return;
       }
       // ② 番組IDが8桁以内であること。
-      if (!this.isValidMaxLength(this.programId, 8)) {
+      if (!commonUtils.isValidMaxLength(this.programId, 8)) {
         this.msg = msgList['MSG005'].replace('{0}', "番組ID");
         this.msg = this.msg.replace('{1}', "8文字");
         this.$emit('on-message', this.msg);
@@ -212,7 +211,7 @@ export default {
       // 更新時の場合
       if (this.programId !== undefined) {
         // ② 番組IDが8桁以内であること。
-        if (!this.isValidMaxLength(this.programId, 8)) {
+        if (!commonUtils.isValidMaxLength(this.programId, 8)) {
           this.msg = msgList['MSG005'].replace('{0}', "番組ID");
           this.msg = this.msg.replace('{1}', "8文字");
           this.$emit('on-message', this.msg);
@@ -221,7 +220,7 @@ export default {
       }
 
       // ③ 番組名が30桁以内であること。
-      if (!this.isValidMaxLength(this.programName, 30)) {
+      if (!commonUtils.isValidMaxLength(this.programName, 30)) {
         this.msg = msgList['MSG005'].replace('{0}', "番組名");
         this.msg = this.msg.replace('{1}', "30文字");
         this.$emit('on-message', this.msg);
@@ -229,7 +228,7 @@ export default {
       }
 
       // ④ チャンネル局IDが数値であること。
-      if (!this.isValidNumber(Number(this.channelId))) {
+      if (!commonUtils.isValidNumber(Number(this.channelId))) {
         this.msg = msgList['MSG003'].replace('{0}', "チャンネル局ID");
         this.msg = this.msg.replace('{1}', "数値");
         this.$emit('on-message', this.msg);
@@ -237,8 +236,7 @@ export default {
       }
 
       // ⑤ チャンネル局IDが2桁以内であること。
-      console.log('this.channelId:' + this.channelId);
-      if (!this.isValidRange(this.channelId, 1, 99)) {
+      if (!commonUtils.isValidRange(this.channelId, 1, 99)) {
         this.msg = msgList['MSG005'].replace('{0}', "チャンネル局ID");
         this.msg = this.msg.replace('{1}', "2桁");
         this.$emit('on-message', this.msg);
@@ -246,7 +244,7 @@ export default {
       }
 
       // ⑥ チャンネル名が30桁以内であること。
-      if (!this.isValidMaxLength(this.channelName, 30)) {
+      if (!commonUtils.isValidMaxLength(this.channelName, 30)) {
         this.msg = msgList['MSG005'].replace('{0}', "チャンネル名");
         this.msg = this.msg.replace('{1}', "30文字");
         this.$emit('on-message', this.msg);
@@ -254,7 +252,7 @@ export default {
       }
 
       // ⑦ ジャンルIDが数値であること。
-      if (!this.isValidNumber(Number(this.jyunjyo))) {
+      if (!commonUtils.isValidNumber(Number(this.jyunjyo))) {
         this.msg = msgList['MSG003'].replace('{0}', "ジャンルID");
         this.msg = this.msg.replace('{1}', "数値");
         this.$emit('on-message', this.msg);
@@ -262,7 +260,7 @@ export default {
       }
 
       // ⑧ ジャンルIDが2桁以内であること。
-      if (!this.isValidRange(this.jyunjyo, 1, 99)) {
+      if (!commonUtils.isValidRange(this.jyunjyo, 1, 99)) {
         this.msg = msgList['MSG005'].replace('{0}', "ジャンルID");
         this.msg = this.msg.replace('{1}', "2桁");
         this.$emit('on-message', this.msg);
@@ -270,7 +268,7 @@ export default {
       }
 
       // ⑨ ジャンル名が30桁以内であること。
-      if (!this.isValidMaxLength(this.jyunjyoName, 30)) {
+      if (!commonUtils.isValidMaxLength(this.jyunjyoName, 30)) {
         this.msg = msgList['MSG005'].replace('{0}', "ジャンル名");
         this.msg = this.msg.replace('{1}', "30文字");
         this.$emit('on-message', this.msg);
@@ -320,26 +318,6 @@ export default {
       this.jyunjyo = null;
       this.jyunjyoName = null;
       this.msg = '';
-    },
-    isValidDate(dateString) {
-      return isNaN(Date.parse(dateString));
-    },
-    isValidateDate(dateString) {
-      // 有効日付チェック
-      const parsedDate = parseISO(dateString.replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3"));
-      return isValid(parsedDate);
-    },
-    isValidNumber(value) {
-      // 数値であるかどうかをチェック
-      return typeof value === 'number';
-    },
-    isValidRange(value, min, max) {
-      // minからmaxの範囲内にあるかどうかをチェック
-      return value >= min && value <= max;
-    },
-    isValidMaxLength(value, maxLength) {
-      // 文字列の長さが【maxLength】文字以内であるかどうかをチェック
-      return value.length <= maxLength;
     },
     // チャンネル名の表示
     getChannelName(channelId) {
