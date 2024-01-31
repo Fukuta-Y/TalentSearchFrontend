@@ -106,6 +106,7 @@
 import { Field, ErrorMessage } from 'vee-validate'
 import axios from 'axios'
 import msgList from '../../../router/msgList';
+import { PROGRAM_REF_URL } from '../../../router/constList';
 
 export default {
   name: 'ProgramRefSearchJoken',
@@ -183,9 +184,9 @@ export default {
         return;
       }
       // 取得処理を開始
-      const programRefBFFUrl= "http://localhost:8081/api/programRefBFF?programId={0}&programName={1}";
-      this.url = programRefBFFUrl.replace('{0}', this.programId);
-      this.url = this.url.replace('{1}', this.programName);
+      this.url = PROGRAM_REF_URL;
+      this.url = this.url.replace('{1}', this.programId);
+      this.url = this.url.replace('{2}', this.programName);
       this.result = await axios.get(this.url).then(response => (response.data.programInfoRef));
       if (this.result != null && this.result[0].programId !== null) {
         this.countFlg = true;

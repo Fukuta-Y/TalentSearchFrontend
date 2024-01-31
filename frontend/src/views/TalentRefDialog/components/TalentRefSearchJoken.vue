@@ -102,6 +102,7 @@
 import { Field, ErrorMessage } from 'vee-validate'
 import axios from 'axios'
 import msgList from '../../../router/msgList';
+import { TALENT_REF_URL } from '../../../router/constList';
 
 export default {
   name: 'TalentRefSearchJoken',
@@ -180,9 +181,9 @@ export default {
         return;
       }
       // 取得処理を開始
-      const talentRefBFFUrl = "http://localhost:8081/api/talentRefBFF?talentId={0}&talentName={1}";
-      this.url = talentRefBFFUrl.replace('{0}', this.talentId);
-      this.url = this.url.replace('{1}', this.talentName);
+      this.url = TALENT_REF_URL;
+      this.url = this.url.replace('{1}', this.talentId);
+      this.url = this.url.replace('{2}', this.talentName);
       this.result = await axios.get(this.url).then(response => (response.data.mTalent));
       if (this.result.length !== 0) {
         this.countFlg = true;

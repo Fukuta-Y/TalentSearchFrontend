@@ -135,6 +135,7 @@ import { format } from 'date-fns';
 import isValid from "date-fns/isValid";
 import parseISO from "date-fns/parseISO";
 import msgList from '../../../router/msgList';
+import { ON_AIR_KANRI_REF_URL, ON_AIR_KANRI_INFO_URL, NENTSUKI_SHUKANRI_URL } from '../../../router/constList';
 
 export default {
   name: 'OnAirKanriTorokuKoshin',
@@ -174,6 +175,7 @@ export default {
       nentsuki: null,
       shu: null,
       msg: '',
+      url: '',
       formattedDate: null,
       nentsukiShuKanri: [],
       idRefDialogComponent: false,
@@ -205,8 +207,10 @@ export default {
           return;
         }
         // 番組情報BFF（更新時のみ）※
-        const onAirKanriUrl = "http://localhost:8081/api/onAirKanriRefBFF?id=" + this.propId + "&onAirDay=";
-        const onAirKanri = await axios.get(onAirKanriUrl).then(response => (response.data.tOnAirKanriRef[0]))
+        this.url = ON_AIR_KANRI_REF_URL;
+        this.url = this.url.replace('{1}', this.propId);
+        this.url = this.url.replace('{2}', '');
+        const onAirKanri = await axios.get(this.url).then(response => (response.data.tOnAirKanriRef[0]))
         if (onAirKanri.id !== '') {
           this.id = onAirKanri.id;
           this.onAirDay = onAirKanri.onAirDay;
@@ -226,8 +230,8 @@ export default {
     // 初期表示時
     async fetchData() {
       // 年月週管理マスタ検索BFF
-      const nentsukiShuKanriUrl = "http://localhost:8081/api/nentsukiShuKanriBFF";
-      this.nentsukiShuKanriTmp = await axios.get(nentsukiShuKanriUrl).then(response => response.data.mNentsukiShuKanri);
+      this.url = NENTSUKI_SHUKANRI_URL;
+      this.nentsukiShuKanriTmp = await axios.get(this.url).then(response => response.data.mNentsukiShuKanri);
       this.nentsukiShuKanriTmp = this.nentsukiShuKanriTmp.map(item => ({ nentsuki: item.nentsuki, shu: item.shu }));
       // nentsukiの前の４文字を○年、後ろの２文字を△月、shuを□週として結合
       this.nentsukiShuKanri = this.nentsukiShuKanriTmp.map(item => {
@@ -434,10 +438,9 @@ export default {
       };
 
       // 年月週管理登録・更新BFF（登録・更新モード共通）
-      const onAirKanriInfoUrl = "http://localhost:8081/api/onAirKanriInfoBFF";
-
+      this.url = ON_AIR_KANRI_INFO_URL;
       // POSTリクエストを行う
-      axios.post(onAirKanriInfoUrl, postData).then(response => {
+      axios.post(this.url, postData).then(response => {
           console.log("成功時の戻り値:" + JSON.stringify(response.data));
           this.$router.push({ name: 'main', });
         })

@@ -99,6 +99,7 @@ import Datepicker from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
 import { format } from 'date-fns';
 import msgList from '../../../router/msgList';
+import { ON_AIR_KANRI_REF_URL } from '../../../router/constList';
 
 export default {
   name: 'OnAirKanriRefSearchJoken',
@@ -188,9 +189,9 @@ export default {
         this.$emit('on-message', this.msg);
         return;
       }
-      const onAirKanriRefBFFUrl = "http://localhost:8081/api/onAirKanriRefBFF?id={0}&onAirDay={1}";
-      this.url = onAirKanriRefBFFUrl.replace('{0}', this.id);
-      this.url = this.url.replace('{1}', this.onAirDay);
+      this.url = ON_AIR_KANRI_REF_URL;
+      this.url = this.url.replace('{1}', this.id);
+      this.url = this.url.replace('{2}', this.onAirDay);
       this.result = await axios.get(this.url).then(response => (response.data.tOnAirKanriRef));
       if (this.result.length !== 0) {
         this.countFlg = true;

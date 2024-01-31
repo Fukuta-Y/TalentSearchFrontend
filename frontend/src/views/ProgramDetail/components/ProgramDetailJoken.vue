@@ -154,7 +154,8 @@ export default {
   methods: {
     async fetchData() {
       // 取得処理を開始
-      this.url = PROGRAM_SHUTSUEN_URL.replace('{1}', this.programId);
+      this.url = PROGRAM_SHUTSUEN_URL;
+      this.url = this.url.replace('{1}', this.programId);
       this.url = this.url.replace('{2}', this.onAirDay);
       this.url = this.url.replace('{3}', this.nentsuki);
       this.url = this.url.replace('{4}', this.shu);

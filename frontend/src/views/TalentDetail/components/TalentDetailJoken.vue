@@ -150,7 +150,8 @@ export default {
   methods: {
     async fetchData() {
       // 取得処理を開始
-      this.url = TALENT_SHUKAN_SHUTSUEN_JOHO_URL.replace('{1}', this.nentsuki);
+      this.url = TALENT_SHUKAN_SHUTSUEN_JOHO_URL;
+      this.url = this.url.replace('{1}', this.nentsuki);
       this.url = this.url.replace('{2}', this.shu);
       this.url = this.url.replace('{3}', this.talentId);
       this.result = await axios.get(this.url).then(response => (response.data.talentShukanShutsuen));

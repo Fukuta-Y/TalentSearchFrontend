@@ -110,6 +110,7 @@
 import { Field, ErrorMessage } from 'vee-validate'
 import axios from 'axios'
 import msgList from '../../../router/msgList';
+import { NENTSUKI_SHU_KANRI_REF_URL } from '../../../router/constList';
 
 export default {
   name: 'NetsukiShuKanriRefSearchJoken',
@@ -179,9 +180,9 @@ export default {
         this.nentsuki = this.nen + this.tsuki.padStart(2, '0');
       }
       // 取得処理を開始
-      const nentsukiShuKanrRefURL = "http://localhost:8081/api/nentsukiShuKanrRefBFF?nentsuki={0}&shu={1}";
-      this.url = nentsukiShuKanrRefURL.replace('{0}', this.nentsuki);
-      this.url = this.url.replace('{1}', this.shu);
+      this.url = NENTSUKI_SHU_KANRI_REF_URL;
+      this.url = this.url.replace('{1}', this.nentsuki);
+      this.url = this.url.replace('{2}', this.shu);
       this.result = await axios.get(this.url).then(response => (response.data.mNentsukiShuKanri));
       if (this.result.length !== 0) {
         this.countFlg = true;

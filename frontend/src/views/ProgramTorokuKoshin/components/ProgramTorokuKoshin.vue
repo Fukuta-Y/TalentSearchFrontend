@@ -93,6 +93,7 @@ import ProgramRefDialog from '../../ProgramRefDialog/ProgramRefDialogBaseForm.vu
 import isValid from "date-fns/isValid";
 import parseISO from "date-fns/parseISO";
 import msgList from '../../../router/msgList';
+import { PROGRAM_INFO_URL, CHANNEL_INFO_URL, KBN_MASTER_URL, PROGRAM_TOROKU_KOSHIN_URL } from '../../../router/constList';
 
 export default {
   name: 'ProgramTorokuKoshin',
@@ -129,13 +130,15 @@ export default {
       jyunjyoName: '',//ジャンル名
       programRefDialogComponent: false,
       msg: '',
+      url: '',
     };
   },
   async created() {
     // 初期化
     this.btnClear();
     // 更新モードの場合
-    if (this.programId !== undefined) {
+    if (this.propProgramId !== undefined) {
+      this.programId = this.propProgramId;
       // ① 前画面からのパラメータは番組IDは必須で入力されていること。
       if (this.programId.trim() === '') {
         this.$emit('on-message', msgList['MSG006']);
@@ -149,8 +152,10 @@ export default {
         return;
       }
       // 番組情報BFF（更新時のみ）※
-      const programInfoUrl = "http://localhost:8081/api/programInfoBFF/" + this.programId;
-      const programInfo = await axios.get(programInfoUrl).then(response => (response.data))
+      this.url = PROGRAM_INFO_URL;
+      this.url = this.url.replace("{1}", this.programId);
+      console.log('url:' + this.url);
+      const programInfo = await axios.get(this.url).then(response => (response.data))
       if (programInfo.talentId !== null) {
         this.programName = programInfo.programName;
         this.channelId = programInfo.channelId;
@@ -163,11 +168,12 @@ export default {
   methods: {
     async fetchData() {
       // チャンネル情報BFF（登録・更新時）
-      const channelInfoUrl = "http://localhost:8081/api/channelInfoBFF";
-      this.channelInfo = await axios.get(channelInfoUrl).then(response => response.data.channelInfo);
+      this.url = CHANNEL_INFO_URL;
+      this.channelInfo = await axios.get(this.url).then(response => response.data.channelInfo);
       // 区分マスタBFF（登録・更新モード共通）
-      const genreInfoUrl = "http://localhost:8081/api/kbnMasterBFF/1";
-      this.genreInfo = await axios.get(genreInfoUrl).then(response => response.data.mKbnGenre);
+      this.url = KBN_MASTER_URL;
+      this.url = this.url.replace("{1}", "1");
+      this.genreInfo = await axios.get(this.url).then(response => response.data.mKbnGenre);
     },
     // 初期化ボタン
     btnClear() {
@@ -273,8 +279,9 @@ export default {
 
       // チャンネル局IDに紐づく、チャンネルIDを取得
       this.channel = this.channelInfo.find(item => item.channelId === this.channelId);
-      const kbnMasterChannelUrl = "http://localhost:8081/api/kbnMasterBFF/3";
-      this.kbnMasterChannel = await axios.get(kbnMasterChannelUrl).then(response => response.data.mKbnGenre);
+      this.url = KBN_MASTER_URL;
+      this.url = this.url.replace("{1}", "3");
+      this.kbnMasterChannel = await axios.get(this.url).then(response => response.data.mKbnGenre);
 
       // チャンネル名と同一のジャンルを取得し、順序をチャンネルIDに設定
       const matchingGenre = this.kbnMasterChannel.find(item => item.genre === this.channelName);
@@ -292,10 +299,9 @@ export default {
       };
 
       // 番組登録・更新BFF（登録・更新モード共通）
-      const programToroku = "http://localhost:8081/api/programTorokuKoshinBFF";
-
       // POSTリクエストを行う
-      axios.post(programToroku, postData).then(response => {
+      this.url = PROGRAM_TOROKU_KOSHIN_URL;
+      axios.post(this.url, postData).then(response => {
           console.log("成功時の戻り値:" + JSON.stringify(response));
           this.$router.push({ name: 'main', })
         })
