@@ -69,14 +69,14 @@
 
 <script>
 import { Field } from 'vee-validate'
+import { TALENT_TOROKU_KOSHIN_URL, TALENT_INFO_URL, KBN_MASTER_URL } from '../../../router/constList';
+import { commonUtils } from '../../../router/utils/sysCom/VeeValidateSettings';
 import axios from 'axios'
 import TalentRefDialog from '../../TalentRefDialog/TalentRefDialogBaseForm.vue';
-import isValid from "date-fns/isValid";
-import parseISO from "date-fns/parseISO";
 import msgList from '../../../router/msgList';
 
 export default {
-  name: 'talentTorokuKoshin',
+  name: 'TalentTorokuKoshin',
   props: {
     propTalentId: {
       type: String,
@@ -118,15 +118,16 @@ export default {
         return;
       }
       // ② タレントIDが8桁以内であること。
-      if (!this.isValidMaxLength(this.talentId, 8)) {
+      if (!commonUtils.isValidMaxLength(this.talentId, 8)) {
         this.msg = msgList['MSG005'].replace('{0}', "タレントID");
         this.msg = this.msg.replace('{1}', "8文字");
         this.$emit('on-message', this.msg);
         return;
       }
       // タレント情報BFF（更新時のみ）※
-      const talentInfoUrl = "http://localhost:8081/api/talentInfoBFF/" + this.talentId;
-      const talentInfo = await axios.get(talentInfoUrl).then(response => (response.data));
+      this.url = TALENT_INFO_URL;
+      this.url = this.url.replace("{1}", this.talentId);
+      const talentInfo = await axios.get(this.url).then(response => (response.data));
       if (talentInfo.talentId !== null) {
         this.talentName = talentInfo.talentName;
         this.jyunjyo = talentInfo.genreId;
@@ -138,8 +139,9 @@ export default {
   methods: {
     async fetchData() {
       // 区分マスタBFF（登録・更新モード共通）
-      const genreInfoUrl = "http://localhost:8081/api/kbnMasterBFF/2";
-      this.genreInfo = await axios.get(genreInfoUrl).then(response => response.data.mKbnGenre);
+      this.url = KBN_MASTER_URL;
+      this.url = this.url.replace("{1}", "2");
+      this.genreInfo = await axios.get(this.url).then(response => response.data.mKbnGenre);
     },
     // 初期化ボタン
     btnClear() {
@@ -159,7 +161,7 @@ export default {
       // 更新時の場合
       if (this.talentId !== undefined) {
         // ② タレントIDが8桁以内であること。
-        if (!this.isValidMaxLength(this.talentId, 8)) {
+        if (!commonUtils.isValidMaxLength(this.talentId, 8)) {
           this.msg = msgList['MSG005'].replace('{0}', "タレントID");
           this.msg = this.msg.replace('{1}', "8文字");
           this.$emit('on-message', this.msg);
@@ -167,7 +169,7 @@ export default {
         }
       }
       // ③ タレント名が30桁以内であること。
-      if (!this.isValidMaxLength(this.talentName, 30)) {
+      if (!commonUtils.isValidMaxLength(this.talentName, 30)) {
         this.msg = msgList['MSG005'].replace('{0}', "タレント名");
         this.msg = this.msg.replace('{1}', "30文字");
         this.$emit('on-message', this.msg);
@@ -175,7 +177,7 @@ export default {
       }
 
       // ④ ジャンルIDが数値であること。
-      if (!this.isValidNumber(Number(this.jyunjyo))) {
+      if (!commonUtils.isValidNumber(Number(this.jyunjyo))) {
         this.msg = msgList['MSG003'].replace('{0}', "ジャンルID");
         this.msg = this.msg.replace('{1}', "数値");
         this.$emit('on-message', this.msg);
@@ -183,7 +185,7 @@ export default {
       }
 
       // ⑤ ジャンルIDが2桁以内であること。
-      if (!this.isValidRange(this.jyunjyo, 1, 99)) {
+      if (!commonUtils.isValidRange(this.jyunjyo, 1, 99)) {
         this.msg = msgList['MSG005'].replace('{0}', "ジャンルID");
         this.msg = this.msg.replace('{1}', "2桁");
         this.$emit('on-message', this.msg);
@@ -191,7 +193,7 @@ export default {
       }
 
       // ⑥ ジャンル名が30桁以内であること。
-      if (!this.isValidMaxLength(this.jyunjyoName, 30)) {
+      if (!commonUtils.isValidMaxLength(this.jyunjyoName, 30)) {
         this.msg = msgList['MSG005'].replace('{0}', "ジャンル名");
         this.msg = this.msg.replace('{1}', "30文字");
         this.$emit('on-message', this.msg);
@@ -209,10 +211,9 @@ export default {
       };
 
       // タレント登録・更新BFF（登録・更新モード共通）
-      const talentToroku = "http://localhost:8081/api/talentTorokuKoshinBFF";
-
       // POSTリクエストを行う
-      axios.post(talentToroku, postData).then(response => {
+      this.url = TALENT_TOROKU_KOSHIN_URL;
+      axios.post(this.url, postData).then(response => {
           console.log("成功時の戻り値:" + JSON.stringify(response.data));
           this.$router.push({ name: 'main', })
         })
@@ -247,26 +248,6 @@ export default {
       this.jyunjyo = null;
       this.jyunjyoName = null;
       this.channelId = null;
-    },
-    isValidDate(dateString) {
-      return isNaN(Date.parse(dateString));
-    },
-    isValidateDate(dateString) {
-      // 有効日付チェック
-      const parsedDate = parseISO(dateString.replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3"));
-      return isValid(parsedDate);
-    },
-    isValidNumber(value) {
-      // 数値であるかどうかをチェック
-      return typeof value === 'number';
-    },
-    isValidRange(value, min, max) {
-      // minからmaxの範囲内にあるかどうかをチェック
-      return value >= min && value <= max;
-    },
-    isValidMaxLength(value, maxLength) {
-      // 文字列の長さが【maxLength】文字以内であるかどうかをチェック
-      return value.length <= maxLength;
     },
     // ジャンル名の表示
     getGenreName(jyunjyo) {

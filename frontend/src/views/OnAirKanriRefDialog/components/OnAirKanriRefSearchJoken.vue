@@ -94,10 +94,12 @@
 </template>
 <script>
 import { Field, ErrorMessage } from 'vee-validate'
+import { format } from 'date-fns';
+import { ON_AIR_KANRI_REF_URL } from '../../../router/constList';
+import { commonUtils } from '../../../router/utils/sysCom/VeeValidateSettings';
 import axios from 'axios'
 import Datepicker from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
-import { format } from 'date-fns';
 import msgList from '../../../router/msgList';
 
 export default {
@@ -127,6 +129,7 @@ export default {
       id: '',
       onAirDay: '',
       msg: '',
+      url: '',
       countFlg: false,
       result: {},
       formattedDate: null,
@@ -165,21 +168,15 @@ export default {
     },
     async fetchData() {
       // ① IDが入力されている場合は、IDが8桁以内であること。
-      if (this.propId !== '' && !this.isValidMaxLength(this.propId, 8)) {
+      if (this.id !== '' && !commonUtils.isValidMaxLength(this.id, 8)) {
         this.msg = msgList['MSG005'].replace('{0}', "ID");
         this.msg = this.msg.replace('{1}', "8文字");
         this.$emit('on-message', this.msg);
         return;
       }
       // ② オンエア日が入力されている場合は、オンエア日がYYYY-MM-DD HH:MM形式であること。
-      if (this.propOnAirDay !== '' && !this.isCheckDateTime(this.propOnAirDay)) {
-        this.msg = msgList['MSG003'].replace('{0}', "オンエア日時");
-        this.msg = this.msg.replace('{1}', "YYYY-MM-DD HH:MM");
-        this.$emit('on-message', this.msg);
-        return;
-      }
-      if (this.propOnAirDay !== '') {
-        const dateObject = new Date(this.propOnAirDay);
+      if (this.onAirDay !== '') {
+        const dateObject = new Date(this.onAirDay);
         const year = dateObject.getFullYear();
         const month = `0${dateObject.getMonth() + 1}`.slice(-2);
         const day = `0${dateObject.getDate()}`.slice(-2);
@@ -187,15 +184,23 @@ export default {
         const minutes = `0${dateObject.getMinutes()}`.slice(-2);
         this.onAirDay = `${year}-${month}-${day} ${hours}:${minutes}`;
       }
-      const url = "http://localhost:8081/api/onAirKanriRefBFF?id=" + this.id +"&onAirDay=" + this.onAirDay;
-      this.result = await axios.get(url).then(response => (response.data.tOnAirKanriRef));
-      this.totalPages = Math.ceil(this.result.length / this.pageSize);
-      this.resultCount = this.result.length;
-      if(this.result[0].id !== null) {
+      if (this.onAirDay !== '' && !commonUtils.isCheckDateTime(this.onAirDay)) {
+        this.msg = msgList['MSG003'].replace('{0}', "オンエア日時");
+        this.msg = this.msg.replace('{1}', "YYYY-MM-DD HH:MM");
+        this.$emit('on-message', this.msg);
+        return;
+      }
+      this.url = ON_AIR_KANRI_REF_URL;
+      this.url = this.url.replace('{1}', this.id);
+      this.url = this.url.replace('{2}', this.onAirDay);
+      this.result = await axios.get(this.url).then(response => (response.data.tOnAirKanriRef));
+      if (this.result.length !== 0) {
         this.countFlg = true;
         this.$emit('on-message', "");
+        this.totalPages = Math.ceil(this.result.length / this.pageSize);
+        this.resultCount = this.result.length;
       } else {
-        this.msg = "検索結果が0件です。";
+        this.msg = msgList['INFO001'];
         this.$emit('on-message', this.msg);
         this.countFlg = false;
       }
@@ -210,9 +215,9 @@ export default {
       this.currentPage = pageNumber;
       this.fetchData(); // ページ変更時にデータを再取得するなどの処理を追加
     },
-    selectId(id, onAirDay, programId, programName, talentId,talentName, nentsuki, shu) {
+    selectId(id, onAirDay, programId, programName, talentId, talentName, nentsuki, shu) {
       // 「選択」ボタンがクリックされたときに呼ばれるメソッド
-      // idとonAirDayとprogramIdとtalentIdとnentsukiとshuを親コンポーネントに渡す
+      // idとonAirDayとprogramIdとtalentIdとtalentNameとnentsukiとshuを親コンポーネントに渡す
       this.$emit('on-select-id', { id, onAirDay, programId, programName, talentId, talentName, nentsuki, shu });
     },
     btnClear() {
@@ -225,27 +230,6 @@ export default {
       this.countFlg = false;
       this.msg = '';
       this.result = {};
-    },
-    isValidMaxLength(value, maxLength) {
-      // 文字列の長さが【maxLength】文字以内であるかどうかをチェック
-      return value.length <= maxLength;
-    },
-    isCheckDateTime(onAirDay) {
-      // 日時の正規表現パターン
-      const dateTimePattern = /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/;
-
-      // 入力された日時がパターンに一致するかどうかを確認
-      if (!dateTimePattern.test(onAirDay)) {
-        return false; // パターンに一致しない場合は無効な日時
-      }
-
-      // 日付の妥当性を検証
-      const inputDate = new Date(onAirDay);
-      return !isNaN(inputDate.getTime()); // インスタンスが有効な日時であるかどうか
-    },
-    underlineNumber(number) {
-      // 数字にアンダーラインをつけるためのスタイルを適用するメソッド
-      return `<span class="underlined">${number}</span>`;
     },
   },
 }

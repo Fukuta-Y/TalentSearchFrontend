@@ -117,11 +117,11 @@
 </template>
 <script>
 import { Field, ErrorMessage } from 'vee-validate'
+import { commonUtils } from '../../../router/utils/sysCom/VeeValidateSettings';
+import { SHUKAN_TALENT_JOHO_URL } from '../../../router/constList';
+import msgList from '../../../router/msgList';
 import axios from 'axios'
 import moment from 'moment';
-import isValid from "date-fns/isValid";
-import parseISO from "date-fns/parseISO";
-import msgList from '../../../router/msgList';
 
 export default {
   name: 'WeekTalentShutsuenJoken',
@@ -163,34 +163,35 @@ export default {
     }
   },
   async created() {
-    this.init();
+    // 初期化
+    this.btnClear();
     //（初期表示時【値が渡されている来ている場合のみ】）
     if (this.mode === '2') {
       this.nentsuki = this.propNentsuki;
       this.shu = this.propShu;
       this.talentName = this.propTalentName;
       // ① 前画面からのパラメータは年月は必須で入力されていること。
-      if (this.nentsuki.trim() === '' || this.shu.trim() === '') {
+      if (this.nentsuki.trim() === '' || this.shu.toString().trim() === '') {
         this.$emit('on-message', msgList['MSG006']);
         return;
       }
       // ② 年月がYYYYMM形式であること。
       // ③ 年月がYYYY/MM/01で有効な日付であること。
-      if (!this.isValidateDate(this.nentsuki + "01")) {
+      if (!commonUtils.isValidateDate(this.nentsuki + "01")) {
         this.msg = msgList['MSG003'].replace('{0}', "年月");
         this.msg = this.msg.replace('{1}', "有効な日付の年月（YYYYMM)");
         this.$emit('on-message', this.msg);
         return;
       }
       // ④ 週が数値であること。
-      if (!this.isValidNumber(Number(this.shu))) {
+      if (!commonUtils.isValidNumber(Number(this.shu))) {
         this.msg = msgList['MSG003'].replace('{0}', "週");
         this.msg = this.msg.replace('{1}', "数値");
         this.$emit('on-message', this.msg);
         return;
       }
       // ⑤ 週が1～5の数値のいずれかであること。
-      if (!this.isValidRange(Number(this.shu), 1, 5)) {
+      if (!commonUtils.isValidRange(Number(this.shu), 1, 5)) {
         this.msg = msgList['MSG004'].replace('{0}', "週");
         this.msg = this.msg.replace('{1}', "1");
         this.msg = this.msg.replace('{2}', "5");
@@ -198,7 +199,7 @@ export default {
         return;
       }
       // ⑥ タレント名が設定されている場合は、30桁以内であること。
-      if (this.talentName.trim() !== '' && !this.isValidMaxLength(this.talentName, 30)) {
+      if (this.talentName.trim() !== '' && !commonUtils.isValidMaxLength(this.talentName, 30)) {
         this.msg = msgList['MSG005'].replace('{0}', "タレント名");
         this.msg = this.msg.replace('{1}', "30文字");
         this.$emit('on-message', this.msg);
@@ -232,28 +233,28 @@ export default {
     },
     async fetchData() {
       // ① 年月、週が必須で入力されていること。
-      if (this.nentsuki.trim() === '' || this.shu.trim() === '') {
+      if (this.nentsuki.trim() === '' || this.shu.toString().trim() === '') {
         this.msg = msgList['MSG002'].replace('{0}', "年月と週");
         this.$emit('on-message', this.msg);
         return;
       }
       // ②年月がYYYYMM形式であること。
       // ③ 年月がYYYY/MM/01で有効な日付であること。
-      if (!this.isValidateDate(this.nentsuki + "01")) {
+      if (!commonUtils.isValidateDate(this.nentsuki + "01")) {
         this.msg = msgList['MSG003'].replace('{0}', "年月");
         this.msg = this.msg.replace('{1}', "有効な日付の年月（YYYYMM)");
         this.$emit('on-message', this.msg);
         return;
       }
       // ④ 週が数値であること。
-      if(!this.isValidNumber(Number(this.shu))){
+      if(!commonUtils.isValidNumber(Number(this.shu))){
         this.msg = msgList['MSG003'].replace('{0}', "週");
         this.msg = this.msg.replace('{1}', "数値");
         this.$emit('on-message', this.msg);
         return;
       }
       // ⑤ 週が1～5の数値のいずれかであること。
-      if (!this.isValidRange(Number(this.shu), 1, 5)) {
+      if (!commonUtils.isValidRange(Number(this.shu), 1, 5)) {
         this.msg = msgList['MSG004'].replace('{0}', "週");
         this.msg = this.msg.replace('{1}', "1");
         this.msg = this.msg.replace('{2}', "5");
@@ -261,17 +262,17 @@ export default {
         return;
       }
       // ⑥ タレント名が設定されている場合は、30桁以内であること。
-      if (this.talentName.trim() !== '' && !this.isValidMaxLength(this.talentName, 30)){
+      if (this.talentName.trim() !== '' && !commonUtils.isValidMaxLength(this.talentName, 30)){
         this.msg = msgList['MSG005'].replace('{0}', "タレント名");
         this.msg = this.msg.replace('{1}', "30文字");
         this.$emit('on-message', this.msg);
         return;
       }
       // 取得処理を開始
-      const shukanTalentJohoURL = "http://localhost:8081/api/shukanTalentJohoBFF?nentsuki={0}&shu={1}&talentName={2}";
-      this.url = shukanTalentJohoURL.replace('{0}', this.nentsuki);
-      this.url = this.url.replace('{1}', this.shu);
-      this.url = this.url.replace('{2}', this.talentName);
+      this.url = SHUKAN_TALENT_JOHO_URL;
+      this.url = this.url.replace('{1}', this.nentsuki);
+      this.url = this.url.replace('{2}', this.shu);
+      this.url = this.url.replace('{3}', this.talentName);
       this.result = await axios.get(this.url).then(response => (response.data.shukanTalent))
       if (this.result != null && this.result[0].talentId !== null) {
         this.countFlg = true;
@@ -279,7 +280,7 @@ export default {
         this.totalPages = Math.ceil(this.result.length / this.pageSize);
         this.resultCount = this.result.length;
       } else {
-        this.msg ="検索結果が0件です。";
+        this.msg =  msgList['INFO001'];
         this.$emit('on-message', this.msg);
         this.countFlg = false;
       }
@@ -307,30 +308,6 @@ export default {
       this.countFlg = false;
       this.msg = '';
       this.result = {};
-    },
-    isValidDate(dateString) {
-      return isNaN(Date.parse(dateString));
-    },
-    isValidateDate(dateString) {
-      // 有効日付チェック
-      const parsedDate = parseISO(dateString.replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3"));
-      return isValid(parsedDate);
-    },
-    isValidNumber(value) {
-      // 数値であるかどうかをチェック
-      return typeof value === 'number';
-    },
-    isValidRange(value, min, max) {
-      // minからmaxの範囲内にあるかどうかをチェック
-      return value >= min && value <= max;
-    },
-    isValidMaxLength(value, maxLength) {
-      // 文字列の長さが【maxLength】文字以内であるかどうかをチェック
-      return value.length <= maxLength;
-    },
-    underlineNumber(number) {
-      // 数字にアンダーラインをつけるためのスタイルを適用するメソッド
-      return `<span class="underlined">${number}</span>`;
     },
   },
 }

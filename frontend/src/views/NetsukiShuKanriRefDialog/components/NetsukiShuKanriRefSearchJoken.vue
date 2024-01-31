@@ -108,7 +108,11 @@
 </template>
 <script>
 import { Field, ErrorMessage } from 'vee-validate'
+import { NENTSUKI_SHU_KANRI_REF_URL } from '../../../router/constList';
+import { commonUtils } from '../../../router/utils/sysCom/VeeValidateSettings';
 import axios from 'axios'
+import msgList from '../../../router/msgList';
+
 export default {
   name: 'NetsukiShuKanriRefSearchJoken',
   props: {
@@ -134,15 +138,17 @@ export default {
       shu: '',
       nentsuki: '',
       msg: '',
+      url: '',
       countFlg: false,
       result: {},
       currentPage: 1,
-      pageSize: 10, // Update to 10 items per page
+      pageSize: 10,
       totalPages: 0,
     }
   },
   async created() {
-    this.init();
+    // 初期化
+    this.btnClear();
     if(this.propNentsukiShu) {
       this.nen = this.propNentsukiShu.toString().substring(0, 4);
       this.tsuki = this.propNentsukiShu.toString().substring(4, 6);
@@ -171,19 +177,66 @@ export default {
       this.fetchData();
     },
     async fetchData() {
-      if (this.tsuki !== '') {
+      // ①年が入力されている場合は、月と必須で入力であること。
+      if (this.nen.trim() !== '') {
+        if (this.tsuki.trim() === '') {
+          this.msg = msgList['MSG002'].replace('{0}', "年と月");
+          this.$emit('on-message', this.msg);
+          return;
+        }
+      }
+
+      // ②月が入力されている場合は、年と必須で入力であること。
+      if (this.tsuki.trim() !== '') {
+        if (this.nen.trim() === '') {
+          this.msg = msgList['MSG002'].replace('{0}', "年と月");
+          this.$emit('on-message', this.msg);
+          return;
+        }
+      }
+      // ③年月がYYYYMM形式であること。
+      // ④ 年月がYYYY/MM/01で有効な日付であること。
+      if (this.nen.trim() !== '' && this.tsuki.trim() !== '' && !commonUtils.isValidateDate(this.nen + this.tsuki + "01")) {
+        this.msg = msgList['MSG003'].replace('{0}', "年月");
+        this.msg = this.msg.replace('{1}', "有効な日付の年月（YYYYMM)");
+        this.$emit('on-message', this.msg);
+        return;
+      }
+
+      // ⑤ 週が数値であること。
+      if (this.shu.toString().trim() !== '' && !commonUtils.isValidNumber(Number(this.shu))) {
+        this.msg = msgList['MSG003'].replace('{0}', "週");
+        this.msg = this.msg.replace('{1}', "数値");
+        this.$emit('on-message', this.msg);
+        return;
+      }
+
+      // ⑥ 週が1～5の数値のいずれかであること。
+      if (this.shu.toString().trim() !== '' && !commonUtils.isValidRange(Number(this.shu), 1, 5)) {
+        this.msg = msgList['MSG004'].replace('{0}', "週");
+        this.msg = this.msg.replace('{1}', "1");
+        this.msg = this.msg.replace('{2}', "5");
+        this.$emit('on-message', this.msg);
+        return;
+      }
+
+      // 年月を0埋め形式へ変換
+      if (this.tsuki.trim() !== '') {
         this.nentsuki = this.nen + this.tsuki.padStart(2, '0');
       }
-      const url = "http://localhost:8081/api/nentsukiShuKanrRefBFF?nentsuki=" + this.nentsuki + "&shu=" + this.shu;
-      this.result = await axios.get(url).then(response => (response.data.mNentsukiShuKanri));
-      this.resultCount = this.result.length; // 件数を更新
-      this.totalPages = Math.ceil(this.result.length / this.pageSize);
-      this.resultCount = this.result.length;
-      if(this.result[0].nentsuki !== null) {
+      // 取得処理を開始
+      this.url = NENTSUKI_SHU_KANRI_REF_URL;
+      this.url = this.url.replace('{1}', this.nentsuki);
+      this.url = this.url.replace('{2}', this.shu);
+      this.result = await axios.get(this.url).then(response => (response.data.mNentsukiShuKanri));
+      if (this.result.length !== 0) {
         this.countFlg = true;
         this.$emit('on-message', "");
+        this.resultCount = this.result.length; // 件数を更新
+        this.totalPages = Math.ceil(this.result.length / this.pageSize);
+        this.resultCount = this.result.length;
       } else {
-        this.msg ="検索結果が0件です。";
+        this.msg = msgList['INFO001'];
         this.$emit('on-message', this.msg);
         this.countFlg = false;
       }
@@ -209,10 +262,6 @@ export default {
       this.countFlg = false;
       this.msg = '';
       this.result = {};
-    },
-    underlineNumber(number) {
-      // 数字にアンダーラインをつけるためのスタイルを適用するメソッド
-      return `<span class="underlined">${number}</span>`;
     },
   },
 }

@@ -88,10 +88,10 @@
 
 <script>
 import { Field } from 'vee-validate'
+import { PROGRAM_INFO_URL, CHANNEL_INFO_URL, KBN_MASTER_URL, PROGRAM_TOROKU_KOSHIN_URL } from '../../../router/constList';
+import { commonUtils } from '../../../router/utils/sysCom/VeeValidateSettings';
 import axios from 'axios'
 import ProgramRefDialog from '../../ProgramRefDialog/ProgramRefDialogBaseForm.vue';
-import isValid from "date-fns/isValid";
-import parseISO from "date-fns/parseISO";
 import msgList from '../../../router/msgList';
 
 export default {
@@ -129,26 +129,32 @@ export default {
       jyunjyoName: '',//ジャンル名
       programRefDialogComponent: false,
       msg: '',
+      url: '',
     };
   },
   async created() {
+    // 初期化
+    this.btnClear();
     // 更新モードの場合
-    if (this.programId !== undefined) {
+    if (this.propProgramId !== undefined) {
+      this.programId = this.propProgramId;
       // ① 前画面からのパラメータは番組IDは必須で入力されていること。
       if (this.programId.trim() === '') {
         this.$emit('on-message', msgList['MSG006']);
         return;
       }
       // ② 番組IDが8桁以内であること。
-      if (!this.isValidMaxLength(this.programId, 8)) {
+      if (!commonUtils.isValidMaxLength(this.programId, 8)) {
         this.msg = msgList['MSG005'].replace('{0}', "番組ID");
         this.msg = this.msg.replace('{1}', "8文字");
         this.$emit('on-message', this.msg);
         return;
       }
       // 番組情報BFF（更新時のみ）※
-      const programInfoUrl = "http://localhost:8081/api/programInfoBFF/" + this.programId;
-      const programInfo = await axios.get(programInfoUrl).then(response => (response.data))
+      this.url = PROGRAM_INFO_URL;
+      this.url = this.url.replace("{1}", this.programId);
+      console.log('url:' + this.url);
+      const programInfo = await axios.get(this.url).then(response => (response.data))
       if (programInfo.talentId !== null) {
         this.programName = programInfo.programName;
         this.channelId = programInfo.channelId;
@@ -161,11 +167,12 @@ export default {
   methods: {
     async fetchData() {
       // チャンネル情報BFF（登録・更新時）
-      const channelInfoUrl = "http://localhost:8081/api/channelInfoBFF";
-      this.channelInfo = await axios.get(channelInfoUrl).then(response => response.data.channelInfo);
+      this.url = CHANNEL_INFO_URL;
+      this.channelInfo = await axios.get(this.url).then(response => response.data.channelInfo);
       // 区分マスタBFF（登録・更新モード共通）
-      const genreInfoUrl = "http://localhost:8081/api/kbnMasterBFF/1";
-      this.genreInfo = await axios.get(genreInfoUrl).then(response => response.data.mKbnGenre);
+      this.url = KBN_MASTER_URL;
+      this.url = this.url.replace("{1}", "1");
+      this.genreInfo = await axios.get(this.url).then(response => response.data.mKbnGenre);
     },
     // 初期化ボタン
     btnClear() {
@@ -204,7 +211,7 @@ export default {
       // 更新時の場合
       if (this.programId !== undefined) {
         // ② 番組IDが8桁以内であること。
-        if (!this.isValidMaxLength(this.programId, 8)) {
+        if (!commonUtils.isValidMaxLength(this.programId, 8)) {
           this.msg = msgList['MSG005'].replace('{0}', "番組ID");
           this.msg = this.msg.replace('{1}', "8文字");
           this.$emit('on-message', this.msg);
@@ -213,7 +220,7 @@ export default {
       }
 
       // ③ 番組名が30桁以内であること。
-      if (!this.isValidMaxLength(this.programName, 30)) {
+      if (!commonUtils.isValidMaxLength(this.programName, 30)) {
         this.msg = msgList['MSG005'].replace('{0}', "番組名");
         this.msg = this.msg.replace('{1}', "30文字");
         this.$emit('on-message', this.msg);
@@ -221,7 +228,7 @@ export default {
       }
 
       // ④ チャンネル局IDが数値であること。
-      if (!this.isValidNumber(Number(this.channelId))) {
+      if (!commonUtils.isValidNumber(Number(this.channelId))) {
         this.msg = msgList['MSG003'].replace('{0}', "チャンネル局ID");
         this.msg = this.msg.replace('{1}', "数値");
         this.$emit('on-message', this.msg);
@@ -229,8 +236,7 @@ export default {
       }
 
       // ⑤ チャンネル局IDが2桁以内であること。
-      console.log('this.channelId:' + this.channelId);
-      if (!this.isValidRange(this.channelId, 1, 99)) {
+      if (!commonUtils.isValidRange(this.channelId, 1, 99)) {
         this.msg = msgList['MSG005'].replace('{0}', "チャンネル局ID");
         this.msg = this.msg.replace('{1}', "2桁");
         this.$emit('on-message', this.msg);
@@ -238,7 +244,7 @@ export default {
       }
 
       // ⑥ チャンネル名が30桁以内であること。
-      if (!this.isValidMaxLength(this.channelName, 30)) {
+      if (!commonUtils.isValidMaxLength(this.channelName, 30)) {
         this.msg = msgList['MSG005'].replace('{0}', "チャンネル名");
         this.msg = this.msg.replace('{1}', "30文字");
         this.$emit('on-message', this.msg);
@@ -246,7 +252,7 @@ export default {
       }
 
       // ⑦ ジャンルIDが数値であること。
-      if (!this.isValidNumber(Number(this.jyunjyo))) {
+      if (!commonUtils.isValidNumber(Number(this.jyunjyo))) {
         this.msg = msgList['MSG003'].replace('{0}', "ジャンルID");
         this.msg = this.msg.replace('{1}', "数値");
         this.$emit('on-message', this.msg);
@@ -254,7 +260,7 @@ export default {
       }
 
       // ⑧ ジャンルIDが2桁以内であること。
-      if (!this.isValidRange(this.jyunjyo, 1, 99)) {
+      if (!commonUtils.isValidRange(this.jyunjyo, 1, 99)) {
         this.msg = msgList['MSG005'].replace('{0}', "ジャンルID");
         this.msg = this.msg.replace('{1}', "2桁");
         this.$emit('on-message', this.msg);
@@ -262,7 +268,7 @@ export default {
       }
 
       // ⑨ ジャンル名が30桁以内であること。
-      if (!this.isValidMaxLength(this.jyunjyoName, 30)) {
+      if (!commonUtils.isValidMaxLength(this.jyunjyoName, 30)) {
         this.msg = msgList['MSG005'].replace('{0}', "ジャンル名");
         this.msg = this.msg.replace('{1}', "30文字");
         this.$emit('on-message', this.msg);
@@ -271,8 +277,9 @@ export default {
 
       // チャンネル局IDに紐づく、チャンネルIDを取得
       this.channel = this.channelInfo.find(item => item.channelId === this.channelId);
-      const kbnMasterChannelUrl = "http://localhost:8081/api/kbnMasterBFF/3";
-      this.kbnMasterChannel = await axios.get(kbnMasterChannelUrl).then(response => response.data.mKbnGenre);
+      this.url = KBN_MASTER_URL;
+      this.url = this.url.replace("{1}", "3");
+      this.kbnMasterChannel = await axios.get(this.url).then(response => response.data.mKbnGenre);
 
       // チャンネル名と同一のジャンルを取得し、順序をチャンネルIDに設定
       const matchingGenre = this.kbnMasterChannel.find(item => item.genre === this.channelName);
@@ -290,10 +297,9 @@ export default {
       };
 
       // 番組登録・更新BFF（登録・更新モード共通）
-      const programToroku = "http://localhost:8081/api/programTorokuKoshinBFF";
-
       // POSTリクエストを行う
-      axios.post(programToroku, postData).then(response => {
+      this.url = PROGRAM_TOROKU_KOSHIN_URL;
+      axios.post(this.url, postData).then(response => {
           console.log("成功時の戻り値:" + JSON.stringify(response));
           this.$router.push({ name: 'main', })
         })
@@ -312,26 +318,6 @@ export default {
       this.jyunjyo = null;
       this.jyunjyoName = null;
       this.msg = '';
-    },
-    isValidDate(dateString) {
-      return isNaN(Date.parse(dateString));
-    },
-    isValidateDate(dateString) {
-      // 有効日付チェック
-      const parsedDate = parseISO(dateString.replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3"));
-      return isValid(parsedDate);
-    },
-    isValidNumber(value) {
-      // 数値であるかどうかをチェック
-      return typeof value === 'number';
-    },
-    isValidRange(value, min, max) {
-      // minからmaxの範囲内にあるかどうかをチェック
-      return value >= min && value <= max;
-    },
-    isValidMaxLength(value, maxLength) {
-      // 文字列の長さが【maxLength】文字以内であるかどうかをチェック
-      return value.length <= maxLength;
     },
     // チャンネル名の表示
     getChannelName(channelId) {
