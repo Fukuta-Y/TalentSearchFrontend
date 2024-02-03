@@ -6,7 +6,6 @@
 
       <!-- メインメニュータイトルブロックとコンテンツ -->
       <div style="flex: 1; display: flex; flex-direction: column; padding: 20px;">
-        <CommonHeader />
         <ErrorMessage v-if="message" v-bind:prop-message="message" />
         <OnAirKanriTorokuKoshin
           v-bind:prop-id="id"
@@ -18,7 +17,6 @@
   </div>
 </template>
 <script>
-import CommonHeader from '../common/CommonHeader.vue'
 import ErrorMessage from '../common/ErrorMessage.vue'
 import OnAirKanriTorokuKoshin from './components/OnAirKanriTorokuKoshin.vue'
 import SideBar from '../common/SideBar.vue';
@@ -34,7 +32,6 @@ export default {
     },
   },
   components: {
-    CommonHeader,
     ErrorMessage,
     OnAirKanriTorokuKoshin,
     SideBar,

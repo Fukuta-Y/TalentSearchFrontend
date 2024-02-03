@@ -3,11 +3,8 @@
     <div style="display: flex; flex: 1;">
       <!-- サイドバー -->
       <SideBar />
-
       <!-- メインメニュータイトルブロックとコンテンツ -->
       <div style="flex: 1; display: flex; flex-direction: column; padding: 20px;">
-          <CommonHeader
-            />
           <ErrorMessage
               v-if="message"
               v-bind:prop-message="message"
@@ -24,7 +21,6 @@
   </div>
 </template>
 <script>
-import CommonHeader from '../common/CommonHeader.vue'
 import ErrorMessage from '../common/ErrorMessage.vue'
 import WeekTalentShutsuenJoken from './components/WeekTalentShutsuenJoken.vue'
 import SideBar from '../common/SideBar.vue';
@@ -46,7 +42,6 @@ export default {
     },
   },
   components: {
-    CommonHeader,
     ErrorMessage,
     WeekTalentShutsuenJoken,
     SideBar,

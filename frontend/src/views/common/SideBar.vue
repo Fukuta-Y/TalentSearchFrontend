@@ -1,11 +1,15 @@
 <template>
     <div>
-        <div :style="{ width: isSidebarCollapsed ? '60px' : '200px' }" class="sidebar">
-        <!-- HamburgerMenu コンポーネントをインクルード -->
-        <HamburgerMenu :isSidebarCollapsed="isSidebarCollapsed" :toggleSidebar="toggleSidebar" />
-            <!-- サイドバー -->
-            <SidebarMenu :isSidebarCollapsed="isSidebarCollapsed" :sidebarLinks="sidebarLinks"
-                :expandedSubmenus="expandedSubmenus" @toggleSubmenu="toggleSubmenu" />
+        <div class="sidebar-container">
+            <div :style="{ width: isSidebarCollapsed ? '60px' : '200px' }" class="sidebar">
+                <!-- TOP link when the sidebar is collapsed -->
+                <router-link v-if="isSidebarCollapsed" :to="{ name: 'main' }" class="top-link">
+                    TOP
+                </router-link>
+                <HamburgerMenu :isSidebarCollapsed="isSidebarCollapsed" :toggleSidebar="toggleSidebar" />
+                <SidebarMenu :isSidebarCollapsed="isSidebarCollapsed" :sidebarLinks="sidebarLinks"
+                    :expandedSubmenus="expandedSubmenus" @toggleSubmenu="toggleSubmenu" />
+            </div>
         </div>
     </div>
 </template>
@@ -169,4 +173,19 @@ ul ul {
 .sidebar-link {
     margin-bottom: 10px;
     /* 適切なマージンを指定 */
-}</style>
+}
+.sidebar-container {
+  display: flex;
+  align-items: center;
+}
+
+.top-link {
+  text-align: center;
+  font-size: 12px;
+  padding: 10px;
+  background-color: #696969;
+  color: #fff;
+  cursor: pointer;
+  flex-grow: 1; /* Expand the background around TOP link */
+}
+</style>
