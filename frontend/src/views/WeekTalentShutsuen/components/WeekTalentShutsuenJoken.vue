@@ -12,6 +12,7 @@
             rules="required"
             maxlength="6"
             placeholder="例：202304"
+            class="rounded-textbox"
           />
         </td>
       </tr>
@@ -31,9 +32,10 @@
             maxlength="1"
             size="5"
             placeholder="例：3"
+            class="rounded-textbox"
           />&nbsp;&nbsp;週目
         </td>
-        <td style="font-size:11px;color:red;" >※月と週はセットで必須入力</td>
+        <td style="font-size:12px;color:red;" >※月と週はセットで必須入力</td>
       </tr>
       <tr>
         <td colspan="2"> 
@@ -50,6 +52,7 @@
             size="30"
             maxlength="30"
             placeholder="例：○○太郎"
+            class="rounded-textbox"
           />
         </td>
       </tr>
@@ -61,12 +64,11 @@
     </table>
     <br>
     <div>
-      <button v-on:click="btnSearch()">
+      <button v-on:click="btnSearch()" class="rounded-button">
         検索
       </button>
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      <button 
-        v-on:click="btnClear()">
+      <button v-on:click="btnClear()" class="rounded-button">
         クリア
       </button>
     </div>
@@ -80,7 +82,7 @@
       </tr>
     </table>
     <div style="overflow-y: auto;">
-      <table align="center" border="1" style="border-collapse: collapse;" v-if="isCount">
+      <table class="result-table" align="center" border="1" style="border-collapse: collapse;" v-if="isCount">
         <tr>
           <td style="background-color: greenyellow;">タレント名 </td>
           <td style="background-color: greenyellow;">週間出演番組本数 </td>
@@ -328,6 +330,72 @@ export default {
 }
 
 .underlined {
+  text-decoration: underline;
+}
+.rounded-button {
+  padding: 8px 16px;
+  border-radius: 8px;
+  background-color: #c0c0c0; /* Light gray background color */
+  color: black;
+  border: 1px solid #c0c0c0; /* Light gray border */
+  cursor: pointer;
+  font-size: 14px;
+  outline: none; /* Remove default button outline */
+}
+
+.rounded-button:hover {
+  background-color: #a0a0a0; /* Slightly darker gray on hover */
+  border: 1px solid #a0a0a0; /* Darker gray border on hover */
+}
+.rounded-textbox {
+  padding: 8px;
+  border-radius: 10px;
+  border: 1px solid #c0c0c0; /* Light gray border */
+  font-size: 14px;
+  box-sizing: border-box; /* Include padding and border in element's total width and height */
+}
+
+/* Optionally, you can add a hover effect for the textboxes */
+.rounded-textbox:hover {
+  border: 1px solid #a0a0a0; /* Darker gray border on hover */
+}
+
+
+table th {
+  background-color: #333;
+  color: white;
+  padding: 10px;
+  text-align: center;
+  border: 1px solid #ddd;
+  box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.1);
+}
+
+/* Style the table rows */
+.result-table tr {
+  border: 1px solid #ddd;
+}
+
+.result-table td {
+  padding: 8px;
+  text-align: center;
+  border: 1px solid #ddd;
+  box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.1);
+}
+
+/* Add a hover effect on table rows */
+.result-table tr:hover {
+  background-color: #f5f5f5;
+}
+
+/* Optional: Style the links in the table */
+.result-table a {
+  color: #007BFF;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+/* Optional: Add a hover effect on links */
+.result-table a:hover {
   text-decoration: underline;
 }
 </style>

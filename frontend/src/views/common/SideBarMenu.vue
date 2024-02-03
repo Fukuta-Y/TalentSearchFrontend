@@ -1,6 +1,11 @@
 <template>
     <div class="sidebar" :class="{ 'collapsed': isSidebarCollapsed }">
         <ul v-show="!isSidebarCollapsed">
+            <!-- TOP link when the sidebar is collapsed -->
+            <router-link v-if="!isSidebarCollapsed" :to="{ name: 'main' }" class="top-link">
+                TOP
+            </router-link>
+            <br/>
             <li v-for="item in sidebarLinks" :key="item.id">
                 <span v-if="item.children" @click="toggleSubmenu(item.id)">
                     <span class="menu-text">{{ item.text }}</span>

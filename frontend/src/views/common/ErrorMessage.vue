@@ -1,17 +1,20 @@
 <template>
-  <br>
-  <center>
-    <table border="1">
-      <colgroup>
-        <col style="background-color: #FFFFEE" />
-        <col span="2" />
-      </colgroup>
-      <tr>
-        <font color="red">{{ propMessage }}</font>
-      </tr>
-    </table>
-  </center>
-  <br>
+  <div>
+    <br>
+    <center>
+      <table style="width: 100%; background-color: #ffe6e6; border-collapse: collapse; border: 1px solid #ff6666;">
+        <colgroup>
+          <col style="width: 33%;" />
+          <col style="width: 33%;" />
+          <col style="width: 33%;" />
+        </colgroup>
+        <tr>
+          <td colspan="3" style="text-align: center; color: red;">{{ propMessage }}</td>
+        </tr>
+      </table>
+    </center>
+    <br>
+  </div>
 </template>
 
 <script>
@@ -30,5 +33,4 @@ export default {
 }
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

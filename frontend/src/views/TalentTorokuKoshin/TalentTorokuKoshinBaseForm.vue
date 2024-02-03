@@ -6,7 +6,6 @@
 
       <!-- メインメニュータイトルブロックとコンテンツ -->
       <div style="flex: 1; display: flex; flex-direction: column; padding: 20px;">
-        <CommonHeader />
         <ErrorMessage v-if="message" v-bind:prop-message="message" />
         <TalentTorokuKoshin
           v-bind:prop-talent-id="talentId"
@@ -17,7 +16,6 @@
   </div>
 </template>
 <script>
-import CommonHeader from '../common/CommonHeader.vue'
 import ErrorMessage from '../common/ErrorMessage.vue'
 import TalentTorokuKoshin from './components/TalentTorokuKoshin.vue'
 import SideBar from '../common/SideBar.vue';
@@ -30,7 +28,6 @@ export default {
     },
   },
   components: {
-    CommonHeader,
     ErrorMessage,
     TalentTorokuKoshin,
     SideBar,
