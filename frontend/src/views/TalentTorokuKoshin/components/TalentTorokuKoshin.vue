@@ -6,7 +6,7 @@
          <td>
           <label>{{ gettalentId }}</label>
         </td>
-        <button v-on:click="btnTalentRefDialogOpen()">
+        <button v-on:click="btnTalentRefDialogOpen()" class="rounded-ref-button">
           <label>参照</label>
         </button>
         <TalentRefDialog 
@@ -17,7 +17,7 @@
           @close="btnTalentRefDialogClose()" 
           v-on:on-select-talent="handleSelectTalent" 
         />
-      </tr>
+      </tr><br/>
       <tr>
         <td>タレント名： </td>
         <td>
@@ -29,9 +29,10 @@
               maxlength="30"
               size="20"
               placeholder="例：タモリ"
+              class="rounded-textbox"
             />
         </td>
-      </tr>
+      </tr><br/>
         <tr>
           <td>ジャンルID： </td>
           <td>
@@ -44,7 +45,7 @@
                 </select>
             </div>
           </td>
-        </tr>
+        </tr><br/>
         <tr>
           <td>ジャンル名： </td>
             <td>
@@ -56,12 +57,11 @@
     <br/>
     <br/>
     <div>
-      <button v-on:click="btnToroku()">
+      <button v-on:click="btnToroku()" class="rounded-button">
         <label>{{ getTorokuKoshinName }}</label>
       </button>
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      <button 
-        v-on:click="btnClear()">
+      <button  v-on:click="btnClear()" class="rounded-button">
         クリア
       </button>
   </div>
@@ -74,6 +74,7 @@ import { commonUtils } from '../../../router/utils/sysCom/VeeValidateSettings';
 import axios from 'axios'
 import TalentRefDialog from '../../TalentRefDialog/TalentRefDialogBaseForm.vue';
 import msgList from '../../../router/msgList';
+import '../../../router/styles/common.css';
 
 export default {
   name: 'TalentTorokuKoshin',
@@ -259,11 +260,4 @@ export default {
 }
 </script>
 <style scoped>
-.custom-select {
-  width: 150px;
-  /* 任意の幅を指定してください */
-  padding: 2px;
-  /* 適切なパディングを指定してください */
-  box-sizing: border-box;
-}
 </style>

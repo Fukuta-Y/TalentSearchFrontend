@@ -9,7 +9,7 @@
         v-on:on-select-program="reciveSelectProgram"
         v-on:on-message="receiveMessage"
       />
-      <button @click="closeDialog">閉じる</button>
+     <button v-on:click="closeDialog()" class="rounded-button">閉じる</button>
     </div>
   </div>
 </template>
@@ -17,6 +17,8 @@
 <script>
 import ErrorMessage from '../common/ErrorMessage.vue'
 import ProgramRefSearchJoken from './components/ProgramRefSearchJoken.vue'
+import '../../router/styles/common.css';
+
 export default {
   name: 'ProgramRefDialogBaseForm',
   props: {
@@ -60,26 +62,4 @@ export default {
 };
 </script>
 <style scoped>
-.modal-container {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  /* 背景に透明度を追加 */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.modal-content {
-  background-color: #fff;
-  padding: 20px;
-  border-radius: 8px;
-}
-.dialog-content {
-  width: 40%; /* 任意の幅を指定してください */
-  height: 70%; /* 任意の幅を指定してください */
-  margin: 0 auto;
-}
 </style>

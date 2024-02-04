@@ -18,7 +18,7 @@
         <td style="text-align: left;">【週・日付】：   {{ this.result[0].shuFrom }}  ー   {{ this.result[0].shuTo }}</td>
       </tr>
     </table>
-    <table align="center" border="1" style="border-collapse: collapse;" v-if="isCount">
+    <table  class="result-table" align="center" border="1" style="border-collapse: collapse;" v-if="isCount">
       <tr>
         <td style="background-color: greenyellow;">出演番組 </td>
         <td style="background-color: greenyellow;">放送局（チャンネル） </td>
@@ -26,7 +26,7 @@
         <td style="background-color: greenyellow;">放送時間</td>
         <td style="background-color: greenyellow;">番組ジャンル</td>
       </tr>
-      <tr v-for="(item, key) in result" :key="key">
+      <tr v-for="(item, key) in paginatedResult" :key="key">
         <td><router-link :to="{ name: 'ProgramDetail', params: { programId: item.programId, onAirDay: item.onAirDay + ' ' + item.onAirTime.substring(0, 5), nentsuki: this.nentsuki, shu: this.shu } }">{{ item.shutsuenProgram }}</router-link></td>
         <td>{{ item.hosokyokuChannel }} </td>
         <td>{{ item.onAirDay }} </td>
@@ -36,11 +36,11 @@
     </table>
     <div v-if="isCount">
       <div class="pagination-container">
-        <a @click="changePage(1)" :disabled="currentPage === 1" class="pagination-link">最初</a>
+        <a  v-on:click="changePage(1)" :disabled="currentPage === 1" class="pagination-link">最初</a>
         <a
           v-for="pageNumber in totalPageLinks"
           :key="pageNumber"
-          @click="pageNumber !== '...' ? changePage(pageNumber) : null"
+           v-on:click="pageNumber !== '...' ? changePage(pageNumber) : null"
           class="pagination-link"
         >
           <span v-if="pageNumber !== '...'">
@@ -48,7 +48,7 @@
           </span>
           <span v-else>...</span>
         </a>
-        <a @click="changePage(totalPages)" :disabled="currentPage === totalPages" class="pagination-link">最後</a>
+        <a  v-on:click="changePage(totalPages)" :disabled="currentPage === totalPages" class="pagination-link">最後</a>
       </div>
     </div>
     <br>
@@ -60,6 +60,7 @@ import axios from 'axios'
 import msgList from '../../../router/msgList';
 import { TALENT_SHUKAN_SHUTSUEN_JOHO_URL } from '../../../router/constList';
 import { commonUtils } from '../../../router/utils/sysCom/VeeValidateSettings';
+import '../../../router/styles/common.css';
 
 export default {
   name: 'TalentProgramJoken',
@@ -84,6 +85,7 @@ export default {
       isCount: false,
       result: {},
       currentPage: 1,
+      maxPageLinks: 100,
       pageSize: 10, // 1ページあたりのアイテム数
       totalPages: 0,
     }
@@ -138,11 +140,9 @@ export default {
       return this.result.slice(startIndex, endIndex);
     },
     totalPageLinks() {
-      const maxPageLinks = 10;
-      const currentGroup = Math.ceil(this.currentPage / maxPageLinks);
-      const startPage = (currentGroup - 1) * maxPageLinks + 1;
-      const endPage = Math.min(currentGroup * maxPageLinks, this.totalPages);
-
+      const currentGroup = Math.ceil(this.currentPage / this.maxPageLinks);
+      const startPage = (currentGroup - 1) * this.maxPageLinks + 1;
+      const endPage = Math.min(currentGroup * this.maxPageLinks, this.totalPages);
       return Array.from({ length: endPage - startPage + 1 }, (_, index) => startPage + index);
     },
   },

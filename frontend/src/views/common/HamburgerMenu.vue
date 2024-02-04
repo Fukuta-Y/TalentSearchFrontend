@@ -1,5 +1,5 @@
 <template>
-    <div class="burger-menu" @click="toggleSidebar">
+    <div class="burger-menu"  v-on:click="toggleSidebar">
         <div :class="{ 'bar': isSidebarCollapsed, 'plus': !isSidebarCollapsed }"></div>
         <div :class="{ 'bar': isSidebarCollapsed, 'plus': !isSidebarCollapsed }"></div>
         <div :class="{ 'bar': isSidebarCollapsed, 'plus': !isSidebarCollapsed }"></div>

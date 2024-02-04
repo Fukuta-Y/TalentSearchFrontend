@@ -9,7 +9,7 @@
         v-on:on-select-talent="reciveSelectTalent"
         v-on:on-message="receiveMessage"
       />
-      <button @click="closeDialog">閉じる</button>
+     <button v-on:click="closeDialog()" class="rounded-ref-button">閉じる</button>
     </div>
   </div>
 </template>
@@ -17,6 +17,7 @@
 <script>
 import ErrorMessage from '../common/ErrorMessage.vue'
 import TalentRefSearchJoken from './components/TalentRefSearchJoken.vue'
+import '../../router/styles/common.css';
 export default {
   props: {
     propTalentId: {
@@ -78,7 +79,6 @@ export default {
 }
 .dialog-content {
   width: 40%; /* 任意の幅を指定してください */
-  height: 70%; /* 任意の幅を指定してください */
   margin: 0 auto;
 }
 </style>

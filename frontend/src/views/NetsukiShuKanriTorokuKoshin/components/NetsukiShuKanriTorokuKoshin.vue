@@ -11,6 +11,7 @@
               rules="required"
               maxlength="4"
               placeholder="例：2023"
+              class="rounded-textbox"
             /> 年
           </td>
           <td>
@@ -22,8 +23,9 @@
               rules="required"
               maxlength="2"
               placeholder="例：04"
+              class="rounded-textbox"
             />月
-          <button v-on:click="btnNentsukiRefDialogOpen()">
+          <button v-on:click="btnNentsukiRefDialogOpen()" class="rounded-ref-button">
             <label>参照</label>
           </button>
           <NetsukiShuKanriRefDialog 
@@ -34,7 +36,7 @@
             v-on:on-select-nentsuki-shu="handleSelectNentsuki" 
           />
         </td>
-        </tr>
+        </tr><br/>
         <tr>
           <td>週： </td>
           <td>
@@ -46,31 +48,31 @@
               maxlength="1"
               size="5"
               placeholder="例：3"
+              class="rounded-textbox"
             /> 週目
           </td>
-        </tr>
+        </tr><br/>
         <tr v-if="!nentsukiShuRefDialogComponent">
           <td>週の開始日（日曜日）： </td>
           <td class="date-picker">
-            <Datepicker v-model="shuFrom" @input="updateFormattedDate" :style="{ width: '250px' }"  language="ja"></Datepicker>
+            <Datepicker v-model="shuFrom" @input="updateFormattedDate" :style="{ width: '250px' }"  class="rounded-datepicker" language="ja" placeholder="例：2024-02-04 00:00"/>
           </td>
-        </tr>
+        </tr><br/>
         <tr v-if="!nentsukiShuRefDialogComponent">
           <td>週の終了日（土曜日）： </td>
           <td class="date-picker">
-            <Datepicker v-model="shuTo" @input="updateFormattedDate" :style="{ width: '250px' }"  language="ja"></Datepicker>
+            <Datepicker v-model="shuTo" @input="updateFormattedDate" :style="{ width: '250px' }"  class="rounded-datepicker" language="ja" placeholder="例：2024-02-10 00:00"/>
           </td>
         </tr>
     </table>
     <br/>
     <br/>
     <div>
-      <button v-on:click="btnToroku()">
+      <button v-on:click="btnToroku()" class="rounded-button">
         <label>{{ getTorokuKoshinName }}</label>
       </button>
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      <button 
-        v-on:click="btnClear()">
+      <button v-on:click="btnClear()" class="rounded-button">
         クリア
       </button>
   </div>
@@ -84,8 +86,9 @@ import { NENTSUKI_SHUKANRI_GET_URL, NENTSUKI_SHUKANRI_URL } from '../../../route
 import axios from 'axios'
 import NetsukiShuKanriRefDialog from '../../NetsukiShuKanriRefDialog/NetsukiShuKanriRefDialogBaseForm.vue'
 import Datepicker from '@vuepic/vue-datepicker'
-import '@vuepic/vue-datepicker/dist/main.css'
 import msgList from '../../../router/msgList';
+import '@vuepic/vue-datepicker/dist/main.css'
+import '../../../router/styles/common.css';
 
 export default {
   name: 'NetsukiShuKanriTorokuKoshin',

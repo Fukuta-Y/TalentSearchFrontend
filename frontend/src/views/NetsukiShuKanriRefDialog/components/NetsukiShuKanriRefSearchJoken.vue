@@ -12,6 +12,7 @@
             rules="required"
             maxlength="4"
             placeholder="例：2023"
+            class="rounded-textbox"
           /> 年
         </td>
         <td>
@@ -23,6 +24,7 @@
             rules="required"
             maxlength="2"
             placeholder="例：04"
+            class="rounded-textbox"
           />月
         </td>
         <td style="font-size:11px;color:red;" >※年と月は入力時はセットで必須入力</td>
@@ -38,6 +40,7 @@
             maxlength="1"
             size="5"
             placeholder="例：3"
+            class="rounded-textbox"
           /> 週目
         </td>
       </tr>
@@ -54,19 +57,18 @@
     </table>
     <br>
     <div>
-      <button v-on:click="btnSearch()">
+      <button v-on:click="btnSearch()" class="rounded-ref-button">
         検索
       </button>
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      <button 
-        v-on:click="btnClear()">
+      <button v-on:click="btnClear()" class="rounded-ref-button">
         クリア
       </button>
     </div>
     <br>
     <br>
     <div style="overflow-y: auto;">
-      <table align="center" border="1" style="border-collapse: collapse;" v-if="isCount">
+      <table align="center" border="1" style="border-collapse: collapse;" class="result-table" v-if="isCount">
         <tr>
           <td style="background-color: greenyellow;"></td>
           <td style="background-color: greenyellow; width:150px;">年月・週</td>
@@ -74,7 +76,7 @@
           <td style="background-color: greenyellow; width:180px;">週の終了日（土曜日）</td>
         </tr>
         <tr v-for="(item, key) in paginatedResult" :key="key">
-          <td><button v-on:click="selectNentsukiShu(item.nentsuki, item.shu, item.shuFrom.toString().substring(0, 8), item.shuTo.toString().substring(0, 8))">選択</button></td>
+          <td><button v-on:click="selectNentsukiShu(item.nentsuki, item.shu, item.shuFrom.toString().substring(0, 8), item.shuTo.toString().substring(0, 8))" class="rounded-ref-button">選択</button></td>
           <td v-if="isNentsukiShu">
              {{ `${String(item.nentsuki).substring(0, 4)}/${String(item.nentsuki).substring(4, 6)} ${item.shu}週` }}
           </td>
@@ -87,11 +89,11 @@
       </table>
       <div v-if="isCount">
         <div class="pagination-container">
-          <a @click="changePage(1)" :disabled="currentPage === 1" class="pagination-link">最初</a>
+          <a  v-on:click="changePage(1)" :disabled="currentPage === 1" class="pagination-link">最初</a>
           <a
             v-for="pageNumber in totalPageLinks"
             :key="pageNumber"
-            @click="pageNumber !== '...' ? changePage(pageNumber) : null"
+             v-on:click="pageNumber !== '...' ? changePage(pageNumber) : null"
             class="pagination-link"
           >
             <span v-if="pageNumber !== '...'">
@@ -99,7 +101,7 @@
             </span>
             <span v-else>...</span>
           </a>
-          <a @click="changePage(totalPages)" :disabled="currentPage === totalPages" class="pagination-link">最後</a>
+          <a  v-on:click="changePage(totalPages)" :disabled="currentPage === totalPages" class="pagination-link">最後</a>
         </div>
       </div>
     </div>
@@ -112,6 +114,7 @@ import { NENTSUKI_SHU_KANRI_REF_URL } from '../../../router/constList';
 import { commonUtils } from '../../../router/utils/sysCom/VeeValidateSettings';
 import axios from 'axios'
 import msgList from '../../../router/msgList';
+import '../../../router/styles/common.css';
 
 export default {
   name: 'NetsukiShuKanriRefSearchJoken',
@@ -144,6 +147,7 @@ export default {
       currentPage: 1,
       pageSize: 10,
       totalPages: 0,
+      maxPageLinks: 10,
     }
   },
   async created() {
@@ -164,11 +168,9 @@ export default {
       return this.result.slice(startIndex, endIndex);
     },
     totalPageLinks() {
-      const maxPageLinks = 10;
-      const currentGroup = Math.ceil(this.currentPage / maxPageLinks);
-      const startPage = (currentGroup - 1) * maxPageLinks + 1;
-      const endPage = Math.min(currentGroup * maxPageLinks, this.totalPages);
-
+      const currentGroup = Math.ceil(this.currentPage / this.maxPageLinks);
+      const startPage = (currentGroup - 1) * this. maxPageLinks + 1;
+      const endPage = Math.min(currentGroup * this.maxPageLinks, this.totalPages);
       return Array.from({ length: endPage - startPage + 1 }, (_, index) => startPage + index);
     },
   },
@@ -267,32 +269,4 @@ export default {
 }
 </script>
 <style scoped>
-.custom-select {
-  width: 150px;
-  /* 任意の幅を指定してください */
-  padding: 2px;
-  /* 適切なパディングを指定してください */
-  box-sizing: border-box;
-}
-
-/* 最低限のstyle */
-.date-picker {
-  margin: 60px auto 0;
-  width: 60%;
-}
-/* ページネーションのための同じスタイルを使用 */
-.pagination-container {
-  display: flex;
-  gap: 8px;
-  justify-content: center;
-}
-
-.pagination-link {
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.underlined {
-  text-decoration: underline;
-}
 </style>

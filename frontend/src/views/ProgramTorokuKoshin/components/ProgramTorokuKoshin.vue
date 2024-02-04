@@ -6,7 +6,7 @@
          <td>
           <label>{{ getProgramId }}</label>
         </td>
-        <button v-on:click="btnProgramRefDialogOpen()">
+        <button v-on:click="btnProgramRefDialogOpen()" class="rounded-ref-button">
           <label>参照</label>
         </button>
         <ProgramRefDialog 
@@ -17,7 +17,7 @@
           @close="btnProgramRefDialogClose()" 
           v-on:on-select-program="handleSelectProgram" 
         />
-      </tr>
+      </tr><br/>
       <tr>
         <td>番組名： </td>
         <td>
@@ -29,9 +29,10 @@
               maxlength="30"
               size="20"
               placeholder="例：ぽかぽか"
+              class="rounded-textbox"
             />
         </td>
-      </tr>
+      </tr><br/>
       <tr>
         <td>チャンネル局ID： </td>
         <td>
@@ -44,13 +45,13 @@
               </select>
           </div>
         </td>
-       </tr>
+       </tr><br/>
         <tr>
           <td>チャンネル名： </td>
            <td>
             {{ getChannelName(channelId) }}
            </td>
-        </tr>
+        </tr><br/>
         <tr>
           <td>ジャンルID： </td>
           <td>
@@ -63,24 +64,23 @@
                 </select>
             </div>
           </td>
-        </tr>
+        </tr><br/>
         <tr>
           <td>ジャンル名： </td>
             <td>
             {{ getGenreName(jyunjyo) }}
             </td>
-        </tr>
+        </tr><br/>
     </table>
     </div>
     <br/>
     <br/>
     <div>
-      <button v-on:click="btnToroku()">
+      <button v-on:click="btnToroku()" class="rounded-button">
         <label>{{ getTorokuKoshinName }}</label>
       </button>
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      <button 
-        v-on:click="btnClear()">
+      <button v-on:click="btnClear()" class="rounded-button">
         クリア
       </button>
   </div>
@@ -93,6 +93,7 @@ import { commonUtils } from '../../../router/utils/sysCom/VeeValidateSettings';
 import axios from 'axios'
 import ProgramRefDialog from '../../ProgramRefDialog/ProgramRefDialogBaseForm.vue';
 import msgList from '../../../router/msgList';
+import '../../../router/styles/common.css';
 
 export default {
   name: 'ProgramTorokuKoshin',

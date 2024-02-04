@@ -11,6 +11,7 @@
             label="番組ID"
             maxlength="8"
             placeholder="例：00000001"
+            class="rounded-textbox"
           />
         </td>
       </tr>
@@ -29,6 +30,7 @@
             maxlength="30"
             size="20"
             placeholder="例：ぽかぽか"
+            class="rounded-textbox"
           />
         </td>
       </tr>
@@ -45,19 +47,19 @@
     </table>
     <br>
     <div>
-      <button v-on:click="btnSearch()">
+      <button v-on:click="btnSearch()" class="rounded-ref-button">
         検索
       </button>
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
       <button 
-        v-on:click="btnClear()">
+        v-on:click="btnClear()" class="rounded-ref-button">
         クリア
       </button>
     </div>
     <br>
     <br>
     <div style="overflow-y: auto;">
-      <table align="center" border="1" style="border-collapse: collapse;" v-if="isCount">
+      <table align="center" border="1" style="border-collapse: collapse;" class="result-table" v-if="isCount">
         <!-- テーブルのヘッダー部分 -->
         <tr>
           <td style="background-color: greenyellow;"></td>
@@ -68,7 +70,7 @@
         </tr>
         <!-- ページごとに表示されるアイテムを反復処理 -->
         <tr v-for="(item, key) in paginatedResult" :key="key">
-          <td><button v-on:click="selectProgram(item.programId, item.programName, item.channelKyokuId, item.genreId)">選択</button></td>
+          <td><button v-on:click="selectProgram(item.programId, item.programName, item.channelKyokuId, item.genreId)" class="rounded-ref-button">選択</button></td>
           <td v-if="isProgramToroku">
             {{ item.programId }}
           </td>
@@ -82,11 +84,11 @@
       </table>
       <div v-if="isCount">
         <div class="pagination-container">
-          <a @click="changePage(1)" :disabled="currentPage === 1" class="pagination-link">最初</a>
+          <a  v-on:click="changePage(1)" :disabled="currentPage === 1" class="pagination-link">最初</a>
           <a
             v-for="pageNumber in totalPageLinks"
             :key="pageNumber"
-            @click="pageNumber !== '...' ? changePage(pageNumber) : null"
+             v-on:click="pageNumber !== '...' ? changePage(pageNumber) : null"
             class="pagination-link"
           >
             <span v-if="pageNumber !== '...'">
@@ -94,7 +96,7 @@
             </span>
             <span v-else>...</span>
           </a>
-          <a @click="changePage(totalPages)" :disabled="currentPage === totalPages" class="pagination-link">最後</a>
+          <a  v-on:click="changePage(totalPages)" :disabled="currentPage === totalPages" class="pagination-link">最後</a>
         </div>
       </div>
     </div>
@@ -138,6 +140,7 @@ export default {
       currentPage: 1,
       pageSize: 10, // 1ページあたりのアイテム数
       totalPages: 0,
+      maxPageLinks: 10,
     }
   },
   async created() {
@@ -157,11 +160,9 @@ export default {
       return this.result.slice(startIndex, endIndex);
     },
     totalPageLinks() {
-      const maxPageLinks = 10;
-      const currentGroup = Math.ceil(this.currentPage / maxPageLinks);
-      const startPage = (currentGroup - 1) * maxPageLinks + 1;
-      const endPage = Math.min(currentGroup * maxPageLinks, this.totalPages);
-
+      const currentGroup = Math.ceil(this.currentPage / this.maxPageLinks);
+      const startPage = (currentGroup - 1) * this.maxPageLinks + 1;
+      const endPage = Math.min(currentGroup * this.maxPageLinks, this.totalPages);
       return Array.from({ length: endPage - startPage + 1 }, (_, index) => startPage + index);
     },
   },
@@ -224,18 +225,4 @@ export default {
 }
 </script>
 <style scoped>
-.pagination-container {
-  display: flex;
-  gap: 8px;
-  justify-content: center; /* 画面中央に寄せる */
-}
-
-.pagination-link {
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.underlined {
-  text-decoration: underline;
-}
 </style>

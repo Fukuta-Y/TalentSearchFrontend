@@ -11,6 +11,7 @@
             label="ID"
             maxlength="8"
             placeholder="例：10000001"
+            class="rounded-textbox"
           />
         </td>
       </tr>
@@ -22,7 +23,7 @@
       <tr>
         <td>オンエア日時： </td>
         <td class="date-picker">
-          <Datepicker v-model="onAirDay" @input="updateFormattedDate" :style="{ width: '250px' }"  language="ja" placeholder="例：2023-04-18 11:50"></Datepicker>
+          <Datepicker v-model="onAirDay" @input="updateFormattedDate" :style="{ width: '250px' }"  language="ja" class="rounded-datepicker" placeholder="例：2023-04-18 11:50"></Datepicker>
         </td>
       </tr>
       <tr>
@@ -38,30 +39,30 @@
     </table>
     <br>
     <div>
-      <button v-on:click="btnSearch()">
+      <button v-on:click="btnSearch()" class="rounded-ref-button">
         検索
       </button>
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
       <button 
-        v-on:click="btnClear()">
+        v-on:click="btnClear()" class="rounded-ref-button">
         クリア
       </button>
     </div>
     <br>
     <div style="overflow-y: auto;">
-      <table align="center" border="1" style="border-collapse: collapse;" v-if="isCount">
+      <table align="center" border="1" style="border-collapse: collapse;" class="result-table" v-if="isCount">
         <tr>
           <td style="background-color: greenyellow;"></td>
           <td style="background-color: greenyellow;width:80px;">ID </td>
-          <td style="background-color: greenyellow;width:160px;">オンエア日時</td>
+          <td style="background-color: greenyellow;width:150px;">オンエア日時</td>
           <td style="background-color: greenyellow;width:80px;">番組ID</td>
-          <td style="background-color: greenyellow; width:130px;">番組名</td>
+          <td style="background-color: greenyellow; width:250px;">番組名</td>
           <td style="background-color: greenyellow;">タレントID</td>
-          <td style="background-color: greenyellow; width:150px;">タレント名</td>
+          <td style="background-color: greenyellow; width:250px;">タレント名</td>
           <td style="background-color: greenyellow; width:115px;">年月・週</td>
         </tr>
         <tr v-for="(item, key) in paginatedResult" :key="key">
-          <td><button v-on:click="selectId(item.id, item.onAirDay, item.programId, item.programName, item.talentId, item.talentName, item.nentsuki, item.shu)">選択</button></td>
+          <td><button v-on:click="selectId(item.id, item.onAirDay, item.programId, item.programName, item.talentId, item.talentName, item.nentsuki, item.shu)" class="rounded-ref-button">選択</button></td>
           <td>{{ item.id }} </td>
           <td>{{ item.onAirDay.toString().substring(0, 16) }} </td>
           <td><router-link :to="{ name: 'ProgramTorokuKoshin', params: { programId: item.programId } }">{{ item.programId }}</router-link></td>
@@ -73,11 +74,11 @@
       </table>
       <div v-if="isCount">
         <div class="pagination-container">
-          <a @click="changePage(1)" :disabled="currentPage === 1" class="pagination-link">最初</a>
+          <a  v-on:click="changePage(1)" :disabled="currentPage === 1" class="pagination-link">最初</a>
           <a
             v-for="pageNumber in totalPageLinks"
             :key="pageNumber"
-            @click="pageNumber !== '...' ? changePage(pageNumber) : null"
+             v-on:click="pageNumber !== '...' ? changePage(pageNumber) : null"
             class="pagination-link"
           >
             <span v-if="pageNumber !== '...'">
@@ -85,7 +86,7 @@
             </span>
             <span v-else>...</span>
           </a>
-          <a @click="changePage(totalPages)" :disabled="currentPage === totalPages" class="pagination-link">最後</a>
+          <a  v-on:click="changePage(totalPages)" :disabled="currentPage === totalPages" class="pagination-link">最後</a>
         </div>
       </div>
     </div>
@@ -99,8 +100,9 @@ import { ON_AIR_KANRI_REF_URL } from '../../../router/constList';
 import { commonUtils } from '../../../router/utils/sysCom/VeeValidateSettings';
 import axios from 'axios'
 import Datepicker from '@vuepic/vue-datepicker'
-import '@vuepic/vue-datepicker/dist/main.css'
 import msgList from '../../../router/msgList';
+import '@vuepic/vue-datepicker/dist/main.css'
+import '../../../router/styles/common.css';
 
 export default {
   name: 'OnAirKanriRefSearchJoken',
@@ -136,6 +138,7 @@ export default {
       currentPage: 1,
       pageSize: 10, // 1ページあたりのアイテム数
       totalPages: 0,
+      maxPageLinks: 10,
     }
   },
   async created() {
@@ -154,11 +157,9 @@ export default {
       return this.result.slice(startIndex, endIndex);
     },
     totalPageLinks() {
-      const maxPageLinks = 10;
-      const currentGroup = Math.ceil(this.currentPage / maxPageLinks);
-      const startPage = (currentGroup - 1) * maxPageLinks + 1;
-      const endPage = Math.min(currentGroup * maxPageLinks, this.totalPages);
-
+      const currentGroup = Math.ceil(this.currentPage / this.maxPageLinks);
+      const startPage = (currentGroup - 1) * this.maxPageLinks + 1;
+      const endPage = Math.min(currentGroup * this.maxPageLinks, this.totalPages);
       return Array.from({ length: endPage - startPage + 1 }, (_, index) => startPage + index);
     },
   },
@@ -235,31 +236,4 @@ export default {
 }
 </script>
 <style scoped>
-.custom-select {
-  width: 150px;
-  /* 任意の幅を指定してください */
-  padding: 2px;
-  /* 適切なパディングを指定してください */
-  box-sizing: border-box;
-}
-
-/* 最低限のstyle */
-.date-picker {
-  margin: 60px auto 0;
-  width: 60%;
-}
-.pagination-container {
-  display: flex;
-  gap: 8px;
-  justify-content: center; /* 画面中央に寄せる */
-}
-
-.pagination-link {
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.underlined {
-  text-decoration: underline;
-}
 </style>
