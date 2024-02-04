@@ -76,7 +76,7 @@
           <td style="background-color: greenyellow; width:180px;">週の終了日（土曜日）</td>
         </tr>
         <tr v-for="(item, key) in paginatedResult" :key="key">
-          <td><button v-on:click="selectNentsukiShu(item.nentsuki, item.shu, item.shuFrom.toString().substring(0, 8), item.shuTo.toString().substring(0, 8))" class="rounded-ref-button">選択</button></td>
+          <td><button v-on:click="selectNentsukiShu(item.nentsuki, item.shu, item.shuFrom, item.shuTo)" class="rounded-ref-button">選択</button></td>
           <td v-if="isNentsukiShu">
              {{ `${String(item.nentsuki).substring(0, 4)}/${String(item.nentsuki).substring(4, 6)} ${item.shu}週` }}
           </td>
