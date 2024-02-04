@@ -223,19 +223,4 @@ export default {
 }
 </script>
 <style scoped>
-/* ページネーションのための同じスタイルを使用 */
-.pagination-container {
-  display: flex;
-  gap: 8px;
-  justify-content: center;
-}
-
-.pagination-link {
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.underlined {
-  text-decoration: underline;
-}
 </style>

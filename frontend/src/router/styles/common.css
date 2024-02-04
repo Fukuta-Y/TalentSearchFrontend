@@ -112,3 +112,17 @@
     padding: 5px;
     /* DatePickerの内側に余白を追加 */
 }
+.pagination-container {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+}
+
+.pagination-link {
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.underlined {
+    text-decoration: underline;
+}
