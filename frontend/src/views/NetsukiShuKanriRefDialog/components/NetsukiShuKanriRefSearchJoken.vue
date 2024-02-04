@@ -147,6 +147,7 @@ export default {
       currentPage: 1,
       pageSize: 10,
       totalPages: 0,
+      maxPageLinks: 10,
     }
   },
   async created() {
@@ -167,11 +168,9 @@ export default {
       return this.result.slice(startIndex, endIndex);
     },
     totalPageLinks() {
-      const maxPageLinks = 10;
-      const currentGroup = Math.ceil(this.currentPage / maxPageLinks);
-      const startPage = (currentGroup - 1) * maxPageLinks + 1;
-      const endPage = Math.min(currentGroup * maxPageLinks, this.totalPages);
-
+      const currentGroup = Math.ceil(this.currentPage / this.maxPageLinks);
+      const startPage = (currentGroup - 1) * this. maxPageLinks + 1;
+      const endPage = Math.min(currentGroup * this.maxPageLinks, this.totalPages);
       return Array.from({ length: endPage - startPage + 1 }, (_, index) => startPage + index);
     },
   },

@@ -41,9 +41,6 @@
     font-size: 14px;
     outline: none;
     /* Remove default button outline */
-}
-
-.rounded-button:hover {
     background-color: #a0a0a0;
     /* Slightly darker gray on hover */
     border: 1px solid #a0a0a0;

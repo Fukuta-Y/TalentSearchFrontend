@@ -15,7 +15,7 @@
             class="rounded-textbox"
           />
         </td>
-      </tr>
+      </tr><br/>
       <tr>
         <td colspan="2"> 
           <ErrorMessage style="font-size:12px;color:red;" name="nentsuki" /> 
@@ -36,7 +36,7 @@
           />&nbsp;&nbsp;週目
         </td>
         <td style="font-size:12px;color:red;" >※月と週はセットで必須入力</td>
-      </tr>
+      </tr><br/>
       <tr>
         <td colspan="2"> 
           <ErrorMessage style="font-size:12px;color:red;" name="shu" /> 
@@ -73,7 +73,6 @@
       </button>
     </div>
     <br>
-    <br>
     <table align="center" v-if="isCount">
       <tr>
         <td style="text-align: left;">【年月・週】：{{ `${String(this.labelNentsuki).substring(0, 4)}/${String(this.labelNentsuki).substring(4, 6)} ${this.labelShu}週目` }}</td>
@@ -89,7 +88,7 @@
           <td style="background-color: greenyellow;">出演番組（直近） </td>
           <td style="background-color: greenyellow;">オンエア日時（直近） </td>
         </tr>
-        <tr v-for="(item, key) in result" :key="key">
+       <tr v-for="(item, key) in paginatedResult" :key="key">
           <td><router-link :to="{ name: 'TalentDetail', params: { nentsuki: this.labelNentsuki, shu: this.labelShu, talentId: item.talentId } }">{{ item.talentName }}</router-link></td>
           <td>{{ item.shukanShutsuenProgramHonsu + "本"}} </td>
           <td><router-link :to="{ name: 'ProgramDetail', params: { programId: item.shutsuenProgramIdChokin, onAirDay: getOnAirDayFormat(item.onAirDayChokin), nentsuki: this.labelNentsuki, shu: this.labelShu } }">{{ item.shutsuenProgramChokin  }}</router-link></td>
@@ -160,6 +159,7 @@ export default {
       isCount: false,
       result: {},
       currentPage: 1,
+      maxPageLinks: 100,
       pageSize: 10, // 1ページあたりのアイテム数
       totalPages: 0,
       url: '',
@@ -221,11 +221,9 @@ export default {
       return this.result.slice(startIndex, endIndex);
     },
     totalPageLinks() {
-      const maxPageLinks = 10;
-      const currentGroup = Math.ceil(this.currentPage / maxPageLinks);
-      const startPage = (currentGroup - 1) * maxPageLinks + 1;
-      const endPage = Math.min(currentGroup * maxPageLinks, this.totalPages);
-
+      const currentGroup = Math.ceil(this.currentPage / this.maxPageLinks);
+      const startPage = (currentGroup - 1) * this.maxPageLinks + 1;
+      const endPage = Math.min(currentGroup * this.maxPageLinks, this.totalPages);
       return Array.from({ length: endPage - startPage + 1 }, (_, index) => startPage + index);
     },
   },
@@ -279,13 +277,15 @@ export default {
       this.url = this.url.replace('{2}', this.shu);
       this.url = this.url.replace('{3}', this.talentName);
       this.result = await axios.get(this.url).then(response => (response.data.shukanTalent))
-      if (this.result != null && this.result[0].talentId !== null) {
+      if (this.result != null && this.result.length > 0) {
         this.isCount = true;
         this.$emit('on-message', "");
         this.totalPages = Math.ceil(this.result.length / this.pageSize);
+        // ここで currentPage の制約を追加
+        this.currentPage = Math.min(this.currentPage, this.totalPages);
         this.resultCount = this.result.length;
       } else {
-        this.msg =  msgList['INFO001'];
+        this.msg = msgList['INFO001'];
         this.$emit('on-message', this.msg);
         this.isCount = false;
       }

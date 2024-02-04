@@ -24,7 +24,7 @@
       <tr>
         <td style="background-color: greenyellow;">タレント名 </td>
       </tr>
-      <tr v-for="(item, key) in result" :key="key">
+      <tr v-for="(item, key) in paginatedResult" :key="key">
         <td><router-link :to="{ name: 'TalentDetail', params: { nentsuki: this.nentsuki, shu: this.shu, talentId: item.talentId }}">{{ item.talentName }}</router-link></td>
       </tr>
     </table>
@@ -80,6 +80,7 @@ export default {
       isCount: false,
       result: {},
       currentPage: 1,
+      maxPageLinks: 100,
       pageSize: 10, // 1ページあたりのアイテム数
       totalPages: 0,
     }
@@ -143,11 +144,9 @@ export default {
       return this.result.slice(startIndex, endIndex);
     },
     totalPageLinks() {
-      const maxPageLinks = 10;
-      const currentGroup = Math.ceil(this.currentPage / maxPageLinks);
-      const startPage = (currentGroup - 1) * maxPageLinks + 1;
-      const endPage = Math.min(currentGroup * maxPageLinks, this.totalPages);
-
+      const currentGroup = Math.ceil(this.currentPage / this.maxPageLinks);
+      const startPage = (currentGroup - 1) * this.maxPageLinks + 1;
+      const endPage = Math.min(currentGroup * this.maxPageLinks, this.totalPages);
       return Array.from({ length: endPage - startPage + 1 }, (_, index) => startPage + index);
     },
   },
