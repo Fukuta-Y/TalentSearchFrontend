@@ -76,7 +76,7 @@
           <td style="background-color: greenyellow; width:180px;">週の終了日（土曜日）</td>
         </tr>
         <tr v-for="(item, key) in paginatedResult" :key="key">
-          <td><button v-on:click="selectNentsukiShu(item.nentsuki, item.shu, item.shuFrom.toString().substring(0, 8), item.shuTo.toString().substring(0, 8))" class="rounded-ref-button">選択</button></td>
+          <td><button v-on:click="selectNentsukiShu(item.nentsuki, item.shu, item.shuFrom, item.shuTo)" class="rounded-ref-button">選択</button></td>
           <td v-if="isNentsukiShu">
              {{ `${String(item.nentsuki).substring(0, 4)}/${String(item.nentsuki).substring(4, 6)} ${item.shu}週` }}
           </td>
@@ -88,21 +88,12 @@
         </tr>
       </table>
       <div v-if="isCount">
-        <div class="pagination-container">
-          <a  v-on:click="changePage(1)" :disabled="currentPage === 1" class="pagination-link">最初</a>
-          <a
-            v-for="pageNumber in totalPageLinks"
-            :key="pageNumber"
-             v-on:click="pageNumber !== '...' ? changePage(pageNumber) : null"
-            class="pagination-link"
-          >
-            <span v-if="pageNumber !== '...'">
-              <span class="underlined">{{ pageNumber }}</span>
-            </span>
-            <span v-else>...</span>
-          </a>
-          <a  v-on:click="changePage(totalPages)" :disabled="currentPage === totalPages" class="pagination-link">最後</a>
-        </div>
+        <DataGridViewPaging
+          :currentPage="currentPage"
+          :totalPages="totalPages"
+          :totalPageLinks="totalPageLinks"
+          :changePage="changePage"
+        />
       </div>
     </div>
     <br>
@@ -112,6 +103,7 @@
 import { Field, ErrorMessage } from 'vee-validate'
 import { NENTSUKI_SHU_KANRI_REF_URL } from '../../../router/constList';
 import { commonUtils } from '../../../router/utils/sysCom/VeeValidateSettings';
+import DataGridViewPaging from '../../common/DataGridViewPaging.vue';
 import axios from 'axios'
 import msgList from '../../../router/msgList';
 import '../../../router/styles/common.css';
@@ -130,6 +122,7 @@ export default {
   components: {
     Field,
     ErrorMessage,
+    DataGridViewPaging,
   },
   watch: {
   },

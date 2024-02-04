@@ -96,21 +96,12 @@
         </tr>
       </table>
       <div v-if="isCount">
-        <div class="pagination-container">
-          <a  v-on:click="changePage(1)" :disabled="currentPage === 1" class="pagination-link">最初</a>
-          <a
-            v-for="pageNumber in totalPageLinks"
-            :key="pageNumber"
-             v-on:click="pageNumber !== '...' ? changePage(pageNumber) : null"
-            class="pagination-link"
-          >
-            <span v-if="pageNumber !== '...'">
-              <span class="underlined">{{ pageNumber }}</span>
-            </span>
-            <span v-else>...</span>
-          </a>
-          <a  v-on:click="changePage(totalPages)" :disabled="currentPage === totalPages" class="pagination-link">最後</a>
-        </div>
+        <DataGridViewPaging
+          :currentPage="currentPage"
+          :totalPages="totalPages"
+          :totalPageLinks="totalPageLinks"
+          :changePage="changePage"
+        />
       </div>
     </div>
     <br>
@@ -120,6 +111,7 @@
 import { Field, ErrorMessage } from 'vee-validate'
 import { commonUtils } from '../../../router/utils/sysCom/VeeValidateSettings';
 import { SHUKAN_TALENT_JOHO_URL } from '../../../router/constList';
+import DataGridViewPaging from '../../common/DataGridViewPaging.vue';
 import msgList from '../../../router/msgList';
 import axios from 'axios'
 import moment from 'moment';
@@ -144,6 +136,7 @@ export default {
   components: {
     Field,
     ErrorMessage,
+    DataGridViewPaging,
   },
   emits: ['on-message'],
   data() {
@@ -277,7 +270,7 @@ export default {
       this.url = this.url.replace('{2}', this.shu);
       this.url = this.url.replace('{3}', this.talentName);
       this.result = await axios.get(this.url).then(response => (response.data.shukanTalent))
-      if (this.result != null && this.result.length > 0) {
+      if (this.result[0].talentId != null) {
         this.isCount = true;
         this.$emit('on-message', "");
         this.totalPages = Math.ceil(this.result.length / this.pageSize);
@@ -285,9 +278,9 @@ export default {
         this.currentPage = Math.min(this.currentPage, this.totalPages);
         this.resultCount = this.result.length;
       } else {
+        this.isCount = false;
         this.msg = msgList['INFO001'];
         this.$emit('on-message', this.msg);
-        this.isCount = false;
       }
       // 検索結果のラベルの内容に設定
       this.labelNentsuki = this.nentsuki;

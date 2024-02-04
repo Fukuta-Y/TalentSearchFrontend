@@ -336,11 +336,4 @@ export default {
 }
 </script>
 <style scoped>
-.custom-select {
-  width: 150px;
-  /* 任意の幅を指定してください */
-  padding: 2px;
-  /* 適切なパディングを指定してください */
-  box-sizing: border-box;
-}
 </style>

@@ -55,13 +55,13 @@
         <tr v-if="!nentsukiShuRefDialogComponent">
           <td>週の開始日（日曜日）： </td>
           <td class="date-picker">
-            <Datepicker v-model="shuFrom" @input="updateFormattedDate" :style="{ width: '250px' }"  class="rounded-datepicker" language="ja" placeholder="例：2024-02-04 00:00"/>
+            <Datepicker v-model="shuFrom" @input="updateFormattedDate" :style="{ width: '200px' }" class="rounded-datepicker" language="ja" placeholder="例：2024-02-04" :format="customDateFormat"/>
           </td>
         </tr><br/>
         <tr v-if="!nentsukiShuRefDialogComponent">
           <td>週の終了日（土曜日）： </td>
           <td class="date-picker">
-            <Datepicker v-model="shuTo" @input="updateFormattedDate" :style="{ width: '250px' }"  class="rounded-datepicker" language="ja" placeholder="例：2024-02-10 00:00"/>
+            <Datepicker v-model="shuTo" @input="updateFormattedDate" :style="{ width: '200px' }" class="rounded-datepicker" language="ja" placeholder="例：2024-02-10" :format="customDateFormat"/>
           </td>
         </tr>
     </table>
@@ -130,6 +130,7 @@ export default {
       nentsukiShuRefDialogComponent: false,
       targetFromNentsuki: '',
       targetToNentsuki: '',
+      customDateFormat: 'yyyy-MM-dd',
     };
   },
   watch: {
@@ -156,19 +157,20 @@ export default {
           this.nen = result.nentsuki.toString().substring(0, 4);
           this.tsuki = result.nentsuki.toString().substring(4);
           this.shu = result.shu;
-          this.shuFrom = result.shuFrom.toString().substring(0, 8);
-          this.shuTo = result.shuTo.toString().substring(0, 8);
+          this.shuFrom = result.shuFrom.toString()
+          this.shuTo = result.shuTo.toString()
         }
       }
     },
     // 年月週の参照時の戻り
     handleSelectNentsuki(selectedData) {
       this.$emit('on-message', '');
+      console.log('selectedData:' + JSON.stringify(selectedData));
       this.nen = selectedData.nentsuki.toString().substring(0, 4);
       this.tsuki = selectedData.nentsuki.toString().substring(4);
       this.shu = selectedData.shu;
-      this.shuFrom = selectedData.shuFrom.toString().substring(0, 8);
-      this.shuTo = selectedData.shuTo.toString().substring(0, 8);
+      this.shuFrom = selectedData.shuFrom.toString()
+      this.shuTo = selectedData.shuTo.toString()
       this.nentsukiShu = this.nen + this.tsuki + this.shu;
     },
     updateFormattedDate() {
@@ -405,21 +407,10 @@ export default {
       this.shuFrom = null;
       this.shuTo = null;
       this.msg = '';
+      this.nentsukiShu = null;
     },
   },
 }
 </script>
 <style scoped>
-.custom-select {
-  width: 150px;
-  /* 任意の幅を指定してください */
-  padding: 2px;
-  /* 適切なパディングを指定してください */
-  box-sizing: border-box;
-}
-/* 最低限のstyle */
-.date-picker {
-  margin: 60px auto 0;
-  width: 60%;
-}
 </style>
