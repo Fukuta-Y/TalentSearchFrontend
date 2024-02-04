@@ -54,15 +54,15 @@
         <tr>
           <td style="background-color: greenyellow;"></td>
           <td style="background-color: greenyellow;width:80px;">ID </td>
-          <td style="background-color: greenyellow;width:160px;">オンエア日時</td>
+          <td style="background-color: greenyellow;width:150px;">オンエア日時</td>
           <td style="background-color: greenyellow;width:80px;">番組ID</td>
-          <td style="background-color: greenyellow; width:130px;">番組名</td>
+          <td style="background-color: greenyellow; width:250px;">番組名</td>
           <td style="background-color: greenyellow;">タレントID</td>
-          <td style="background-color: greenyellow; width:150px;">タレント名</td>
+          <td style="background-color: greenyellow; width:250px;">タレント名</td>
           <td style="background-color: greenyellow; width:115px;">年月・週</td>
         </tr>
         <tr v-for="(item, key) in paginatedResult" :key="key">
-          <td><button v-on:click="selectId(item.id, item.onAirDay, item.programId, item.programName, item.talentId, item.talentName, item.nentsuki, item.shu)">選択</button></td>
+          <td><button v-on:click="selectId(item.id, item.onAirDay, item.programId, item.programName, item.talentId, item.talentName, item.nentsuki, item.shu)" class="rounded-ref-button">選択</button></td>
           <td>{{ item.id }} </td>
           <td>{{ item.onAirDay.toString().substring(0, 16) }} </td>
           <td><router-link :to="{ name: 'ProgramTorokuKoshin', params: { programId: item.programId } }">{{ item.programId }}</router-link></td>
@@ -237,31 +237,4 @@ export default {
 }
 </script>
 <style scoped>
-.custom-select {
-  width: 150px;
-  /* 任意の幅を指定してください */
-  padding: 2px;
-  /* 適切なパディングを指定してください */
-  box-sizing: border-box;
-}
-
-/* 最低限のstyle */
-.date-picker {
-  margin: 60px auto 0;
-  width: 60%;
-}
-.pagination-container {
-  display: flex;
-  gap: 8px;
-  justify-content: center; /* 画面中央に寄せる */
-}
-
-.pagination-link {
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.underlined {
-  text-decoration: underline;
-}
 </style>

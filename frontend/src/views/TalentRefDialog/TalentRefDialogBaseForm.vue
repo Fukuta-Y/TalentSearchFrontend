@@ -9,7 +9,7 @@
         v-on:on-select-talent="reciveSelectTalent"
         v-on:on-message="receiveMessage"
       />
-     <button v-on:click="closeDialog()" class="rounded-button">閉じる</button>
+     <button v-on:click="closeDialog()" class="rounded-ref-button">閉じる</button>
     </div>
   </div>
 </template>
@@ -79,7 +79,6 @@ export default {
 }
 .dialog-content {
   width: 40%; /* 任意の幅を指定してください */
-  height: 70%; /* 任意の幅を指定してください */
   margin: 0 auto;
 }
 </style>

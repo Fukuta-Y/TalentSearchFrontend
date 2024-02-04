@@ -70,7 +70,7 @@
         </tr>
         <!-- ページごとに表示されるアイテムを反復処理 -->
         <tr v-for="(item, key) in paginatedResult" :key="key">
-          <td><button v-on:click="selectProgram(item.programId, item.programName, item.channelKyokuId, item.genreId)">選択</button></td>
+          <td><button v-on:click="selectProgram(item.programId, item.programName, item.channelKyokuId, item.genreId)" class="rounded-ref-button">選択</button></td>
           <td v-if="isProgramToroku">
             {{ item.programId }}
           </td>
@@ -226,18 +226,4 @@ export default {
 }
 </script>
 <style scoped>
-.pagination-container {
-  display: flex;
-  gap: 8px;
-  justify-content: center; /* 画面中央に寄せる */
-}
-
-.pagination-link {
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.underlined {
-  text-decoration: underline;
-}
 </style>

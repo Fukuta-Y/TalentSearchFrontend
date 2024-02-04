@@ -12,7 +12,7 @@
           v-bind:prop-id="id"
           v-bind:prop-on-air-day="onAirDay"
           :is-open="idRefDialogComponent" 
-          v-on:click="btnIdRefDialogClose()" 
+          @close="btnIdRefDialogClose()" 
           v-on:on-select-id="handleSelectId" 
         />
       </tr><br/>
@@ -43,7 +43,7 @@
             v-bind:prop-program-name="programName"
             v-bind:is-program-toroku="false"
             :is-open="programRefDialogComponent" 
-            v-on:click="btnProgramRefDialogClose()" 
+            @close="btnProgramRefDialogClose()" 
             v-on:on-select-program="handleSelectProgram" 
           />
       </tr><br/>
@@ -74,7 +74,7 @@
           v-bind:prop-talent-name="talentName"
           v-bind:is-talent-toroku="false"
           :is-open="talentRefDialogComponent" 
-          v-on:click="btnTalentRefDialogClose()" 
+          @close="btnTalentRefDialogClose()" 
           v-on:on-select-talent="handleSelectTalent" 
         />
       </tr><br/>
@@ -103,7 +103,7 @@
             v-bind:prop-nentsuki-shu="propNentsukiShu"
             v-bind:is-nentsuki-shu="false"
             :is-open="nentsukiShuRefDialogComponent" 
-            v-on:click="btnNentsukiRefDialogClose()" 
+            @close="btnNentsukiRefDialogClose()" 
             v-on:on-select-nentsuki-shu="handleSelectNentsuki" 
           />
       </tr>

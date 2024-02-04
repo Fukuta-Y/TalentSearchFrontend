@@ -14,7 +14,7 @@
           v-bind:prop-talent-name="talentName"
           v-bind:is-talent-toroku="true"
           :is-open="talentRefDialogComponent" 
-          v-on:click="btnTalentRefDialogClose()"
+          @close="btnTalentRefDialogClose()" 
           v-on:on-select-talent="handleSelectTalent" 
         />
       </tr><br/>

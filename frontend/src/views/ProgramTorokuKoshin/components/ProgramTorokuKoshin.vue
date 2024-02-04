@@ -14,7 +14,7 @@
           v-bind:prop-program-name="programName"
           v-bind:is-program-toroku="true"
           :is-open="programRefDialogComponent" 
-          v-on:click="btnProgramRefDialogClose()" 
+          @close="btnProgramRefDialogClose()" 
           v-on:on-select-program="handleSelectProgram" 
         />
       </tr><br/>

@@ -71,7 +71,7 @@ methods: {
 .dialog-content {
   width: 60%;
   /* 任意の幅を指定してください */
-  height: 70%;
+  height: 90%;
   /* 任意の幅を指定してください */
   margin: 0 auto;
 }</style>

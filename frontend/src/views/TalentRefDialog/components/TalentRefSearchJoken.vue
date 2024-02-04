@@ -56,7 +56,6 @@
       </button>
     </div>
     <br>
-    <br>
     <div style="overflow-y: auto;">
       <table align="center" border="1" style="border-collapse: collapse;" class="result-table" v-if="isCount">
         <tr>
@@ -66,7 +65,7 @@
           <td style="background-color: greenyellow;" v-if="isTalentToroku">ジャンルID</td>
         </tr>
         <tr v-for="(item, key) in paginatedResult" :key="key">
-          <td><button v-on:click="selectTalent(item.talentId, item.talentName, item.genreId)">選択</button></td>
+          <td><button v-on:click="selectTalent(item.talentId, item.talentName, item.genreId)" class="rounded-ref-button">選択</button></td>
           <td v-if="isTalentToroku">
               {{ item.talentId }}
           </td>

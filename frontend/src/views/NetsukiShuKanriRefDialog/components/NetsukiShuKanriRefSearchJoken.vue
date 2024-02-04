@@ -76,7 +76,7 @@
           <td style="background-color: greenyellow; width:180px;">週の終了日（土曜日）</td>
         </tr>
         <tr v-for="(item, key) in paginatedResult" :key="key">
-          <td><button v-on:click="selectNentsukiShu(item.nentsuki, item.shu, item.shuFrom.toString().substring(0, 8), item.shuTo.toString().substring(0, 8))">選択</button></td>
+          <td><button v-on:click="selectNentsukiShu(item.nentsuki, item.shu, item.shuFrom.toString().substring(0, 8), item.shuTo.toString().substring(0, 8))" class="rounded-ref-button">選択</button></td>
           <td v-if="isNentsukiShu">
              {{ `${String(item.nentsuki).substring(0, 4)}/${String(item.nentsuki).substring(4, 6)} ${item.shu}週` }}
           </td>
@@ -270,32 +270,4 @@ export default {
 }
 </script>
 <style scoped>
-.custom-select {
-  width: 150px;
-  /* 任意の幅を指定してください */
-  padding: 2px;
-  /* 適切なパディングを指定してください */
-  box-sizing: border-box;
-}
-
-/* 最低限のstyle */
-.date-picker {
-  margin: 60px auto 0;
-  width: 60%;
-}
-/* ページネーションのための同じスタイルを使用 */
-.pagination-container {
-  display: flex;
-  gap: 8px;
-  justify-content: center;
-}
-
-.pagination-link {
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.underlined {
-  text-decoration: underline;
-}
 </style>
