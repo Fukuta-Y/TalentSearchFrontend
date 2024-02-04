@@ -5,23 +5,23 @@
         <td>
           <label>{{ getId() }}</label>
         </td>
-        <button v-on:click="btnIdRefDialogOpen()">
+        <button v-on:click="btnIdRefDialogOpen()" class="rounded-ref-button">
           <label>参照</label>
         </button>
         <OnAirKanriRefDialog 
           v-bind:prop-id="id"
           v-bind:prop-on-air-day="onAirDay"
           :is-open="idRefDialogComponent" 
-          @close="btnIdRefDialogClose()" 
+          v-on:click="btnIdRefDialogClose()" 
           v-on:on-select-id="handleSelectId" 
         />
-      </tr>
+      </tr><br/>
       <tr v-if="!idRefDialogComponent">
         <td>オンエア日時： </td>
-        <td class="date-picker">
-          <Datepicker v-model="onAirDay" @input="updateFormattedDate" :style="{ width: '250px' }" language="ja" v-show="mode === '1' || !idRefDialogComponent"></Datepicker>
+        <td class="date-picker" v-show="mode === '1' || !idRefDialogComponent">
+          <Datepicker v-model="onAirDay" @input="updateFormattedDate" :style="{ width: '250px' }" class="rounded-datepicker" language="ja" placeholder="例：2023-04-18 11:50"></Datepicker>
         </td>
-      </tr>
+      </tr><br/>
       <tr>
           <td>番組ID： </td>
           <td>
@@ -35,7 +35,7 @@
               :disabled="true" 
             />
           </td>
-          <button v-on:click="btnProgramRefDialogOpen()">
+          <button v-on:click="btnProgramRefDialogOpen()" class="rounded-ref-button">
             <label>参照</label>
           </button>
           <ProgramRefDialog 
@@ -43,16 +43,16 @@
             v-bind:prop-program-name="programName"
             v-bind:is-program-toroku="false"
             :is-open="programRefDialogComponent" 
-            @close="btnProgramRefDialogClose()" 
+            v-on:click="btnProgramRefDialogClose()" 
             v-on:on-select-program="handleSelectProgram" 
           />
-      </tr>
+      </tr><br/>
       <tr>
         <td>番組名： </td>
           <td>
           <label>{{ this.programName }}</label>
         </td>
-      </tr>
+      </tr><br/>
       <tr>
         <td>タレントID： </td>
         <td>
@@ -64,9 +64,9 @@
             rules="required"
             maxlength="8"
             :disabled="true" 
-          />
+          /><br/>
         </td>
-        <button v-on:click="btnTalentRefDialogOpen()">
+        <button v-on:click="btnTalentRefDialogOpen()" class="rounded-ref-button">
           <label>参照</label>
         </button>
         <TalentRefDialog 
@@ -74,16 +74,16 @@
           v-bind:prop-talent-name="talentName"
           v-bind:is-talent-toroku="false"
           :is-open="talentRefDialogComponent" 
-          @close="btnTalentRefDialogClose()" 
+          v-on:click="btnTalentRefDialogClose()" 
           v-on:on-select-talent="handleSelectTalent" 
         />
-      </tr>
+      </tr><br/>
       <tr>
         <td>タレント名： </td>
           <td>
           <label>{{ this.talentName }}</label>
         </td>
-      </tr>
+      </tr><br/>
       <tr>
         <td>年月・週： </td>
         <td>
@@ -96,14 +96,14 @@
             :disabled="true" 
           />
           </td>
-          <button v-on:click="btnNentsukiRefDialogOpen()">
+          <button v-on:click="btnNentsukiRefDialogOpen()" class="rounded-ref-button">
             <label>参照</label>
           </button>
           <NetsukiShuKanriRefDialog 
             v-bind:prop-nentsuki-shu="propNentsukiShu"
             v-bind:is-nentsuki-shu="false"
             :is-open="nentsukiShuRefDialogComponent" 
-            @close="btnNentsukiRefDialogClose()" 
+            v-on:click="btnNentsukiRefDialogClose()" 
             v-on:on-select-nentsuki-shu="handleSelectNentsuki" 
           />
       </tr>
@@ -111,12 +111,12 @@
     <br/>
     <br/>
     <div>
-      <button v-on:click="btnToroku()">
+      <button v-on:click="btnToroku()" class="rounded-button">
         <label>{{ getTorokuKoshinName }}</label>
       </button>
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
       <button 
-        v-on:click="btnClear()">
+        v-on:click="btnClear()" class="rounded-button">
         クリア
       </button>
   </div>
@@ -133,8 +133,9 @@ import OnAirKanriRefDialog from '../../OnAirKanriRefDialog/OnAirKanriRefDialogBa
 import ProgramRefDialog from '../../ProgramRefDialog/ProgramRefDialogBaseForm.vue';
 import TalentRefDialog from '../../TalentRefDialog/TalentRefDialogBaseForm.vue';
 import Datepicker from '@vuepic/vue-datepicker'
-import '@vuepic/vue-datepicker/dist/main.css'
 import msgList from '../../../router/msgList';
+import '@vuepic/vue-datepicker/dist/main.css'
+import '../../../router/styles/common.css';
 
 export default {
   name: 'OnAirKanriTorokuKoshin',

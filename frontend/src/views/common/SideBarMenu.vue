@@ -7,7 +7,7 @@
             </router-link>
             <br/>
             <li v-for="item in sidebarLinks" :key="item.id">
-                <span v-if="item.children" @click="toggleSubmenu(item.id)">
+                <span v-if="item.children"  v-on:click="toggleSubmenu(item.id)">
                     <span class="menu-text">{{ item.text }}</span>
                     <span :class="{ 'expanded': isSubmenuExpanded(item.id) }">&#9660;</span>
                 </span>

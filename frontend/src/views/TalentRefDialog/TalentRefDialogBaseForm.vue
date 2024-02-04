@@ -9,7 +9,7 @@
         v-on:on-select-talent="reciveSelectTalent"
         v-on:on-message="receiveMessage"
       />
-      <button @click="closeDialog">閉じる</button>
+     <button v-on:click="closeDialog()" class="rounded-button">閉じる</button>
     </div>
   </div>
 </template>
@@ -17,6 +17,7 @@
 <script>
 import ErrorMessage from '../common/ErrorMessage.vue'
 import TalentRefSearchJoken from './components/TalentRefSearchJoken.vue'
+import '../../router/styles/common.css';
 export default {
   props: {
     propTalentId: {

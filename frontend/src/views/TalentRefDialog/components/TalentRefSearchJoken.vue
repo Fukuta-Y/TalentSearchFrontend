@@ -11,6 +11,7 @@
             label="タレントID"
             maxlength="8"
             placeholder="例：10000001"
+            class="rounded-textbox"
           />
         </td>
       </tr>
@@ -29,6 +30,7 @@
             maxlength="30"
             size="20"
             placeholder="例：タモリ"
+            class="rounded-textbox"
           />
         </td>
       </tr>
@@ -45,19 +47,18 @@
     </table>
     <br>
     <div>
-      <button v-on:click="btnSearch()">
+      <button v-on:click="btnSearch()" class="rounded-ref-button">
         検索
       </button>
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      <button 
-        v-on:click="btnClear()">
+      <button v-on:click="btnClear()" class="rounded-ref-button">
         クリア
       </button>
     </div>
     <br>
     <br>
     <div style="overflow-y: auto;">
-      <table align="center" border="1" style="border-collapse: collapse;" v-if="isCount">
+      <table align="center" border="1" style="border-collapse: collapse;" class="result-table" v-if="isCount">
         <tr>
           <td style="background-color: greenyellow;"></td>
           <td style="background-color: greenyellow;">タレントID </td>
@@ -78,11 +79,11 @@
       </table>
       <div v-if="isCount">
         <div class="pagination-container">
-          <a @click="changePage(1)" :disabled="currentPage === 1" class="pagination-link">最初</a>
+          <a v-on:click="changePage(1)" :disabled="currentPage === 1" class="pagination-link">最初</a>
           <a
             v-for="pageNumber in totalPageLinks"
             :key="pageNumber"
-            @click="pageNumber !== '...' ? changePage(pageNumber) : null"
+            v-on:click="pageNumber !== '...' ? changePage(pageNumber) : null"
             class="pagination-link"
           >
             <span v-if="pageNumber !== '...'">
@@ -90,7 +91,7 @@
             </span>
             <span v-else>...</span>
           </a>
-          <a @click="changePage(totalPages)" :disabled="currentPage === totalPages" class="pagination-link">最後</a>
+          <a v-on:click="changePage(totalPages)" :disabled="currentPage === totalPages" class="pagination-link">最後</a>
         </div>
       </div>
     </div>
@@ -104,6 +105,7 @@ import { commonUtils } from '../../../router/utils/sysCom/VeeValidateSettings';
 import { TALENT_REF_URL } from '../../../router/constList';
 import axios from 'axios'
 import msgList from '../../../router/msgList';
+import '../../../router/styles/common.css';
 
 export default {
   name: 'TalentRefSearchJoken',

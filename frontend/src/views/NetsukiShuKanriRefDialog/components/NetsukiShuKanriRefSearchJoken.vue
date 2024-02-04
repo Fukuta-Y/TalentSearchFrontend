@@ -12,6 +12,7 @@
             rules="required"
             maxlength="4"
             placeholder="例：2023"
+            class="rounded-textbox"
           /> 年
         </td>
         <td>
@@ -23,6 +24,7 @@
             rules="required"
             maxlength="2"
             placeholder="例：04"
+            class="rounded-textbox"
           />月
         </td>
         <td style="font-size:11px;color:red;" >※年と月は入力時はセットで必須入力</td>
@@ -38,6 +40,7 @@
             maxlength="1"
             size="5"
             placeholder="例：3"
+            class="rounded-textbox"
           /> 週目
         </td>
       </tr>
@@ -54,19 +57,18 @@
     </table>
     <br>
     <div>
-      <button v-on:click="btnSearch()">
+      <button v-on:click="btnSearch()" class="rounded-ref-button">
         検索
       </button>
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      <button 
-        v-on:click="btnClear()">
+      <button v-on:click="btnClear()" class="rounded-ref-button">
         クリア
       </button>
     </div>
     <br>
     <br>
     <div style="overflow-y: auto;">
-      <table align="center" border="1" style="border-collapse: collapse;" v-if="isCount">
+      <table align="center" border="1" style="border-collapse: collapse;" class="result-table" v-if="isCount">
         <tr>
           <td style="background-color: greenyellow;"></td>
           <td style="background-color: greenyellow; width:150px;">年月・週</td>
@@ -87,11 +89,11 @@
       </table>
       <div v-if="isCount">
         <div class="pagination-container">
-          <a @click="changePage(1)" :disabled="currentPage === 1" class="pagination-link">最初</a>
+          <a  v-on:click="changePage(1)" :disabled="currentPage === 1" class="pagination-link">最初</a>
           <a
             v-for="pageNumber in totalPageLinks"
             :key="pageNumber"
-            @click="pageNumber !== '...' ? changePage(pageNumber) : null"
+             v-on:click="pageNumber !== '...' ? changePage(pageNumber) : null"
             class="pagination-link"
           >
             <span v-if="pageNumber !== '...'">
@@ -99,7 +101,7 @@
             </span>
             <span v-else>...</span>
           </a>
-          <a @click="changePage(totalPages)" :disabled="currentPage === totalPages" class="pagination-link">最後</a>
+          <a  v-on:click="changePage(totalPages)" :disabled="currentPage === totalPages" class="pagination-link">最後</a>
         </div>
       </div>
     </div>
@@ -112,6 +114,7 @@ import { NENTSUKI_SHU_KANRI_REF_URL } from '../../../router/constList';
 import { commonUtils } from '../../../router/utils/sysCom/VeeValidateSettings';
 import axios from 'axios'
 import msgList from '../../../router/msgList';
+import '../../../router/styles/common.css';
 
 export default {
   name: 'NetsukiShuKanriRefSearchJoken',

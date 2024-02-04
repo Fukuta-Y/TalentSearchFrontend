@@ -8,7 +8,6 @@ export const commonUtils = {
         // 引数が8桁でない場合はエラーとする
         if (!this.isValidJustLength(dateString, 8)) return false;
         const parsedDate = parseISO(dateString.replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3"));
-        console.log(isValid(parsedDate));
         return isValid(parsedDate);
     },
     // 数値型チェック

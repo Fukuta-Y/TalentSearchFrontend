@@ -8,13 +8,15 @@
           v-on:on-select-id="receiveSelectId"
           v-on:on-message="receiveMessage"
         />
-      <button @click="closeDialog">閉じる</button>
+      <button v-on:click="closeDialog()" class="rounded-button">閉じる</button>
     </div>
   </div>
 </template>
 <script>
 import ErrorMessage from '../common/ErrorMessage.vue'
 import OnAirKanriRefSearchJoken from './components/OnAirKanriRefSearchJoken.vue'
+import '../../router/styles/common.css';
+
 export default {
   name: 'OnAirKanriRefDialogBaseForm',
   props: {

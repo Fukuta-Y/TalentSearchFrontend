@@ -98,11 +98,11 @@
       </table>
       <div v-if="isCount">
         <div class="pagination-container">
-          <a @click="changePage(1)" :disabled="currentPage === 1" class="pagination-link">最初</a>
+          <a  v-on:click="changePage(1)" :disabled="currentPage === 1" class="pagination-link">最初</a>
           <a
             v-for="pageNumber in totalPageLinks"
             :key="pageNumber"
-            @click="pageNumber !== '...' ? changePage(pageNumber) : null"
+             v-on:click="pageNumber !== '...' ? changePage(pageNumber) : null"
             class="pagination-link"
           >
             <span v-if="pageNumber !== '...'">
@@ -110,7 +110,7 @@
             </span>
             <span v-else>...</span>
           </a>
-          <a @click="changePage(totalPages)" :disabled="currentPage === totalPages" class="pagination-link">最後</a>
+          <a  v-on:click="changePage(totalPages)" :disabled="currentPage === totalPages" class="pagination-link">最後</a>
         </div>
       </div>
     </div>
@@ -124,6 +124,7 @@ import { SHUKAN_TALENT_JOHO_URL } from '../../../router/constList';
 import msgList from '../../../router/msgList';
 import axios from 'axios'
 import moment from 'moment';
+import '../../../router/styles/common.css';
 
 export default {
   name: 'WeekTalentShutsuenJoken',
@@ -317,85 +318,4 @@ export default {
 }
 </script>
 <style scoped>
-.pagination-container {
-  display: flex;
-  gap: 8px;
-  justify-content: center;
-  /* 画面中央に寄せる */
-}
-
-.pagination-link {
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.underlined {
-  text-decoration: underline;
-}
-.rounded-button {
-  padding: 8px 16px;
-  border-radius: 8px;
-  background-color: #c0c0c0; /* Light gray background color */
-  color: black;
-  border: 1px solid #c0c0c0; /* Light gray border */
-  cursor: pointer;
-  font-size: 14px;
-  outline: none; /* Remove default button outline */
-}
-
-.rounded-button:hover {
-  background-color: #a0a0a0; /* Slightly darker gray on hover */
-  border: 1px solid #a0a0a0; /* Darker gray border on hover */
-}
-.rounded-textbox {
-  padding: 8px;
-  border-radius: 10px;
-  border: 1px solid #c0c0c0; /* Light gray border */
-  font-size: 14px;
-  box-sizing: border-box; /* Include padding and border in element's total width and height */
-}
-
-/* Optionally, you can add a hover effect for the textboxes */
-.rounded-textbox:hover {
-  border: 1px solid #a0a0a0; /* Darker gray border on hover */
-}
-
-
-table th {
-  background-color: #333;
-  color: white;
-  padding: 10px;
-  text-align: center;
-  border: 1px solid #ddd;
-  box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.1);
-}
-
-/* Style the table rows */
-.result-table tr {
-  border: 1px solid #ddd;
-}
-
-.result-table td {
-  padding: 8px;
-  text-align: center;
-  border: 1px solid #ddd;
-  box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.1);
-}
-
-/* Add a hover effect on table rows */
-.result-table tr:hover {
-  background-color: #f5f5f5;
-}
-
-/* Optional: Style the links in the table */
-.result-table a {
-  color: #007BFF;
-  text-decoration: none;
-  font-weight: bold;
-}
-
-/* Optional: Add a hover effect on links */
-.result-table a:hover {
-  text-decoration: underline;
-}
 </style>
