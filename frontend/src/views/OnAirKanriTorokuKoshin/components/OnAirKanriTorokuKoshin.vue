@@ -30,7 +30,6 @@
               v-model="programId"
               size="9"
               label="番組ID"
-              rules="required"
               maxlength="8"
               :disabled="true" 
             />
@@ -60,8 +59,7 @@
             name="talentId" 
             v-model="talentId"
             size="9"
-            label="タレントID"
-            rules="required"
+            label="タレントID"            
             maxlength="8"
             :disabled="true" 
           /><br/>
@@ -92,7 +90,6 @@
             v-model="nentsukiShu"
             size="15"
             label="年月・週"
-            rules="required"
             :disabled="true" 
           />
           </td>

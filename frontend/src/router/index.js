@@ -15,15 +15,9 @@ const routes = [
     component: MenuBaseForm
   },
   {
-    path: '/WeekTalentShutsuenBaseForm/1',
-    name: 'WeekTalentShutsuenTop',
-    component: WeekTalentShutsuenBaseForm,
-  },
-  {
-    path: '/WeekTalentShutsuenBaseForm/:nentsuki/:shu/:talentName/:mode',
+    path: '/WeekTalentShutsuenBaseForm',
     name: 'WeekTalentShutsuen',
-    component: WeekTalentShutsuenBaseForm,
-    props: route => ({ nentsuki: route.params.nentsuki, shu: route.params.shu, talentName: route.params.talentName, mode: route.params.mode || '2' })
+    component: WeekTalentShutsuenBaseForm
   },
   {
     path: '/TalentDetailBaseForm/:nentsuki/:shu/:talentId',

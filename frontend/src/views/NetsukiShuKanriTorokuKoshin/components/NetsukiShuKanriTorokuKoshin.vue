@@ -8,7 +8,6 @@
               v-model="nen"
               size="9"
               label="年"
-              rules="required"
               maxlength="4"
               placeholder="例：2023"
               class="rounded-textbox"
@@ -20,7 +19,6 @@
               v-model="tsuki"
               size="6"
               label="月"
-              rules="required"
               maxlength="2"
               placeholder="例：04"
               class="rounded-textbox"
@@ -42,7 +40,6 @@
           <td>
             <Field 
               name="shu" 
-              rules="required"
               v-model="shu"
               label="週"
               maxlength="1"

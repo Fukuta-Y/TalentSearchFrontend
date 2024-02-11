@@ -10,11 +10,7 @@
               v-bind:prop-message="message"
           />
           <WeekTalentShutsuenJoken 
-              v-bind:prop-nentsuki="nentsuki"
-              v-bind:prop-shu="shu"
-              v-bind:prop-talent-name="talentName"
-              v-bind:mode="mode"
-              v-on:on-message="receiveMessage"
+            v-on:on-message="receiveMessage"
           />
         </div>
     </div>
@@ -28,18 +24,6 @@ import SideBar from '../common/SideBar.vue';
 export default {
   name: 'WeekTalentShutsuenBaseForm',
   props: {
-    nentsuki: {
-      type: String,
-    },
-    shu: {
-      type: String,
-    },
-    talentName: {
-      type: String,
-    },
-    mode: {
-      type: String,
-    },
   },
   components: {
     ErrorMessage,

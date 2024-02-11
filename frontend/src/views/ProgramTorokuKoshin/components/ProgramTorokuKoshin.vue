@@ -22,8 +22,7 @@
         <td>番組名： </td>
         <td>
             <Field 
-              name="programName" 
-              rules="required"
+              name="programName"        
               v-model="programName"
               label="番組名"
               maxlength="30"
