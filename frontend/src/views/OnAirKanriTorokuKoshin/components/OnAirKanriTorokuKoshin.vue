@@ -123,7 +123,7 @@
 import { Field } from 'vee-validate'
 import { format } from 'date-fns';
 import { commonUtils } from '../../../router/utils/sysCom/VeeValidateSettings';
-import { ON_AIR_KANRI_INFO_URL, NENTSUKI_SHUKANRI_URL } from '../../../router/constList';
+import { ON_AIR_KANRI_INFO_URL } from '../../../router/constList';
 import axios from 'axios'
 import NetsukiShuKanriRefDialog from '../../NetsukiShuKanriRefDialog/NetsukiShuKanriRefDialogBaseForm.vue';
 import OnAirKanriRefDialog from '../../OnAirKanriRefDialog/OnAirKanriRefDialogBaseForm.vue';
@@ -187,23 +187,8 @@ export default {
       // 初期化
       this.btnClear();
       // 前画面からの値で検索処理を行う。
-      this.fetchData();
   },
   methods: {
-    // 初期表示時
-    async fetchData() {
-      // 年月週管理マスタ検索BFF
-      this.url = NENTSUKI_SHUKANRI_URL;
-      this.nentsukiShuKanriTmp = await axios.get(this.url).then(response => response.data.mNentsukiShuKanri);
-      this.nentsukiShuKanriTmp = this.nentsukiShuKanriTmp.map(item => ({ nentsuki: item.nentsuki, shu: item.shu }));
-      // nentsukiの前の４文字を○年、後ろの２文字を△月、shuを□週として結合
-      this.nentsukiShuKanri = this.nentsukiShuKanriTmp.map(item => {
-        const year = String(item.nentsuki).substring(0, 4);
-        const month = String(item.nentsuki).substring(4, 6);
-        const week = item.shu;
-        return `${year}/${month} ${week}週`;
-      });
-    },
     // IDの参照時の戻り
     handleSelectId(selectedData) {
       this.$emit('on-message', "");
@@ -297,7 +282,10 @@ export default {
     },
     // 登録・更新ボタン
     async btnToroku() {
-
+      this.fetchData();
+    },
+    // 更新系処理
+    async fetchData() {
       // ① 全項目が必須で入力されていること。
       if (this.onAirDay === '' ||
           this.programId === '' || this.programName.trim() === '' ||

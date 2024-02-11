@@ -138,7 +138,7 @@ export default {
     if(this.propTalentId && this.propTalentName) {
       this.talentId = this.propTalentId;
       this.talentName = this.propTalentName;
-      this.btnSearch();
+      this.fetchData(false);
     }
   },
   computed: {
@@ -157,22 +157,25 @@ export default {
   },
   methods: {
     btnSearch() {
-      this.fetchData();
+      this.fetchData(true);
     },
-    async fetchData() {
-      // ① タレントIDが入力されている場合は、タレントIDが8桁以内であること。
-      if (this.talentId.trim() !== '' && !commonUtils.isValidMaxLength(this.talentId, 8)) {
-        this.msg = msgList['MSG005'].replace('{0}', "タレントID");
-        this.msg = this.msg.replace('{1}', "8文字");
-        this.$emit('on-message', this.msg);
-        return;
-      }
-      // ② タレント名が入力されている場合は、タレント名が30桁以内であること。
-      if (this.talentName.trim() !== '' && !commonUtils.isValidMaxLength(this.talentName, 30)) {
-        this.msg = msgList['MSG005'].replace('{0}', "タレント名");
-        this.msg = this.msg.replace('{1}', "30文字");
-        this.$emit('on-message', this.msg);
-        return;
+    async fetchData(isValidate) {
+       // バリデーションチェックが必要な場合
+      if (isValidate) {
+        // ① タレントIDが入力されている場合は、タレントIDが8桁以内であること。
+        if (this.talentId.trim() !== '' && !commonUtils.isValidMaxLength(this.talentId, 8)) {
+          this.msg = msgList['MSG005'].replace('{0}', "タレントID");
+          this.msg = this.msg.replace('{1}', "8文字");
+          this.$emit('on-message', this.msg);
+          return;
+        }
+        // ② タレント名が入力されている場合は、タレント名が30桁以内であること。
+        if (this.talentName.trim() !== '' && !commonUtils.isValidMaxLength(this.talentName, 30)) {
+          this.msg = msgList['MSG005'].replace('{0}', "タレント名");
+          this.msg = this.msg.replace('{1}', "30文字");
+          this.$emit('on-message', this.msg);
+          return;
+        }
       }
       // 取得処理を開始
       this.url = TALENT_REF_URL;

@@ -185,19 +185,4 @@ export default {
 }
 </script>
 <style scoped>
-.pagination-container {
-  display: flex;
-  gap: 8px;
-  justify-content: center;
-  /* 画面中央に寄せる */
-}
-
-.pagination-link {
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.underlined {
-  text-decoration: underline;
-}
 </style>

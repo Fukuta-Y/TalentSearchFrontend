@@ -142,7 +142,7 @@ export default {
     if(this.propProgramId && this.propProgramName) {
       this.programId = this.propProgramId
       this.programName = this.propProgramName
-      this.btnSearch()
+      this.fetchData(false)
     }
   },
   computed: {
@@ -161,22 +161,25 @@ export default {
   },
   methods: {
     async btnSearch() {
-      this.fetchData();
+      this.fetchData(true);
     },
-    async fetchData() {
-      // ① 番組IDが入力されている場合は、番組IDが8桁以内であること。
-      if (this.programId.trim() !== '' && !commonUtils.isValidMaxLength(this.programId, 8)) {
-        this.msg = msgList['MSG005'].replace('{0}', "番組ID");
-        this.msg = this.msg.replace('{1}', "8文字");
-        this.$emit('on-message', this.msg);
-        return;
-      }
-      // ② 番組名が入力されている場合は、番組名が30桁以内であること。
-      if (this.programName.trim() !== '' && !commonUtils.isValidMaxLength(this.programName, 30)) {
-        this.msg = msgList['MSG005'].replace('{0}', "番組名");
-        this.msg = this.msg.replace('{1}', "30文字");
-        this.$emit('on-message', this.msg);
-        return;
+    async fetchData(isValidate) {
+      // バリデーションチェックが必要な場合
+      if(isValidate) {
+        // ① 番組IDが入力されている場合は、番組IDが8桁以内であること。
+        if (this.programId.trim() !== '' && !commonUtils.isValidMaxLength(this.programId, 8)) {
+          this.msg = msgList['MSG005'].replace('{0}', "番組ID");
+          this.msg = this.msg.replace('{1}', "8文字");
+          this.$emit('on-message', this.msg);
+          return;
+        }
+        // ② 番組名が入力されている場合は、番組名が30桁以内であること。
+        if (this.programName.trim() !== '' && !commonUtils.isValidMaxLength(this.programName, 30)) {
+          this.msg = msgList['MSG005'].replace('{0}', "番組名");
+          this.msg = this.msg.replace('{1}', "30文字");
+          this.$emit('on-message', this.msg);
+          return;
+        }
       }
       // 取得処理を開始
       this.url = PROGRAM_REF_URL;

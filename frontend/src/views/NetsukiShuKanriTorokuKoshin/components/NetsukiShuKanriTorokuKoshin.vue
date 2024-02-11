@@ -184,6 +184,7 @@ export default {
         this.url = NENTSUKI_SHUKANRI_GET_URL;
         this.url = this.url.replace("{1}", this.propNentsuki);
         this.url = this.url.replace("{2}", this.propShu);
+        console.log('this.url:' + this.url);
         const result = await axios.get(this.url).then(response => (response.data.mNentsukiShuKanri[0]));
         if (result && result.nentsuki !== null) {
           this.nen = result.nentsuki.toString().substring(0, 4);
