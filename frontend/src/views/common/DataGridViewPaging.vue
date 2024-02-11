@@ -36,7 +36,5 @@ export default {
     },
 };
 </script>
-
 <style scoped>
-/* スタイルを必要に応じて追加 */
 </style>

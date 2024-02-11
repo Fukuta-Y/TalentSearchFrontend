@@ -9,7 +9,6 @@
             v-model="nentsuki"
             size="11"
             label="年月"
-            rules="required"
             maxlength="6"
             placeholder="例：202304"
             class="rounded-textbox"
@@ -26,7 +25,6 @@
         <td>
           <Field 
             name="shu" 
-            rules="required"
             v-model="shu"
             label="週"
             maxlength="1"
@@ -120,18 +118,6 @@ import '../../../router/styles/common.css';
 export default {
   name: 'WeekTalentShutsuenJoken',
   props: {
-    propNentsuki: {
-      type: String,
-    },
-    propShu: {
-      type: Number,
-    },
-    propTalentName: {
-      type: String,
-    },
-    mode: {
-      type: String,
-    },
   },
   components: {
     Field,
@@ -161,50 +147,6 @@ export default {
   async created() {
     // 初期化
     this.btnClear();
-    //（初期表示時【値が渡されている来ている場合のみ】）
-    if (this.mode === '2') {
-      this.nentsuki = this.propNentsuki;
-      this.shu = this.propShu;
-      this.talentName = this.propTalentName;
-      // ① 前画面からのパラメータは年月は必須で入力されていること。
-      if (this.nentsuki.trim() === '' || this.shu.toString().trim() === '') {
-        this.$emit('on-message', msgList['MSG006']);
-        return;
-      }
-      // ② 年月がYYYYMM形式であること。
-      // ③ 年月がYYYY/MM/01で有効な日付であること。
-      if (!commonUtils.isValidateDate(this.nentsuki + "01")) {
-        this.msg = msgList['MSG003'].replace('{0}', "年月");
-        this.msg = this.msg.replace('{1}', "有効な日付の年月（YYYYMM)");
-        this.$emit('on-message', this.msg);
-        return;
-      }
-      // ④ 週が数値であること。
-      if (!commonUtils.isValidNumber(Number(this.shu))) {
-        this.msg = msgList['MSG003'].replace('{0}', "週");
-        this.msg = this.msg.replace('{1}', "数値");
-        this.$emit('on-message', this.msg);
-        return;
-      }
-      // ⑤ 週が1～5の数値のいずれかであること。
-      if (!commonUtils.isValidRange(Number(this.shu), 1, 5)) {
-        this.msg = msgList['MSG004'].replace('{0}', "週");
-        this.msg = this.msg.replace('{1}', "1");
-        this.msg = this.msg.replace('{2}', "5");
-        this.$emit('on-message', this.msg);
-        return;
-      }
-      // ⑥ タレント名が設定されている場合は、30桁以内であること。
-      if (this.talentName.trim() !== '' && !commonUtils.isValidMaxLength(this.talentName, 30)) {
-        this.msg = msgList['MSG005'].replace('{0}', "タレント名");
-        this.msg = this.msg.replace('{1}', "30文字");
-        this.$emit('on-message', this.msg);
-        return;
-      }
-      // 前画面からの値で検索処理を行う。
-      this.fetchData(false);
-
-    }
   },
   computed: {
     paginatedResult() {
@@ -222,47 +164,44 @@ export default {
   },
   methods: {
     async btnSearch() {
-      this.fetchData(true);
+      this.fetchData();
     },
-    async fetchData(isValCheck) {
-      // バリデーションチェックが必要な場合
-      if (isValCheck) {
-        // ① 年月、週が必須で入力されていること。
-        if (this.nentsuki.trim() === '' || this.shu.toString().trim() === '') {
-          this.msg = msgList['MSG002'].replace('{0}', "年月と週");
-          this.$emit('on-message', this.msg);
-          return;
-        }
-        // ② 年月がYYYYMM形式であること。
-        // ③ 年月がYYYY/MM/01で有効な日付であること。
-        if (!commonUtils.isValidateDate(this.nentsuki + "01")) {
-          this.msg = msgList['MSG003'].replace('{0}', "年月");
-          this.msg = this.msg.replace('{1}', "有効な日付の年月（YYYYMM)");
-          this.$emit('on-message', this.msg);
-          return;
-        }
-        // ④ 週が数値であること。
-        if(!commonUtils.isValidNumber(Number(this.shu))){
-          this.msg = msgList['MSG003'].replace('{0}', "週");
-          this.msg = this.msg.replace('{1}', "数値");
-          this.$emit('on-message', this.msg);
-          return;
-        }
-        // ⑤ 週が1～5の数値のいずれかであること。
-        if (!commonUtils.isValidRange(Number(this.shu), 1, 5)) {
-          this.msg = msgList['MSG004'].replace('{0}', "週");
-          this.msg = this.msg.replace('{1}', "1");
-          this.msg = this.msg.replace('{2}', "5");
-          this.$emit('on-message', this.msg);
-          return;
-        }
-        // ⑥ タレント名が設定されている場合は、30桁以内であること。
-        if (this.talentName.trim() !== '' && !commonUtils.isValidMaxLength(this.talentName, 30)){
-          this.msg = msgList['MSG005'].replace('{0}', "タレント名");
-          this.msg = this.msg.replace('{1}', "30文字");
-          this.$emit('on-message', this.msg);
-          return;
-        }
+    async fetchData() {
+      // ① 年月、週が必須で入力されていること。
+      if (this.nentsuki.trim() === '' || this.shu.toString().trim() === '') {
+        this.msg = msgList['MSG002'].replace('{0}', "年月と週");
+        this.$emit('on-message', this.msg);
+        return;
+      }
+      // ② 年月がYYYYMM形式であること。
+      // ③ 年月がYYYY/MM/01で有効な日付であること。
+      if (!commonUtils.isValidateDate(this.nentsuki + "01")) {
+        this.msg = msgList['MSG003'].replace('{0}', "年月");
+        this.msg = this.msg.replace('{1}', "有効な日付の年月（YYYYMM)");
+        this.$emit('on-message', this.msg);
+        return;
+      }
+      // ④ 週が数値であること。
+      if(!commonUtils.isValidNumber(Number(this.shu))){
+        this.msg = msgList['MSG003'].replace('{0}', "週");
+        this.msg = this.msg.replace('{1}', "数値");
+        this.$emit('on-message', this.msg);
+        return;
+      }
+      // ⑤ 週が1～5の数値のいずれかであること。
+      if (!commonUtils.isValidRange(Number(this.shu), 1, 5)) {
+        this.msg = msgList['MSG004'].replace('{0}', "週");
+        this.msg = this.msg.replace('{1}', "1");
+        this.msg = this.msg.replace('{2}', "5");
+        this.$emit('on-message', this.msg);
+        return;
+      }
+      // ⑥ タレント名が設定されている場合は、30桁以内であること。
+      if (this.talentName !== '' && !commonUtils.isValidMaxLength(this.talentName, 30)){
+        this.msg = msgList['MSG005'].replace('{0}', "タレント名");
+        this.msg = this.msg.replace('{1}', "30文字");
+        this.$emit('on-message', this.msg);
+        return;
       }
       // 取得処理を開始
       this.url = SHUKAN_TALENT_JOHO_URL;
@@ -295,7 +234,7 @@ export default {
     },
     btnClear() {
       this.init();
-      this.$emit('on-message', this.msg);
+      this.$emit('on-message', '');
     },
     init(){
       this.nentsuki = '';

@@ -18,7 +18,7 @@
       </tr><br/>
       <tr v-if="!idRefDialogComponent">
         <td>オンエア日時： </td>
-        <td class="date-picker" v-show="mode === '1' || !idRefDialogComponent">
+        <td class="date-picker" v-show="!idRefDialogComponent">
           <Datepicker v-model="onAirDay" @input="updateFormattedDate" :style="{ width: '250px' }" class="rounded-datepicker" language="ja" placeholder="例：2023-04-18 11:50"></Datepicker>
         </td>
       </tr><br/>
@@ -30,7 +30,6 @@
               v-model="programId"
               size="9"
               label="番組ID"
-              rules="required"
               maxlength="8"
               :disabled="true" 
             />
@@ -60,8 +59,7 @@
             name="talentId" 
             v-model="talentId"
             size="9"
-            label="タレントID"
-            rules="required"
+            label="タレントID"            
             maxlength="8"
             :disabled="true" 
           /><br/>
@@ -92,7 +90,6 @@
             v-model="nentsukiShu"
             size="15"
             label="年月・週"
-            rules="required"
             :disabled="true" 
           />
           </td>
@@ -126,7 +123,7 @@
 import { Field } from 'vee-validate'
 import { format } from 'date-fns';
 import { commonUtils } from '../../../router/utils/sysCom/VeeValidateSettings';
-import { ON_AIR_KANRI_REF_URL, ON_AIR_KANRI_INFO_URL, NENTSUKI_SHUKANRI_URL } from '../../../router/constList';
+import { ON_AIR_KANRI_INFO_URL } from '../../../router/constList';
 import axios from 'axios'
 import NetsukiShuKanriRefDialog from '../../NetsukiShuKanriRefDialog/NetsukiShuKanriRefDialogBaseForm.vue';
 import OnAirKanriRefDialog from '../../OnAirKanriRefDialog/OnAirKanriRefDialogBaseForm.vue';
@@ -140,12 +137,6 @@ import '../../../router/styles/common.css';
 export default {
   name: 'OnAirKanriTorokuKoshin',
   props: {
-    propId: {
-      type: String,
-    },
-    mode: {
-      type: String,
-    },
   },
   computed: {
       // ラベルの木切り替え
@@ -164,7 +155,7 @@ export default {
   emits: ['on-message'],
   data() {
     return {
-      id: this.propId,
+      id: null,
       onAirDay: null,
       programId: null,
       programName: '',
@@ -195,54 +186,9 @@ export default {
   async created() {
       // 初期化
       this.btnClear();
-      // ① 更新モードの場合は、前画面からのパラメータはタレントIDは必須で入力されていること。
-      if (this.mode !== '1') {
-        if (this.propId.trim() === '') {
-          this.$emit('on-message', msgList['MSG006']);
-          return;
-        }
-        // ② IDが8桁以内であること。
-        if (!commonUtils.isValidMaxLength(this.propId, 8)) {
-          this.msg = msgList['MSG005'].replace('{0}', "ID");
-          this.msg = this.msg.replace('{1}', "8文字");
-          this.$emit('on-message', this.msg);
-          return;
-        }
-        // 番組情報BFF（更新時のみ）※
-        this.url = ON_AIR_KANRI_REF_URL;
-        this.url = this.url.replace('{1}', this.propId);
-        this.url = this.url.replace('{2}', '');
-        const onAirKanri = await axios.get(this.url).then(response => (response.data.tOnAirKanriRef[0]))
-        if (onAirKanri.id !== '') {
-          this.id = onAirKanri.id;
-          this.onAirDay = onAirKanri.onAirDay;
-          this.programId = onAirKanri.programId;
-          this.programName = onAirKanri.programName;
-          this.talentId = onAirKanri.talentId;
-          this.talentName = onAirKanri.talentName;
-          this.netuski = onAirKanri.netuski;
-          this.shu = onAirKanri.shu;
-          this.nentsukiShu = `${String(onAirKanri.nentsuki).substring(0, 4)}/${String(onAirKanri.nentsuki).substring(4, 6)} ${onAirKanri.shu}週`;
-        }
-      }
       // 前画面からの値で検索処理を行う。
-      this.fetchData();
   },
   methods: {
-    // 初期表示時
-    async fetchData() {
-      // 年月週管理マスタ検索BFF
-      this.url = NENTSUKI_SHUKANRI_URL;
-      this.nentsukiShuKanriTmp = await axios.get(this.url).then(response => response.data.mNentsukiShuKanri);
-      this.nentsukiShuKanriTmp = this.nentsukiShuKanriTmp.map(item => ({ nentsuki: item.nentsuki, shu: item.shu }));
-      // nentsukiの前の４文字を○年、後ろの２文字を△月、shuを□週として結合
-      this.nentsukiShuKanri = this.nentsukiShuKanriTmp.map(item => {
-        const year = String(item.nentsuki).substring(0, 4);
-        const month = String(item.nentsuki).substring(4, 6);
-        const week = item.shu;
-        return `${year}/${month} ${week}週`;
-      });
-    },
     // IDの参照時の戻り
     handleSelectId(selectedData) {
       this.$emit('on-message', "");
@@ -336,28 +282,28 @@ export default {
     },
     // 登録・更新ボタン
     async btnToroku() {
-
+      this.fetchData();
+    },
+    // 更新系処理
+    async fetchData() {
       // ① 全項目が必須で入力されていること。
       if (this.onAirDay === '' ||
           this.programId === '' || this.programName.trim() === '' ||
           this.talentId === '' || this.talentName.trim() === '' ||
-          this.nentsukiShu === '') {
+          this.nentsukiShu === null) {
         this.msg = msgList['MSG007'];
         this.$emit('on-message', this.msg);
         return;
       }
 
-      // 更新時の場合
-      if (this.mode !== '1') {
-        // ② IDが8桁以内であること。
-        if (!commonUtils.isValidMaxLength(this.id, 8)) {
-          this.msg = msgList['MSG005'].replace('{0}', "ID");
-          this.msg = this.msg.replace('{1}', "8文字");
-          this.$emit('on-message', this.msg);
-          return;
-        }
+      // ② IDが8桁以内であること。
+      if (!commonUtils.isValidMaxLength(this.id, 8)) {
+        this.msg = msgList['MSG005'].replace('{0}', "ID");
+        this.msg = this.msg.replace('{1}', "8文字");
+        this.$emit('on-message', this.msg);
+        return;
       }
-
+      
       // ③ オンエア日がYYYY-MM-DD HH:MM形式であること。
       if (this.onAirDay !== '') {
         const dateObject = new Date(this.onAirDay);

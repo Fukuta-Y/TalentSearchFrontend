@@ -69,7 +69,7 @@
           <td>{{ item.programName }} </td>
           <td><router-link :to="{ name: 'TalentTorokuKoshin', params: { talentId: item.talentId } }">{{ item.talentId }}</router-link></td>
           <td>{{ item.talentName }} </td>
-          <td><router-link :to="{ name: 'NetsukiShuKanriTorokuKoshin', params: { mode: '2', nentsuki: item.nentsuki, shu: item.shu } }">{{ `${String(item.nentsuki).substring(0, 4)}/${String(item.nentsuki).substring(4, 6)} ${item.shu}週` }}</router-link></td>
+          <td><router-link :to="{ name: 'NetsukiShuKanriTorokuKoshin', params: { nentsuki: item.nentsuki, shu: item.shu } }">{{ `${String(item.nentsuki).substring(0, 4)}/${String(item.nentsuki).substring(4, 6)} ${item.shu}週` }}</router-link></td>
         </tr>
       </table>
       <div v-if="isCount">
@@ -139,7 +139,7 @@ export default {
     if(this.propId && this.propOnAirDay) {
       this.id = this.propId
       this.onAirDay = this.propOnAirDay
-      this.fetchData()
+      this.fetchData(false)
     }
   },
   computed: {
@@ -158,31 +158,33 @@ export default {
   },
   methods: {
     async btnSearch() {
-      this.fetchData();
+      this.fetchData(true);
     },
-    async fetchData() {
-      // ① IDが入力されている場合は、IDが8桁以内であること。
-      if (this.id !== '' && !commonUtils.isValidMaxLength(this.id, 8)) {
-        this.msg = msgList['MSG005'].replace('{0}', "ID");
-        this.msg = this.msg.replace('{1}', "8文字");
-        this.$emit('on-message', this.msg);
-        return;
-      }
-      // ② オンエア日が入力されている場合は、オンエア日がYYYY-MM-DD HH:MM形式であること。
-      if (this.onAirDay !== '') {
-        const dateObject = new Date(this.onAirDay);
-        const year = dateObject.getFullYear();
-        const month = `0${dateObject.getMonth() + 1}`.slice(-2);
-        const day = `0${dateObject.getDate()}`.slice(-2);
-        const hours = `0${dateObject.getHours()}`.slice(-2);
-        const minutes = `0${dateObject.getMinutes()}`.slice(-2);
-        this.onAirDay = `${year}-${month}-${day} ${hours}:${minutes}`;
-      }
-      if (this.onAirDay !== '' && !commonUtils.isCheckDateTime(this.onAirDay)) {
-        this.msg = msgList['MSG003'].replace('{0}', "オンエア日時");
-        this.msg = this.msg.replace('{1}', "YYYY-MM-DD HH:MM");
-        this.$emit('on-message', this.msg);
-        return;
+    async fetchData(isValidate) {
+      if (isValidate) {
+        // ① IDが入力されている場合は、IDが8桁以内であること。
+        if (this.id !== '' && !commonUtils.isValidMaxLength(this.id, 8)) {
+          this.msg = msgList['MSG005'].replace('{0}', "ID");
+          this.msg = this.msg.replace('{1}', "8文字");
+          this.$emit('on-message', this.msg);
+          return;
+        }
+        // ② オンエア日時が入力されている場合は、オンエア日時がYYYY-MM-DD HH:MM形式であること。
+        if (this.onAirDay !== '') {
+          const dateObject = new Date(this.onAirDay);
+          const year = dateObject.getFullYear();
+          const month = `0${dateObject.getMonth() + 1}`.slice(-2);
+          const day = `0${dateObject.getDate()}`.slice(-2);
+          const hours = `0${dateObject.getHours()}`.slice(-2);
+          const minutes = `0${dateObject.getMinutes()}`.slice(-2);
+          this.onAirDay = `${year}-${month}-${day} ${hours}:${minutes}`;
+        }
+        if (this.onAirDay !== '' && !commonUtils.isCheckDateTime(this.onAirDay)) {
+          this.msg = msgList['MSG003'].replace('{0}', "オンエア日時");
+          this.msg = this.msg.replace('{1}', "YYYY-MM-DD HH:MM");
+          this.$emit('on-message', this.msg);
+          return;
+        }
       }
       this.url = ON_AIR_KANRI_REF_URL;
       this.url = this.url.replace('{1}', this.id);

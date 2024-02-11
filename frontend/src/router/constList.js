@@ -25,7 +25,7 @@ export const TALENT_REF_URL = "http://{0}/api/talentRefBFF?talentId={1}&talentNa
 
 // 以下は画面のURL
 // 週間タレント出演検索
-export const WEEK_TALENT_SHUTSUEN = "http://{0}/WeekTalentShutsuenBaseForm/1".replace("{0}", SERVER_DOMAIN_SCREEN);
+export const WEEK_TALENT_SHUTSUEN = "http://{0}/WeekTalentShutsuenBaseForm".replace("{0}", SERVER_DOMAIN_SCREEN);
 // 番組登録
 export const PROGRAM_TOROKU_KOSHIN = "http://{0}/ProgramTorokuKoshinBaseForm".replace("{0}", SERVER_DOMAIN_SCREEN);
 // オンエア管理登録

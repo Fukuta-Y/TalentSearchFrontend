@@ -9,7 +9,6 @@
             v-model="nen"
             size="9"
             label="年"
-            rules="required"
             maxlength="4"
             placeholder="例：2023"
             class="rounded-textbox"
@@ -21,7 +20,6 @@
             v-model="tsuki"
             size="6"
             label="月"
-            rules="required"
             maxlength="2"
             placeholder="例：04"
             class="rounded-textbox"
@@ -34,14 +32,13 @@
         <td>
           <Field 
             name="shu" 
-            rules="required"
             v-model="shu"
             label="週"
             maxlength="1"
             size="5"
             placeholder="例：3"
             class="rounded-textbox"
-          /> 週目
+          /> 週
         </td>
       </tr>
       <tr>
@@ -72,8 +69,8 @@
         <tr>
           <td style="background-color: greenyellow;"></td>
           <td style="background-color: greenyellow; width:150px;">年月・週</td>
-          <td style="background-color: greenyellow; width:180px;">週の開始日（日曜日）</td>
-          <td style="background-color: greenyellow; width:180px;">週の終了日（土曜日）</td>
+          <td v-if="isNentsukiShu" style="background-color: greenyellow; width:180px;">週の開始日（日曜日）</td>
+          <td v-if="isNentsukiShu" style="background-color: greenyellow; width:180px;">週の終了日（土曜日）</td>
         </tr>
         <tr v-for="(item, key) in paginatedResult" :key="key">
           <td><button v-on:click="selectNentsukiShu(item.nentsuki, item.shu, item.shuFrom, item.shuTo)" class="rounded-ref-button">選択</button></td>
@@ -81,10 +78,10 @@
              {{ `${String(item.nentsuki).substring(0, 4)}/${String(item.nentsuki).substring(4, 6)} ${item.shu}週` }}
           </td>
           <td v-else>
-            <router-link :to="{ name: 'NetsukiShuKanriTorokuKoshin', params: { mode: '2', nentsuki: item.nentsuki, shu: item.shu } }">{{ `${String(item.nentsuki).substring(0, 4)}/${String(item.nentsuki).substring(4, 6)} ${item.shu}週目` }}</router-link>
+            <router-link :to="{ name: 'NetsukiShuKanriTorokuKoshin', params: { nentsuki: item.nentsuki, shu: item.shu } }">{{ `${String(item.nentsuki).substring(0, 4)}/${String(item.nentsuki).substring(4, 6)} ${item.shu}週` }}</router-link>
           </td>
-          <td>{{ item.shuFrom }} </td>
-          <td>{{ item.shuTo }} </td>
+          <td v-if="isNentsukiShu">{{ item.shuFrom }} </td>
+          <td v-if="isNentsukiShu">{{ item.shuTo }} </td>
         </tr>
       </table>
       <div v-if="isCount">
@@ -124,8 +121,6 @@ export default {
     ErrorMessage,
     DataGridViewPaging,
   },
-  watch: {
-  },
   emits: ['on-message', 'on-select-nentsuki-shu'],
   data() {
     return {
@@ -150,7 +145,7 @@ export default {
       this.nen = this.propNentsukiShu.toString().substring(0, 4);
       this.tsuki = this.propNentsukiShu.toString().substring(4, 6);
       this.shu = this.propNentsukiShu.toString().substring(6, 7);
-      this.btnSearch()
+      this.fetchData(false)
     }
   },
   computed: {
@@ -169,52 +164,51 @@ export default {
   },
   methods: {
      btnSearch() {
-      this.fetchData();
+      this.fetchData(true);
     },
-    async fetchData() {
-      // ①年が入力されている場合は、月と必須で入力であること。
-      if (this.nen.trim() !== '') {
-        if (this.tsuki.trim() === '') {
-          this.msg = msgList['MSG002'].replace('{0}', "年と月");
+    async fetchData(isValidate) {
+      // バリデーションチェックが必要な場合
+      if (isValidate) {
+        // ① 年が入力されている場合は、月と必須で入力であること。
+        if (this.nen.trim() !== '') {
+          if (this.tsuki.trim() === '') {
+            this.msg = msgList['MSG002'].replace('{0}', "年と月");
+            this.$emit('on-message', this.msg);
+            return;
+          }
+        }
+        // ② 月が入力されている場合は、年と必須で入力であること。
+        if (this.tsuki.trim() !== '') {
+          if (this.nen.trim() === '') {
+            this.msg = msgList['MSG002'].replace('{0}', "年と月");
+            this.$emit('on-message', this.msg);
+            return;
+          }
+        }
+        // ③ 年月がYYYYMM形式であること。
+        // ④ 年月がYYYY/MM/01で有効な日付であること。
+        if (this.nen.trim() !== '' && this.tsuki.trim() !== '' && !commonUtils.isValidateDate(this.nen + this.tsuki + "01")) {
+          this.msg = msgList['MSG003'].replace('{0}', "年月");
+          this.msg = this.msg.replace('{1}', "有効な日付の年月（YYYYMM)");
+          this.$emit('on-message', this.msg);
+          return;
+        }
+        // ⑤ 週が数値であること。
+        if (this.shu.toString().trim() !== '' && !commonUtils.isValidNumber(Number(this.shu))) {
+          this.msg = msgList['MSG003'].replace('{0}', "週");
+          this.msg = this.msg.replace('{1}', "数値");
+          this.$emit('on-message', this.msg);
+          return;
+        }
+        // ⑥ 週が1～5の数値のいずれかであること。
+        if (this.shu.toString().trim() !== '' && !commonUtils.isValidRange(Number(this.shu), 1, 5)) {
+          this.msg = msgList['MSG004'].replace('{0}', "週");
+          this.msg = this.msg.replace('{1}', "1");
+          this.msg = this.msg.replace('{2}', "5");
           this.$emit('on-message', this.msg);
           return;
         }
       }
-
-      // ②月が入力されている場合は、年と必須で入力であること。
-      if (this.tsuki.trim() !== '') {
-        if (this.nen.trim() === '') {
-          this.msg = msgList['MSG002'].replace('{0}', "年と月");
-          this.$emit('on-message', this.msg);
-          return;
-        }
-      }
-      // ③年月がYYYYMM形式であること。
-      // ④ 年月がYYYY/MM/01で有効な日付であること。
-      if (this.nen.trim() !== '' && this.tsuki.trim() !== '' && !commonUtils.isValidateDate(this.nen + this.tsuki + "01")) {
-        this.msg = msgList['MSG003'].replace('{0}', "年月");
-        this.msg = this.msg.replace('{1}', "有効な日付の年月（YYYYMM)");
-        this.$emit('on-message', this.msg);
-        return;
-      }
-
-      // ⑤ 週が数値であること。
-      if (this.shu.toString().trim() !== '' && !commonUtils.isValidNumber(Number(this.shu))) {
-        this.msg = msgList['MSG003'].replace('{0}', "週");
-        this.msg = this.msg.replace('{1}', "数値");
-        this.$emit('on-message', this.msg);
-        return;
-      }
-
-      // ⑥ 週が1～5の数値のいずれかであること。
-      if (this.shu.toString().trim() !== '' && !commonUtils.isValidRange(Number(this.shu), 1, 5)) {
-        this.msg = msgList['MSG004'].replace('{0}', "週");
-        this.msg = this.msg.replace('{1}', "1");
-        this.msg = this.msg.replace('{2}', "5");
-        this.$emit('on-message', this.msg);
-        return;
-      }
-
       // 年月を0埋め形式へ変換
       if (this.tsuki.trim() !== '') {
         this.nentsuki = this.nen + this.tsuki.padStart(2, '0');

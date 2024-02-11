@@ -23,14 +23,12 @@
         <td style="background-color: greenyellow;">出演番組 </td>
         <td style="background-color: greenyellow;">放送局（チャンネル） </td>
         <td style="background-color: greenyellow;">オンエア日時</td>
-        <td style="background-color: greenyellow;">放送時間</td>
         <td style="background-color: greenyellow;">番組ジャンル</td>
       </tr>
       <tr v-for="(item, key) in paginatedResult" :key="key">
         <td><router-link :to="{ name: 'ProgramDetail', params: { programId: item.programId, onAirDay: item.onAirDay + ' ' + item.onAirTime.substring(0, 5), nentsuki: this.nentsuki, shu: this.shu } }">{{ item.shutsuenProgram }}</router-link></td>
         <td>{{ item.hosokyokuChannel }} </td>
-        <td>{{ item.onAirDay }} </td>
-        <td>{{ getOnAirDayFormat(item.onAirTime) }} </td>
+        <td>{{ item.onAirDay + ' ' + getOnAirDayFormat(item.onAirTime) }}</td>
         <td>{{ item.programGenre }} </td>
       </tr>
     </table>

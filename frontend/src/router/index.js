@@ -15,15 +15,9 @@ const routes = [
     component: MenuBaseForm
   },
   {
-    path: '/WeekTalentShutsuenBaseForm/1',
-    name: 'WeekTalentShutsuenTop',
-    component: WeekTalentShutsuenBaseForm,
-  },
-  {
-    path: '/WeekTalentShutsuenBaseForm/:nentsuki/:shu/:talentName/:mode',
+    path: '/WeekTalentShutsuenBaseForm',
     name: 'WeekTalentShutsuen',
-    component: WeekTalentShutsuenBaseForm,
-    props: route => ({ nentsuki: route.params.nentsuki, shu: route.params.shu, talentName: route.params.talentName, mode: route.params.mode || '2' })
+    component: WeekTalentShutsuenBaseForm
   },
   {
     path: '/TalentDetailBaseForm/:nentsuki/:shu/:talentId',
@@ -60,16 +54,15 @@ const routes = [
     props: route => ({ talentId: route.params.talentId })
   },
   {
-    path: '/NetsukiShuKanriTorokuKoshinBaseForm/:mode?/:nentsuki?/:shu?',  // パラメータがオプショナルになるように変更
+    path: '/NetsukiShuKanriTorokuKoshinBaseForm/:nentsuki?/:shu?',
     name: 'NetsukiShuKanriTorokuKoshin',
     component: NetsukiShuKanriTorokuKoshinBaseForm,
-    props: route => ({ mode: route.params.mode || '1', nentsuki: route.params.nentsuki || '', shu: route.params.shu || ''  })
+    props: route => ({ nentsuki: route.params.nentsuki || '', shu: route.params.shu || ''  })
   },
   {
-    path: '/OnAirKanriTorokuKoshinBaseForm/:mode?/:id?',  // パラメータがオプショナルになるように変更
+    path: '/OnAirKanriTorokuKoshinBaseForm',
     name: 'OnAirKanriTorokuKoshin',
-    component: OnAirKanriTorokuKoshinBaseForm,
-    props: route => ({ mode: route.params.mode || '1', id: route.params.id || '' })
+    component: OnAirKanriTorokuKoshinBaseForm
   }
 ]
 

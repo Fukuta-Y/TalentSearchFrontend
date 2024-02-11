@@ -23,7 +23,6 @@
         <td>
             <Field 
               name="talentName" 
-              rules="required"
               v-model="talentName"
               label="タレント名"
               maxlength="30"

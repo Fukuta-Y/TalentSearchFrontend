@@ -2,7 +2,6 @@
     <div>
         <div class="sidebar-container">
             <div :style="{ width: isSidebarCollapsed ? '60px' : '200px' }" class="sidebar">
-                <!-- TOP link when the sidebar is collapsed -->
                 <router-link v-if="isSidebarCollapsed" :to="{ name: 'main' }" class="top-link">
                     TOP
                 </router-link>

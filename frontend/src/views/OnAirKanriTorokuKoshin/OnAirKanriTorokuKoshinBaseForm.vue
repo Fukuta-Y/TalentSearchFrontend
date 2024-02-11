@@ -8,8 +8,6 @@
       <div style="flex: 1; display: flex; flex-direction: column; padding: 20px;">
         <ErrorMessage v-if="message" v-bind:prop-message="message" />
         <OnAirKanriTorokuKoshin
-          v-bind:prop-id="id"
-          v-bind:mode="mode"
           v-on:on-message="receiveMessage"
         />
       </div>
@@ -24,12 +22,6 @@ import SideBar from '../common/SideBar.vue';
 export default {
   name: 'OnAirKanriTorokuKoshinBaseForm',
   props: {
-    id: {
-      type: String,
-    },
-    mode: {
-      type: String,
-    },
   },
   components: {
     ErrorMessage,
