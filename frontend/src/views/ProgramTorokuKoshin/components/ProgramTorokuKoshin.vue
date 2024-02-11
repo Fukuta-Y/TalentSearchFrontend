@@ -154,7 +154,6 @@ export default {
       // 番組情報BFF（更新時のみ）※
       this.url = PROGRAM_INFO_URL;
       this.url = this.url.replace("{1}", this.programId);
-      console.log('url:' + this.url);
       const programInfo = await axios.get(this.url).then(response => (response.data))
       if (programInfo.talentId !== null) {
         this.programName = programInfo.programName;

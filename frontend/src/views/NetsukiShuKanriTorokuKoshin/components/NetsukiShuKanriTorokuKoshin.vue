@@ -148,6 +148,44 @@ export default {
     async fetchData() {
       // 更新時の場合
       if (this.mode !== '1' && this.propNentsuki !== '' && this.propShu != '')  {
+
+        this.nen = this.propNentsuki.toString().substring(0, 4);
+        this.tsuki = this.propNentsuki.toString().substring(4);
+        this.shu = this.propShu;
+
+        //① 前画面からのパラメータは必須で入力されていること。
+        if (this.nen == null || this.tsuki == null || this.shu === null) {
+          this.msg = msgList['MSG007'];
+          this.$emit('on-message', this.msg);
+          return;
+        }
+
+        // ② 年月がYYYYMM形式であること。
+        // ③ 年月がYYYY/MM/01で有効な日付であること。
+        if (!commonUtils.isValidateDate(this.nen + this.tsuki + "01")) {
+          this.msg = msgList['MSG003'].replace('{0}', "年月");
+          this.msg = this.msg.replace('{1}', "有効な日付の年月（YYYYMM)");
+          this.$emit('on-message', this.msg);
+          return;
+        }
+
+        // ④ 週が数値であること。
+        if (this.shu !== '' && !commonUtils.isValidNumber(Number(this.shu))) {
+          this.msg = msgList['MSG003'].replace('{0}', "週");
+          this.msg = this.msg.replace('{1}', "数値");
+          this.$emit('on-message', this.msg);
+          return;
+        }
+
+        // ⑤ 週が1～5の数値のいずれかであること。
+        if (this.shu !== '' && !commonUtils.isValidRange(Number(this.shu), 1, 5)) {
+          this.msg = msgList['MSG004'].replace('{0}', "週");
+          this.msg = this.msg.replace('{1}', "1");
+          this.msg = this.msg.replace('{2}', "5");
+          this.$emit('on-message', this.msg);
+          return;
+        }
+
         // 取得処理を開始
         this.url = NENTSUKI_SHUKANRI_GET_URL;
         this.url = this.url.replace("{1}", this.propNentsuki);
@@ -165,7 +203,6 @@ export default {
     // 年月週の参照時の戻り
     handleSelectNentsuki(selectedData) {
       this.$emit('on-message', '');
-      console.log('selectedData:' + JSON.stringify(selectedData));
       this.nen = selectedData.nentsuki.toString().substring(0, 4);
       this.tsuki = selectedData.nentsuki.toString().substring(4);
       this.shu = selectedData.shu;
@@ -266,8 +303,8 @@ export default {
         return;
       }
 
-      // ⑧週の開始日（日曜日）と週の終了日（土曜日）を比較して以下であること。
-      // ・週の開始日（日曜日）より週の終了日（土曜日）の方が日付が後であること。
+      // 週の開始日（日曜日）と週の終了日（土曜日）を比較して以下であること。
+      // ⑧ 週の開始日（日曜日）より週の終了日（土曜日）の方が日付が後であること。
       const dateFrom = new Date(this.shuFrom).getTime();
       const dateTo = new Date(this.shuTo).getTime();
       if(dateFrom > dateTo) {
@@ -276,7 +313,7 @@ export default {
         this.$emit('on-message', this.msg);
         return;
       }
-      // 週の開始日（日曜日）と週の終了日（土曜日）の日付間隔が6日間であること。
+      // ⑨ 週の開始日（日曜日）と週の終了日（土曜日）の日付間隔が6日間であること。
       if (commonUtils.isDateDifferenceDays(dateTo, dateFrom) !== 6) {
         this.msg = msgList['MSG009'].replace('{0}', "週の開始日（日曜日）");
         this.msg = this.msg.replace('{1}', "週の終了日（土曜日）");
@@ -294,14 +331,14 @@ export default {
       // 週の開始日、週の終了日ともに、チェックする年月は入力した年月とする。
       if(Number(targetFromDay) < 25 && Number(targetToDay) > 6) {
 
-        // ⑥週の開始日（日曜日）のYYYY / MMの内容が年月と合致すること。
+        // ⑩ 週の開始日（日曜日）のYYYY / MMの内容が年月と合致すること。
         if (targetNentsuki !== this.shuFrom.substring(0, 7)) {
           this.msg = msgList['MSG010'].replace('{0}', "週の開始日（日曜日）");
           this.$emit('on-message', this.msg);
           return;
         }
 
-        // ⑦週の終了日（土曜日）のYYYY/MMの内容が年月と合致すること。
+        // (11) 週の終了日（土曜日）のYYYY/MMの内容が年月と合致すること。
         // →MSG010（週の終了日（土曜日））
         if (targetNentsuki !== this.shuTo.substring(0, 7)) {
           this.msg = msgList['MSG010'].replace('{0}', "週の終了日（土曜日）");
@@ -322,14 +359,14 @@ export default {
           // 1ヶ月先の年月
           this.targetToNentsuki = formattedResult
 
-          // ⑥週の開始日（日曜日）のYYYY / MMの内容が年月と合致すること。
+          // ⑩ 週の開始日（日曜日）のYYYY / MMの内容が年月と合致すること。
           if (targetNentsuki !== this.shuFrom.substring(0, 7)) {
             this.msg = msgList['MSG010'].replace('{0}', "週の開始日（日曜日）");
             this.$emit('on-message', this.msg);
             return;
           }
 
-          // ⑦週の終了日（土曜日）のYYYY/MMの内容が年月と合致すること。
+          // (11) 週の終了日（土曜日）のYYYY/MMの内容が年月と合致すること。
           // →MSG010（週の終了日（土曜日））
           if (this.targetToNentsuki !== this.shuTo.substring(0, 7)) {
             this.msg = msgList['MSG010'].replace('{0}', "週の終了日（土曜日）");
@@ -349,14 +386,14 @@ export default {
             // 1ヶ月前の年月
             this.targetFromNentsuki = formattedResult
 
-            // ⑥週の開始日（日曜日）のYYYY / MMの内容が年月と合致すること。
+            // ⑩ 週の開始日（日曜日）のYYYY / MMの内容が年月と合致すること。
             if (this.targetFromNentsuki !== this.shuFrom.substring(0, 7)) {
               this.msg = msgList['MSG010'].replace('{0}', "週の開始日（日曜日）");
               this.$emit('on-message', this.msg);
               return;
             }
 
-            // ⑦週の終了日（土曜日）のYYYY/MMの内容が年月と合致すること。
+            // (11) 週の終了日（土曜日）のYYYY/MMの内容が年月と合致すること。
             // →MSG010（週の終了日（土曜日））
             if (targetNentsuki !== this.shuTo.substring(0, 7)) {
               this.msg = msgList['MSG010'].replace('{0}', "週の終了日（土曜日）");
