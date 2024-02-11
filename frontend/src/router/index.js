@@ -60,10 +60,10 @@ const routes = [
     props: route => ({ talentId: route.params.talentId })
   },
   {
-    path: '/NetsukiShuKanriTorokuKoshinBaseForm/:mode?/:nentsuki?/:shu?',
+    path: '/NetsukiShuKanriTorokuKoshinBaseForm/:nentsuki?/:shu?',
     name: 'NetsukiShuKanriTorokuKoshin',
     component: NetsukiShuKanriTorokuKoshinBaseForm,
-    props: route => ({ mode: route.params.mode || '1', nentsuki: route.params.nentsuki || '', shu: route.params.shu || ''  })
+    props: route => ({ nentsuki: route.params.nentsuki || '', shu: route.params.shu || ''  })
   },
   {
     path: '/OnAirKanriTorokuKoshinBaseForm',

@@ -8,7 +8,6 @@
       <div style="flex: 1; display: flex; flex-direction: column; padding: 20px;">
         <ErrorMessage v-if="message" v-bind:prop-message="message" />
         <NetsukiShuKanriTorokuKoshin
-          v-bind:mode="mode"
           v-bind:prop-nentsuki="nentsuki"
           v-bind:prop-shu="shu"
           v-on:on-message="receiveMessage"
@@ -25,9 +24,6 @@ import SideBar from '../common/SideBar.vue';
 export default {
   name: 'NetsukiShuKanriTorokuKoshinBaseForm',
   props: {
-    mode: {
-      type: String,
-    },
     nentsuki: {
       type: String,
     },

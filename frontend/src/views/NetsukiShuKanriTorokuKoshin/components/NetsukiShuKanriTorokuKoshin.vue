@@ -93,9 +93,6 @@ import '../../../router/styles/common.css';
 export default {
   name: 'NetsukiShuKanriTorokuKoshin',
   props: {
-    mode: {
-      type: String,
-    },
     propNentsuki: {
       type: String,
     },
@@ -147,7 +144,7 @@ export default {
   methods: {
     async fetchData() {
       // 更新時の場合
-      if (this.mode !== '1' && this.propNentsuki !== '' && this.propShu != '')  {
+      if (this.propNentsuki !== '' && this.propShu != '')  {
 
         this.nen = this.propNentsuki.toString().substring(0, 4);
         this.tsuki = this.propNentsuki.toString().substring(4);
