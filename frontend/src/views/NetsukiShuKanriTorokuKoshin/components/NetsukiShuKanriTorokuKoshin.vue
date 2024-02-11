@@ -79,7 +79,7 @@
 import { Field } from 'vee-validate'
 import { format } from 'date-fns';
 import { commonUtils } from '../../../router/utils/sysCom/VeeValidateSettings';
-import { NENTSUKI_SHUKANRI_GET_URL, NENTSUKI_SHUKANRI_URL } from '../../../router/constList';
+import { NENTSUKI_SHU_KANRI_REF_URL, NENTSUKI_SHUKANRI_URL } from '../../../router/constList';
 import axios from 'axios'
 import NetsukiShuKanriRefDialog from '../../NetsukiShuKanriRefDialog/NetsukiShuKanriRefDialogBaseForm.vue'
 import Datepicker from '@vuepic/vue-datepicker'
@@ -98,7 +98,7 @@ export default {
     },
   },
   computed: {
-      // ラベルの木切り替え
+    // ラベルの切り替え
     getTorokuKoshinName() {
       return this.nen === null && this.nen === null ? '登録' : '更新';
     },
@@ -181,17 +181,16 @@ export default {
         }
 
         // 取得処理を開始
-        this.url = NENTSUKI_SHUKANRI_GET_URL;
+        this.url = NENTSUKI_SHU_KANRI_REF_URL;
         this.url = this.url.replace("{1}", this.propNentsuki);
         this.url = this.url.replace("{2}", this.propShu);
-        console.log('this.url:' + this.url);
         const result = await axios.get(this.url).then(response => (response.data.mNentsukiShuKanri[0]));
         if (result && result.nentsuki !== null) {
           this.nen = result.nentsuki.toString().substring(0, 4);
           this.tsuki = result.nentsuki.toString().substring(4);
           this.shu = result.shu;
-          this.shuFrom = result.shuFrom.toString()
-          this.shuTo = result.shuTo.toString()
+          this.shuFrom = result.shuFrom.toString();
+          this.shuTo = result.shuTo.toString();
         }
       }
     },
