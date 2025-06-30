@@ -1,5 +1,5 @@
 export const SERVER_DOMAIN_API = "https://talentsearchbff.onrender.com";
-export const SERVER_DOMAIN_SCREEN = "localhost:8080";
+export const SERVER_DOMAIN_SCREEN = "talent-search-frontend.onrender.com/";
 
 // 以下はAPIのURL
 export const SHUKAN_TALENT_JOHO_URL = "{0}/api/shukanTalentJohoBFF?nentsuki={1}&shu={2}&talentName={3}".replace("{0}", SERVER_DOMAIN_API);
