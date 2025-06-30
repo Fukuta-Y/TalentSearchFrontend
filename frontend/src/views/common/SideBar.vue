@@ -15,6 +15,8 @@
 <script>
 import HamburgerMenu from './HamburgerMenu.vue';
 import SidebarMenu from './SideBarMenu.vue';
+// constList からの import は、もはや直接 router-link に渡さないので、必要なくなる可能性がありますが、
+// 他の場所で使われている場合は残してください。今回は一旦残します。
 import { WEEK_TALENT_SHUTSUEN, PROGRAM_TOROKU_KOSHIN, TALENT_TOROKUKOSHIN, NETSUKI_SHU_KANRI_TOROKU_KOSHIN, ON_AIR_KANRI_TOROKU_KOSHIN } from '../../router/constList'
 export default {
     components: {
@@ -30,17 +32,19 @@ export default {
                     id: 1,
                     text: '業務',
                     children: [
-                        { id: 2, text: '週間タレント出演検索', url: WEEK_TALENT_SHUTSUEN },
+                        // router/index.js で定義されている name を設定
+                        { id: 2, text: '週間タレント出演検索', url: WEEK_TALENT_SHUTSUEN, routeName: 'WeekTalentShutsuen' },
                     ]
                 },
                 {
                     id: 10,
                     text: 'マスタ',
                     children: [
-                        { id: 11, text: '番組登録', url: PROGRAM_TOROKU_KOSHIN },
-                        { id: 12, text: 'タレント登録', url: TALENT_TOROKUKOSHIN },
-                        { id: 13, text: '年月週管理登録', url: NETSUKI_SHU_KANRI_TOROKU_KOSHIN },
-                        { id: 14, text: 'オンエア管理登録', url: ON_AIR_KANRI_TOROKU_KOSHIN },
+                        // router/index.js で定義されている name を設定
+                        { id: 11, text: '番組登録', url: PROGRAM_TOROKU_KOSHIN, routeName: 'ProgramTorokuKoshinTop' },
+                        { id: 12, text: 'タレント登録', url: TALENT_TOROKUKOSHIN, routeName: 'TalentTorokuKoshinTop' },
+                        { id: 13, text: '年月週管理登録', url: NETSUKI_SHU_KANRI_TOROKU_KOSHIN, routeName: 'NetsukiShuKanriTorokuKoshin' },
+                        { id: 14, text: 'オンエア管理登録', url: ON_AIR_KANRI_TOROKU_KOSHIN, routeName: 'OnAirKanriTorokuKoshin' },
                     ]
                 }
             ],
@@ -61,6 +65,7 @@ export default {
 };
 </script>
 <style scoped>
+/* スタイルは変更なし */
 #app {
     display: flex;
     flex-direction: column;

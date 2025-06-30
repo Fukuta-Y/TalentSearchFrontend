@@ -1,7 +1,6 @@
 <template>
     <div class="sidebar" :class="{ 'collapsed': isSidebarCollapsed }">
         <ul v-show="!isSidebarCollapsed">
-            <!-- TOP link when the sidebar is collapsed -->
             <router-link v-if="!isSidebarCollapsed" :to="{ name: 'main' }" class="top-link">
                 TOP
             </router-link>
@@ -11,11 +10,11 @@
                     <span class="menu-text">{{ item.text }}</span>
                     <span :class="{ 'expanded': isSubmenuExpanded(item.id) }">&#9660;</span>
                 </span>
-                <a v-else :href="item.url"><span class="menu-text">{{ item.text }}</span></a>
+                <router-link v-else :to="{ name: item.routeName }"><span class="menu-text">{{ item.text }}</span></router-link>
 
                 <ul v-if="item.children && isSubmenuExpanded(item.id)">
                     <li v-for="child in item.children" :key="child.id">
-                        <a :href="child.url">{{ child.text }}</a>
+                        <router-link :to="{ name: child.routeName }">{{ child.text }}</router-link>
                     </li>
                 </ul>
             </li>
@@ -42,27 +41,40 @@ export default {
 </script>
 
 <style scoped>
+/* router-link要素にもスタイルが正しく適用されるように調整 */
 .sidebar a,
 .menu-text {
     font-size: 15px;
-    /* 適切なサイズに調整 */
-    display: block;
-    /* テキストをブロック要素として表示 */
+    display: block; /* テキストをブロック要素として表示 */
+}
+
+/* router-link要素がリンクスタイルを継承するように */
+.sidebar a {
+    color: #fff; /* リンクのテキスト色を白に */
+    text-decoration: none; /* 下線をなくす */
+    padding: 8px 0; /* クリックしやすいようにパディングを追加 */
 }
 
 .sidebar ul {
-    list-style-type: none;
-    /* デフォルトのバレットポイントを削除 */
-    padding-left: 0;
-    /* デフォルトのパディングを削除 */
+    list-style-type: none; /* デフォルトのバレットポイントを削除 */
+    padding-left: 0; /* デフォルトのパディングを削除 */
 }
 
 .sidebar li {
-    margin-bottom: 15px;
-    /* マージンを増やして項目を離す */
+    margin-bottom: 15px; /* 項目間のマージンを増やす */
 }
 
 .expanded {
-    transform: rotate(180deg);
-    /* 開いたサブメニューの矢印を反転させる */
-}</style>
+    transform: rotate(180deg); /* 開いたサブメニューの矢印を反転させる */
+    transition: transform 0.3s ease; /* スムーズな回転アニメーション */
+}
+
+/* 矢印を右に配置するためのスタイルを追加 */
+.sidebar span {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    padding: 8px 0;
+}
+</style>
