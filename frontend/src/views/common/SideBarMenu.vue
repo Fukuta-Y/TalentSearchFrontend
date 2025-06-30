@@ -4,21 +4,17 @@
             <router-link v-if="!isSidebarCollapsed" :to="{ name: 'main' }" class="top-link">
                 TOP
             </router-link>
-            <br />
+            <br/>
             <li v-for="item in sidebarLinks" :key="item.id">
-                <span v-if="item.children" v-on:click="toggleSubmenu(item.id)" class="menu-item-wrapper">
+                <span v-if="item.children"  v-on:click="toggleSubmenu(item.id)">
                     <span class="menu-text">{{ item.text }}</span>
                     <span :class="{ 'expanded': isSubmenuExpanded(item.id) }">&#9660;</span>
                 </span>
-                <router-link v-else :to="{ name: item.routeName }" class="menu-item-wrapper">
-                    <span class="menu-text">{{ item.text }}</span>
-                </router-link>
+                <router-link v-else :to="{ name: item.routeName }"><span class="menu-text">{{ item.text }}</span></router-link>
 
                 <ul v-if="item.children && isSubmenuExpanded(item.id)">
                     <li v-for="child in item.children" :key="child.id">
-                        <router-link :to="{ name: child.routeName }" class="submenu-item">
-                            {{ child.text }}
-                        </router-link>
+                        <router-link :to="{ name: child.routeName }">{{ child.text }}</router-link>
                     </li>
                 </ul>
             </li>
@@ -27,7 +23,6 @@
 </template>
 
 <script>
-// (スクリプト部分は変更なし)
 export default {
     props: {
         isSidebarCollapsed: Boolean,
@@ -46,103 +41,40 @@ export default {
 </script>
 
 <style scoped>
-/* 基本的なスタイルは維持しつつ、隙間を調整 */
-
-/* 矢印とテキストを含む親要素 (新しいクラス) */
-.menu-item-wrapper {
-    display: flex;
-    /* Flexboxを適用 */
-    justify-content: space-between;
-    /* テキストと矢印を両端に配置 */
-    align-items: center;
-    /* 垂直方向中央揃え */
-    padding: 10px 15px;
-    /* 上下のパディングを増やし、左右にも少しパディングを追加 */
-    cursor: pointer;
-    background-color: #696969;
-    /* 背景色（見やすくするため） */
-    color: #fff;
-    /* 文字色 */
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-    /* 区切り線を追加 (境界線) */
-    margin-bottom: 10px;
-    /* 各メニュー項目の下部に隙間 */
-    box-sizing: border-box;
-    /* パディングを幅に含める */
-}
-
-/* サブメニューのリンクスタイル */
-.submenu-item {
-    display: block;
-    /* ブロック要素にして、パディングを適用できるようにする */
-    padding: 8px 15px 8px 30px;
-    /* パディングを増やし、左にインデント */
-    color: #eee;
-    text-decoration: none;
-    background-color: #555;
-    /* サブメニューの背景色を少し暗く */
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    /* サブメニューの区切り線 */
-    margin-bottom: 5px;
-    /* サブメニュー項目間の隙間 */
-}
-
-
-/* リンクの基本スタイル (router-linkにも適用されるように調整) */
-.sidebar a {
-    text-decoration: none;
-    /* 下線をなくす */
-    color: #fff;
-    /* 文字色 */
-}
-
-/* テキスト部分のスタイル */
+/* router-link要素にもスタイルが正しく適用されるように調整 */
+.sidebar a,
 .menu-text {
     font-size: 15px;
-    /* 適切なサイズに調整 */
-    /* display: block; は .menu-item-wrapper が flex になったので不要 */
+    display: block; /* テキストをブロック要素として表示 */
 }
 
-/* 矢印の回転アニメーション */
-.expanded {
-    transform: rotate(180deg);
-    transition: transform 0.3s ease;
-    /* スムーズな回転 */
+/* router-link要素がリンクスタイルを継承するように */
+.sidebar a {
+    color: #fff; /* リンクのテキスト色を白に */
+    text-decoration: none; /* 下線をなくす */
+    padding: 8px 0; /* クリックしやすいようにパディングを追加 */
 }
 
-/* その他の既存スタイル（必要に応じて残す） */
 .sidebar ul {
-    list-style-type: none;
-    padding-left: 0;
-    margin: 0;
-    /* ul自体の上下マージンをリセット */
+    list-style-type: none; /* デフォルトのバレットポイントを削除 */
+    padding-left: 0; /* デフォルトのパディングを削除 */
 }
 
 .sidebar li {
-    /* 個々の li の下マージンは .menu-item-wrapper の margin-bottom で調整されるため、
-       ここでは大きなマージンは不要になるか、調整が必要です。
-       今回は .menu-item-wrapper に margin-bottom を移動しました。 */
-    margin-bottom: 0;
-    /* ここはゼロにするか、ごく小さな値に */
+    margin-bottom: 15px; /* 項目間のマージンを増やす */
 }
 
-
-/* Collapsed sidebar adjustments */
-.sidebar.collapsed {
-    width: 60px;
-    overflow: hidden;
+.expanded {
+    transform: rotate(180deg); /* 開いたサブメニューの矢印を反転させる */
+    transition: transform 0.3s ease; /* スムーズな回転アニメーション */
 }
 
-/* collapsed時のtop-linkも調整 */
-.sidebar.collapsed .top-link {
-    padding: 10px;
-    font-size: 12px;
-    text-align: center;
-    display: block;
-    /* to apply padding and text-align */
-    background-color: #696969;
-    color: #fff;
+/* 矢印を右に配置するためのスタイルを追加 */
+.sidebar span {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     cursor: pointer;
-    /* flex-grow: 1; は親がflexboxでないと意味がないので削除 */
+    padding: 8px 0;
 }
 </style>
