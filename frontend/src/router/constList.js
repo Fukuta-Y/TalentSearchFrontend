@@ -1,7 +1,8 @@
 export const SERVER_DOMAIN_API = "https://talentsearchbff.onrender.com";
-export const SERVER_DOMAIN_SCREEN = "talent-search-frontend.onrender.com";
+// SERVER_DOMAIN_SCREENは画面のURL定義には不要なので、削除するかコメントアウトしてください。
+// export const SERVER_DOMAIN_SCREEN = "talent-search-frontend.onrender.com";
 
-// 以下はAPIのURL
+// 以下はAPIのURL (変更なし)
 export const SHUKAN_TALENT_JOHO_URL = "{0}/api/shukanTalentJohoBFF?nentsuki={1}&shu={2}&talentName={3}".replace("{0}", SERVER_DOMAIN_API);
 export const NENTSUKI_SHUKANRI_URL = "{0}/api/nentsukiShuKanriBFF".replace("{0}", SERVER_DOMAIN_API);
 export const NENTSUKI_SHUKANRI_GET_URL = "{0}/api/nentsukiShuKanriBFF?nentsuki={1}&shu={2}".replace("{0}", SERVER_DOMAIN_API);
@@ -23,14 +24,14 @@ export const NENTSUKI_SHU_KANRI_REF_URL = "{0}/api/nentsukiShuKanriRefBFF?nentsu
 export const TALENT_REF_URL = "{0}/api/talentRefBFF?talentId={1}&talentName={2}".replace("{0}", SERVER_DOMAIN_API);
 
 
-// 以下は画面のURL
+// 以下は画面のURL - ここを修正しました
 // 週間タレント出演検索
-export const WEEK_TALENT_SHUTSUEN = "/WeekTalentShutsuenBaseForm".replace("{0}", SERVER_DOMAIN_SCREEN);
+export const WEEK_TALENT_SHUTSUEN = "/WeekTalentShutsuenBaseForm";
 // 番組登録
-export const PROGRAM_TOROKU_KOSHIN = "/ProgramTorokuKoshinBaseForm".replace("{0}", SERVER_DOMAIN_SCREEN);
+export const PROGRAM_TOROKU_KOSHIN = "/ProgramTorokuKoshinBaseForm";
 // オンエア管理登録
-export const TALENT_TOROKUKOSHIN = "/TalentTorokuKoshinBaseForm".replace("{0}", SERVER_DOMAIN_SCREEN);
+export const TALENT_TOROKUKOSHIN = "/TalentTorokuKoshinBaseForm";
 // 年月週管理登録
-export const NETSUKI_SHU_KANRI_TOROKU_KOSHIN = "/NetsukiShuKanriTorokuKoshinBaseForm".replace("{0}", SERVER_DOMAIN_SCREEN);
+export const NETSUKI_SHU_KANRI_TOROKU_KOSHIN = "/NetsukiShuKanriTorokuKoshinBaseForm";
 // オンエア管理登録
-export const ON_AIR_KANRI_TOROKU_KOSHIN = "/OnAirKanriTorokuKoshinBaseForm".replace("{0}", SERVER_DOMAIN_SCREEN);
+export const ON_AIR_KANRI_TOROKU_KOSHIN = "/OnAirKanriTorokuKoshinBaseForm";
