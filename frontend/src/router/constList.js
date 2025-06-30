@@ -25,12 +25,12 @@ export const TALENT_REF_URL = "{0}/api/talentRefBFF?talentId={1}&talentName={2}"
 
 // 以下は画面のURL
 // 週間タレント出演検索
-export const WEEK_TALENT_SHUTSUEN = "https://{0}/WeekTalentShutsuenBaseForm".replace("{0}", SERVER_DOMAIN_SCREEN);
+export const WEEK_TALENT_SHUTSUEN = "/WeekTalentShutsuenBaseForm".replace("{0}", SERVER_DOMAIN_SCREEN);
 // 番組登録
-export const PROGRAM_TOROKU_KOSHIN = "https://{0}/ProgramTorokuKoshinBaseForm".replace("{0}", SERVER_DOMAIN_SCREEN);
+export const PROGRAM_TOROKU_KOSHIN = "/ProgramTorokuKoshinBaseForm".replace("{0}", SERVER_DOMAIN_SCREEN);
 // オンエア管理登録
-export const TALENT_TOROKUKOSHIN = "https://{0}/TalentTorokuKoshinBaseForm".replace("{0}", SERVER_DOMAIN_SCREEN);
+export const TALENT_TOROKUKOSHIN = "/TalentTorokuKoshinBaseForm".replace("{0}", SERVER_DOMAIN_SCREEN);
 // 年月週管理登録
-export const NETSUKI_SHU_KANRI_TOROKU_KOSHIN = "https://{0}/NetsukiShuKanriTorokuKoshinBaseForm".replace("{0}", SERVER_DOMAIN_SCREEN);
+export const NETSUKI_SHU_KANRI_TOROKU_KOSHIN = "/NetsukiShuKanriTorokuKoshinBaseForm".replace("{0}", SERVER_DOMAIN_SCREEN);
 // オンエア管理登録
-export const ON_AIR_KANRI_TOROKU_KOSHIN = "https://{0}/OnAirKanriTorokuKoshinBaseForm".replace("{0}", SERVER_DOMAIN_SCREEN);
+export const ON_AIR_KANRI_TOROKU_KOSHIN = "/OnAirKanriTorokuKoshinBaseForm".replace("{0}", SERVER_DOMAIN_SCREEN);
