@@ -1,5 +1,5 @@
-デプロイ先
-https://dashboard.render.com/web/srv-d1hn77be5dus73977fh0
+デプロイ先（フロント）
+https://dashboard.render.com/static/srv-d1ge7uripnbc73ak2m1g
 
 使用時は毎回「Clear build cache & deploy」を実行すること。
 
