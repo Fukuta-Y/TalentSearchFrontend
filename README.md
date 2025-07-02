@@ -1,4 +1,9 @@
+URL
+
+https://talent-search-frontend.onrender.com
+
 デプロイ先（フロント）
+
 https://dashboard.render.com/static/srv-d1ge7uripnbc73ak2m1g
 
 使用時は毎回「Clear build cache & deploy」を実行すること。
