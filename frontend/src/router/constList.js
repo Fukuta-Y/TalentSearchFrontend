@@ -1,4 +1,4 @@
-export const SERVER_DOMAIN_API = "https://talentsearchbff.onrender.com";
+export const SERVER_DOMAIN_API = "https://talent-search-bff-913300773870.europe-west1.run.app";
 // SERVER_DOMAIN_SCREENは画面のURL定義には不要なので、削除するかコメントアウトしてください。
 // export const SERVER_DOMAIN_SCREEN = "talent-search-frontend.onrender.com";
 
