@@ -9,15 +9,18 @@ COPY frontend/package*.json ./
 RUN npm install
 
 # 3. frontend フォルダ内のすべてのソースをコピー
+# これにより、/app 直下に src や public が展開されます
 COPY frontend/ . 
 
 # 4. ビルド実行
+# 成果物は /app/dist に生成されます
 RUN npm run build
 
 # === Production Stage ===
 FROM nginx:stable-alpine AS production-stage
-# ビルド成果物（dist）をコピー
-COPY --from=build-stage /app/frontend/dist /usr/share/nginx/html
+
+# 【修正箇所】コピー元を /app/dist に戻しました
+COPY --from=build-stage /app/dist /usr/share/nginx/html
 
 # Cloud Runのポート8080に対応
 RUN sed -i 's/listen       80;/listen       8080;/g' /etc/nginx/conf.d/default.conf
