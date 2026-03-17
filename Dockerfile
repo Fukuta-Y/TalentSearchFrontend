@@ -19,7 +19,8 @@ RUN npm run build
 # === Production Stage ===
 FROM nginx:stable-alpine AS production-stage
 
-# 【修正箇所】コピー元を /app/dist に戻しました
+# ビルド成果物（dist）をコピー
+# 前回のログにより、成果物は /app/dist にあることが確定しています
 COPY --from=build-stage /app/dist /usr/share/nginx/html
 
 # Cloud Runのポート8080に対応
