@@ -1,89 +1,83 @@
 <template>
-  <div>
-    <table align="center">
+  <div class="search-joken-wrapper">
+    <table align="center" class="search-form-table">
       <tr>
         <td>ID： </td>
         <td>
           <Field 
-            name="id" 
-            v-model="id"
-            size="15"
-            label="ID"
-            maxlength="8"
-            placeholder="例：10000001"
-            class="rounded-textbox"
+            name="id" v-model="id" size="15" label="ID" maxlength="8"
+            placeholder="例：10000001" class="rounded-textbox"
           />
         </td>
       </tr>
       <tr>
-        <td colspan="2"> 
-          <ErrorMessage style="font-size:12px;color:red;" name="nentsuki" /> 
-        </td> 
+        <td colspan="2"><ErrorMessage style="font-size:12px;color:red;" name="nentsuki" /></td>
       </tr>
       <tr>
         <td>オンエア日時： </td>
         <td class="date-picker">
-          <Datepicker v-model="onAirDay" @input="updateFormattedDate" :style="{ width: '250px' }"  language="ja" class="rounded-datepicker" placeholder="例：2023-04-18 11:50"></Datepicker>
+          <Datepicker 
+            v-model="onAirDay" @input="updateFormattedDate" :style="{ width: '250px' }"  
+            language="ja" class="rounded-datepicker" placeholder="例：2023-04-18 11:50"
+          ></Datepicker>
         </td>
       </tr>
       <tr>
-        <td colspan="2"> 
-          <ErrorMessage style="font-size:12px;color:red;" name="shu" /> 
-        </td> 
-      </tr>
-      <tr>
-        <td colspan="2"> 
-          <ErrorMessage name="name" />
-        </td> 
+        <td colspan="2"><ErrorMessage style="font-size:12px;color:red;" name="shu" /></td>
       </tr>
     </table>
+
     <br>
-    <div>
-      <button v-on:click="btnSearch()" class="rounded-ref-button">
-        検索
-      </button>
+    <div class="button-group">
+      <button v-on:click="btnSearch()" class="rounded-ref-button">検索</button>
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      <button 
-        v-on:click="btnClear()" class="rounded-ref-button">
-        クリア
-      </button>
+      <button v-on:click="btnClear()" class="rounded-ref-button">クリア</button>
     </div>
     <br>
-    <div style="overflow-y: auto;">
-      <table align="center" border="1" style="border-collapse: collapse;" class="result-table" v-if="isCount">
-        <tr>
-          <td style="background-color: greenyellow;"></td>
-          <td style="background-color: greenyellow;width:80px;">ID </td>
-          <td style="background-color: greenyellow;width:150px;">オンエア日時</td>
-          <td style="background-color: greenyellow;width:80px;">番組ID</td>
-          <td style="background-color: greenyellow; width:250px;">番組名</td>
-          <td style="background-color: greenyellow;">タレントID</td>
-          <td style="background-color: greenyellow; width:250px;">タレント名</td>
-          <td style="background-color: greenyellow; width:115px;">年月・週</td>
-        </tr>
-        <tr v-for="(item, key) in paginatedResult" :key="key">
-          <td><button v-on:click="selectId(item.id, item.onAirDay, item.programId, item.programName, item.talentId, item.talentName, item.nentsuki, item.shu)" class="rounded-ref-button">選択</button></td>
-          <td>{{ item.id }} </td>
-          <td>{{ item.onAirDay.toString().substring(0, 16) }} </td>
-          <td><router-link :to="{ name: 'ProgramTorokuKoshin', params: { programId: item.programId } }">{{ item.programId }}</router-link></td>
-          <td>{{ item.programName }} </td>
-          <td><router-link :to="{ name: 'TalentTorokuKoshin', params: { talentId: item.talentId } }">{{ item.talentId }}</router-link></td>
-          <td>{{ item.talentName }} </td>
-          <td><router-link :to="{ name: 'NetsukiShuKanriTorokuKoshin', params: { nentsuki: item.nentsuki, shu: item.shu } }">{{ `${String(item.nentsuki).substring(0, 4)}/${String(item.nentsuki).substring(4, 6)} ${item.shu}週` }}</router-link></td>
-        </tr>
-      </table>
-      <div v-if="isCount">
-        <DataGridViewPaging
-          :currentPage="currentPage"
-          :totalPages="totalPages"
-          :totalPageLinks="totalPageLinks"
-          :changePage="changePage"
-        />
+
+    <div v-if="isCount" class="result-container">
+      <div class="table-scroll-container">
+        <table align="center" border="1" style="border-collapse: collapse;" class="result-table">
+          <thead>
+            <tr>
+              <th class="header-cell"></th>
+              <th class="header-cell" style="width:80px;">ID </th>
+              <th class="header-cell" style="width:150px;">オンエア日時</th>
+              <th class="header-cell" style="width:80px;">番組ID</th>
+              <th class="header-cell" style="width:250px;">番組名</th>
+              <th class="header-cell">タレントID</th>
+              <th class="header-cell" style="width:250px;">タレント名</th>
+              <th class="header-cell" style="width:115px;">年月・週</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(item, key) in paginatedResult" :key="key">
+              <td>
+                <button 
+                  v-on:click="selectId(item.id, item.onAirDay, item.programId, item.programName, item.talentId, item.talentName, item.nentsuki, item.shu)" 
+                  class="rounded-ref-button"
+                >選択</button>
+              </td>
+              <td>{{ item.id }} </td>
+              <td>{{ item.onAirDay.toString().substring(0, 16) }} </td>
+              <td><router-link :to="{ name: 'ProgramTorokuKoshin', params: { programId: item.programId } }">{{ item.programId }}</router-link></td>
+              <td class="text-left">{{ item.programName }} </td>
+              <td><router-link :to="{ name: 'TalentTorokuKoshin', params: { talentId: item.talentId } }">{{ item.talentId }}</router-link></td>
+              <td class="text-left">{{ item.talentName }} </td>
+              <td><router-link :to="{ name: 'NetsukiShuKanriTorokuKoshin', params: { nentsuki: item.nentsuki, shu: item.shu } }">{{ `${String(item.nentsuki).substring(0, 4)}/${String(item.nentsuki).substring(4, 6)} ${item.shu}週` }}</router-link></td>
+            </tr>
+          </tbody>
+        </table>
       </div>
+
+      <DataGridViewPaging
+        :currentPage="currentPage" :totalPages="totalPages"
+        :totalPageLinks="totalPageLinks" :changePage="changePage"
+      />
     </div>
-    <br>
   </div>
 </template>
+
 <script>
 import { Field, ErrorMessage } from 'vee-validate'
 import { format } from 'date-fns';
@@ -99,55 +93,21 @@ import '../../../router/styles/common.css';
 export default {
   name: 'OnAirKanriRefSearchJoken',
   props: {
-    propId: {
-      type: String,
-    },
-    propOnAirDay: {
-      type: Date,
-    },
+    propId: { type: String },
+    propOnAirDay: { type: [Date, String] },
   },
-  components: {
-    Field,
-    Datepicker,
-    ErrorMessage,
-    DataGridViewPaging,
-  },
-  watch: {
-    selectedDate: function (newDate) {
-      // 日付をフォーマットして表示用の変数にセット
-      this.formattedDate = this.formatDate(newDate);
-    },
-  },
+  components: { Field, Datepicker, ErrorMessage, DataGridViewPaging },
   emits: ['on-message', 'on-select-id'],
   data() {
     return {
-      id: '',
-      onAirDay: '',
-      msg: '',
-      url: '',
-      isCount: false,
-      result: {},
-      formattedDate: null,
-      currentPage: 1,
-      pageSize: 10, // 1ページあたりのアイテム数
-      totalPages: 0,
-      maxPageLinks: 10,
-    }
-  },
-  async created() {
-    this.init();
-    if(this.propId && this.propOnAirDay) {
-      this.id = this.propId
-      this.onAirDay = this.propOnAirDay
-      this.fetchData(false)
+      id: '', onAirDay: '', msg: '', url: '', isCount: false,
+      result: [], currentPage: 1, pageSize: 10, totalPages: 0, maxPageLinks: 10,
     }
   },
   computed: {
     paginatedResult() {
-      // ページングされた結果を返すように変更
       const startIndex = (this.currentPage - 1) * this.pageSize;
-      const endIndex = startIndex + this.pageSize;
-      return this.result.slice(startIndex, endIndex);
+      return this.result.slice(startIndex, startIndex + this.pageSize);
     },
     totalPageLinks() {
       const currentGroup = Math.ceil(this.currentPage / this.maxPageLinks);
@@ -157,78 +117,52 @@ export default {
     },
   },
   methods: {
-    async btnSearch() {
-      this.fetchData(true);
-    },
+    async btnSearch() { this.currentPage = 1; this.fetchData(true); },
     async fetchData(isValidate) {
       if (isValidate) {
-        // ① IDが入力されている場合は、IDが8桁以内であること。
-        if (this.id !== '' && !commonUtils.isValidMaxLength(this.id, 8)) {
-          this.msg = msgList['MSG005'].replace('{0}', "ID");
-          this.msg = this.msg.replace('{1}', "8文字");
-          this.$emit('on-message', this.msg);
+        if (this.id && !commonUtils.isValidMaxLength(this.id, 8)) {
+          this.$emit('on-message', msgList['MSG005'].replace('{0}', "ID").replace('{1}', "8文字"));
           return;
         }
-        // ② オンエア日時が入力されている場合は、オンエア日時がYYYY-MM-DD HH:MM形式であること。
-        if (this.onAirDay !== '') {
-          const dateObject = new Date(this.onAirDay);
-          const year = dateObject.getFullYear();
-          const month = `0${dateObject.getMonth() + 1}`.slice(-2);
-          const day = `0${dateObject.getDate()}`.slice(-2);
-          const hours = `0${dateObject.getHours()}`.slice(-2);
-          const minutes = `0${dateObject.getMinutes()}`.slice(-2);
-          this.onAirDay = `${year}-${month}-${day} ${hours}:${minutes}`;
-        }
-        if (this.onAirDay !== '' && !commonUtils.isCheckDateTime(this.onAirDay)) {
-          this.msg = msgList['MSG003'].replace('{0}', "オンエア日時");
-          this.msg = this.msg.replace('{1}', "YYYY-MM-DD HH:MM");
-          this.$emit('on-message', this.msg);
-          return;
+        if (this.onAirDay) {
+          this.onAirDay = format(new Date(this.onAirDay), 'yyyy-MM-dd HH:mm');
         }
       }
-      this.url = ON_AIR_KANRI_REF_URL;
-      this.url = this.url.replace('{1}', this.id);
-      this.url = this.url.replace('{2}', this.onAirDay);
-      this.result = await axios.get(this.url).then(response => (response.data.tOnAirKanriRef));
-      if (this.result.length !== 0) {
-        this.isCount = true;
-        this.$emit('on-message', "");
+      this.url = ON_AIR_KANRI_REF_URL.replace('{1}', this.id || '').replace('{2}', this.onAirDay || '');
+      const response = await axios.get(this.url);
+      this.result = response.data.tOnAirKanriRef || [];
+      this.isCount = this.result.length > 0;
+      if (this.isCount) {
         this.totalPages = Math.ceil(this.result.length / this.pageSize);
-        this.resultCount = this.result.length;
+        this.$emit('on-message', "");
       } else {
-        this.msg = msgList['INFO001'];
-        this.$emit('on-message', this.msg);
-        this.isCount = false;
+        this.$emit('on-message', msgList['INFO001']);
       }
     },
-    updateFormattedDate() {
-      this.formattedDate = this.formatDate(this.selectedDate);
-    },
-    formatDate(date) {
-      return format(date, 'yyyy/MM/dd');
-    },
-    changePage(pageNumber) {
-      this.currentPage = pageNumber;
-      this.fetchData(); // ページ変更時にデータを再取得するなどの処理を追加
-    },
+    changePage(p) { this.currentPage = p; },
     selectId(id, onAirDay, programId, programName, talentId, talentName, nentsuki, shu) {
-      // 「選択」ボタンがクリックされたときに呼ばれるメソッド
-      // idとonAirDayとprogramIdとtalentIdとtalentNameとnentsukiとshuを親コンポーネントに渡す
       this.$emit('on-select-id', { id, onAirDay, programId, programName, talentId, talentName, nentsuki, shu });
     },
-    btnClear() {
-      this.init();
-      this.$emit('on-message', this.msg);
-    },
-    init(){
-      this.id = '';
-      this.onAirDay = '';
-      this.isCount = false;
-      this.msg = '';
-      this.result = {};
-    },
-  },
+    btnClear() { this.init(); this.$emit('on-message', ""); },
+    init() { this.id = ''; this.onAirDay = ''; this.isCount = false; this.result = []; }
+  }
 }
 </script>
+
 <style scoped>
+.table-scroll-container {
+  max-height: 400px; /* ここで高さを制限してスクロールさせる */
+  overflow-y: auto;
+  overflow-x: auto;
+  border: 1px solid #ccc;
+  margin: 10px 0;
+}
+.header-cell {
+  background-color: greenyellow;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+.result-table { width: 100%; border-collapse: collapse; }
+.text-left { text-align: left; }
 </style>

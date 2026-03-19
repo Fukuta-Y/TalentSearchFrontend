@@ -1,69 +1,35 @@
 <template>
-  <div id="app" style="display: flex; flex-direction: column; height: 100vh;">
-    <div style="display: flex; flex: 1;">
-      <!-- サイドバー -->
+  <div id="app" class="fixed-viewport-container">
+    <div class="fixed-layout-inner">
       <SideBar />
-
-      <!-- メインメニュータイトルブロックとコンテンツ -->
-      <div style="flex: 1; display: flex; flex-direction: column; padding: 20px;">
-        <ErrorMessage v-if="message" v-bind:prop-message="message" />
-        <OnAirKanriTorokuKoshin
-          v-on:on-message="receiveMessage"
-        />
+      <div class="main-content-area">
+        <ErrorMessage v-if="message" :prop-message="message" />
+        <OnAirKanriTorokuKoshin @on-message="receiveMessage" />
       </div>
     </div>
   </div>
 </template>
+
 <script>
 import ErrorMessage from '../common/ErrorMessage.vue'
 import OnAirKanriTorokuKoshin from './components/OnAirKanriTorokuKoshin.vue'
-import SideBar from '../common/SideBar.vue';
+import SideBar from '../common/SideBar.vue'
 
 export default {
   name: 'OnAirKanriTorokuKoshinBaseForm',
-  props: {
-  },
-  components: {
-    ErrorMessage,
-    OnAirKanriTorokuKoshin,
-    SideBar,
-  },
-  data() {
-    return {
-      message: '',
-    }
-  },
-methods: {
-    receiveMessage(value) {
-      this.message = value
-    },
-  },
+  components: { ErrorMessage, OnAirKanriTorokuKoshin, SideBar },
+  data() { return { message: '' } },
+  methods: { receiveMessage(val) { this.message = val; } }
 }
 </script>
+
 <style scoped>
-.modal-container {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  /* 背景に透明度を追加 */
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.fixed-viewport-container {
+  display: flex; flex-direction: column; height: 100vh; width: 100vw;
+  overflow: auto; background-color: white;
 }
-
-.modal-content {
-  background-color: #fff;
-  padding: 20px;
-  border-radius: 8px;
+.fixed-layout-inner {
+  display: flex; flex: 1; width: 100%; min-width: 1200px; min-height: 100vh;
 }
-
-.dialog-content {
-  width: 60%;
-  /* 任意の幅を指定してください */
-  height: 90%;
-  /* 任意の幅を指定してください */
-  margin: 0 auto;
-}</style>
+.main-content-area { flex: 1; display: flex; flex-direction: column; padding: 20px; min-width: 0; }
+</style>
