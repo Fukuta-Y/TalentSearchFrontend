@@ -20,7 +20,7 @@
         <td style="text-align: left;">【年月・週】：{{ `${String(this.nentsuki).substring(0, 4)}/${String(this.nentsuki).substring(4, 6)} ${this.shu}週目` }}</td>
       </tr>
     </table>
-    <table   class="result-table" align="center" border="1" style="border-collapse: collapse;" v-if="isCount">
+    <table class="result-table" align="center" border="1" style="border-collapse: collapse;" v-if="isCount">
       <tr>
         <td style="background-color: greenyellow;">タレント名 </td>
       </tr>
@@ -73,7 +73,7 @@ export default {
       msg: '',
       url: '',
       isCount: false,
-      result: {},
+      result: [], // sliceを使うため、初期値を空配列に変更
       currentPage: 1,
       maxPageLinks: 100,
       pageSize: 10, // 1ページあたりのアイテム数
@@ -113,7 +113,9 @@ export default {
     }
 
     // ⑥ オンエア日がYYYY-MM-DD HH:MM形式であること。
-    if (!commonUtils.isCheckDateTime(this.onAirDay)){
+    // ※URLのパラメータがスラッシュ区切りの場合に対応するため、一時的に置換してチェックを行う
+    const checkOnAirDay = this.onAirDay.replace(/\//g, '-');
+    if (!commonUtils.isCheckDateTime(checkOnAirDay)){
       this.msg = msgList['MSG003'].replace('{0}', "オンエア日時");
       this.msg = this.msg.replace('{1}', "YYYY-MM-DD HH:MM");
       this.$emit('on-message', this.msg);
@@ -136,7 +138,10 @@ export default {
       // ページングされた結果を返すように変更
       const startIndex = (this.currentPage - 1) * this.pageSize;
       const endIndex = startIndex + this.pageSize;
-      return this.result.slice(startIndex, endIndex);
+      if (Array.isArray(this.result)) {
+        return this.result.slice(startIndex, endIndex);
+      }
+      return [];
     },
     totalPageLinks() {
       const currentGroup = Math.ceil(this.currentPage / this.maxPageLinks);
@@ -150,24 +155,33 @@ export default {
       // 取得処理を開始
       this.url = PROGRAM_SHUTSUEN_URL;
       this.url = this.url.replace('{1}', this.programId);
-      this.url = this.url.replace('{2}', this.onAirDay);
+      // API側がハイフン形式を期待している可能性があるため、スラッシュをハイフンに置換してリクエスト
+      this.url = this.url.replace('{2}', this.onAirDay.replace(/\//g, '-'));
       this.url = this.url.replace('{3}', this.nentsuki);
       this.url = this.url.replace('{4}', this.shu);
-      this.result = await axios.get(this.url).then(response => (response.data.programShutsuen));
-      if (this.result != '' && this.result[0].programName !== null) {
-        this.isCount = true;
-        this.$emit('on-message', "");
-        this.totalPages = Math.ceil(this.result.length / this.pageSize);
-        this.resultCount = this.result.length;
-      } else {
-        this.msg = "対象番組ID（" + this.programId + "）は【" + this.nentsuki.toString().substring(0, 4) + "年" + this.nentsuki.toString().substring(4) + "月 " + this.shu + "週】に放送予定がありません。";
-        this.isCount = false;
-        this.$emit('on-message', this.msg);
+      
+      try {
+        const response = await axios.get(this.url);
+        this.result = response.data.programShutsuen || [];
+        
+        if (this.result.length > 0 && this.result[0].programName !== null) {
+          this.isCount = true;
+          this.$emit('on-message', "");
+          this.totalPages = Math.ceil(this.result.length / this.pageSize);
+          this.resultCount = this.result.length;
+        } else {
+          this.msg = "対象番組ID（" + this.programId + "）は【" + this.nentsuki.toString().substring(0, 4) + "年" + this.nentsuki.toString().substring(4) + "月 " + this.shu + "週】に放送予定がありません。";
+          this.isCount = false;
+          this.$emit('on-message', this.msg);
+        }
+      } catch (error) {
+        console.error("Fetch error:", error);
       }
     },
     changePage(pageNumber) {
       this.currentPage = pageNumber;
-      this.fetchData(); // ページ変更時にデータを再取得するなどの処理を追加
+      // ページ変更時に再取得が必要な場合は以下を有効にする（現在はcomputedで制御）
+      // this.fetchData(); 
     },
     getOnAirDayFormat(onAirDay) {
       return onAirDay.toString().substring(0, 5);
@@ -179,7 +193,7 @@ export default {
     init(){
       this.isCount = false;
       this.msg = '';
-      this.result= { };
+      this.result = [];
     },
   },
 }
