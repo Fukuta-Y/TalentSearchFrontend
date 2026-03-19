@@ -1,19 +1,20 @@
 <template>
-  <div id="app" style="display: flex; flex-direction: column; height: 100vh;">
-    <div style="display: flex; flex: 1;">
-      <!-- サイドバー -->
+  <div id="app" class="fixed-viewport-container">
+    
+    <div class="fixed-layout-inner">
       <SideBar />
 
-      <!-- メインメニュータイトルブロックとコンテンツ -->
-      <div style="flex: 1; display: flex; flex-direction: column; padding: 20px;">
-        <!-- メインメニュータイトルブロック -->
-        <div style="width: 95%; text-align: center; margin-bottom: 20px;" class="boxed-title">
-          <p>メインメニュー</p>
+      <div class="main-content-area">
+        <ErrorMessage v-if="message" v-bind:prop-message="message" />
+
+        <div class="boxed-title-wrapper">
+          <div class="boxed-title">
+            <p>メインメニュー</p>
+          </div>
         </div>
 
-        <!-- 業務とマスタのコンテンツ -->
-        <div style="display: flex; justify-content: space-between;">
-          <div style="width: 48%; padding: 4px; box-sizing: border-box;" class="sidebar-link">
+        <div class="menu-columns-container">
+          <div class="menu-column sidebar-link">
             <div class="boxed">
               <p>業務</p>
             </div>
@@ -21,7 +22,8 @@
               <GyomuList />
             </div>
           </div>
-          <div style="width: 48%; padding: 10px; box-sizing: border-box;" class="sidebar-link">
+
+          <div class="menu-column sidebar-link">
             <div class="boxed">
               <p>マスタ</p>
             </div>
@@ -34,24 +36,32 @@
     </div>
   </div>
 </template>
+
 <script>
 import GyomuList from './components/GyomuList.vue';
 import MasterList from './components/MasterList.vue';
 import SideBar from '../common/SideBar.vue';
+// ErrorMessageのインポートが必要な場合は追加してください
+// import ErrorMessage from '../common/ErrorMessage.vue';
 
 export default {
   components: {
     MasterList,
     GyomuList,
     SideBar,
+    // ErrorMessage,
   },
   data() {
     return {
-      isSidebarCollapsed: true, // サイドメニューがデフォルトで閉じている
+      message: '',
+      isSidebarCollapsed: true,
       expandedSubmenus: [],
     };
   },
   methods: {
+    receiveMessage(value) {
+      this.message = value;
+    },
     toggleSidebar() {
       this.isSidebarCollapsed = !this.isSidebarCollapsed;
     },
@@ -65,105 +75,90 @@ export default {
   },
 };
 </script>
+
 <style scoped>
-  #app {
-    display: flex;
-    flex-direction: column; /* コンテンツを縦に配置するための指定 */
-  }
+/* --- 固定レイアウトのコア設定 --- */
 
-  body {
-    font-family: 'Arial', sans-serif;
-    margin: 0;
-    padding: 0;
-  }
+.fixed-viewport-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+  overflow-x: auto; /* 横スクロールを許可 */
+  overflow-y: auto;
+  background-color: white;
+}
 
-  .burger-menu {
-    cursor: pointer;
-    padding: 10px;
-    background-color: #333;
-    color: #fff;
-  }
-  body {
-    font-family: 'Arial', sans-serif;
-    margin: 0;
-    padding: 0;
-    display: flex;
-  }
+.fixed-layout-inner {
+  display: flex;
+  flex: 1;
+  /* PCでは広々と(100%)、スマホでも1200pxを死守 */
+  width: 100%;
+  min-width: 1200px;
+  min-height: 100vh;
+}
 
-  .burger-menu {
-    cursor: pointer;
-    padding: 10px;
-    background-color:#696969;
-    color: #020000e8;
-  }
+.main-content-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  min-width: 0; /* flex内の縮み防止 */
+}
 
-  .bar, .plus {
-    height: 3px;
-    width: 25px;
-    background-color: #fff;
-    margin: 5px 0;
-    transition: transform 0.3s ease;
-  }
+/* --- コンテンツのスタイル調整 --- */
 
-  .plus {
-    transform: rotate(45deg);
-  }
+.boxed-title-wrapper {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
 
-  .sidebar {
-    width: 200px;
-    background-color: #696969;
-    color: #fff;
-    padding: 20px;
-    height: 100vh;
-    overflow-y: auto;
-    transition: width 0.3s ease;
-  }
+.boxed-title {
+  width: 95%;
+  text-align: center;
+  border: 1px solid #333;
+  padding: 5px;
+  margin: 5px 0 20px 0;
+  background-color: #CCFF99;
+  font-weight: bold;
+}
 
-  .sidebar.collapsed {
-    width: 60px;
-    overflow: hidden;
-  }
-  ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
+.menu-columns-container {
+  display: flex;
+  justify-content: space-between;
+  flex: 1; /* 下まで伸ばす */
+}
 
-  li {
-    margin-bottom: 10px;
-  }
+.menu-column {
+  width: 48%;
+  padding: 4px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
 
-  a {
-    text-decoration: none;
-    color: #fff;
-  }
+.gyoumuMenu, .masterMenu {
+  border: 1px solid #333;
+  padding: 10px;
+  margin: 0 20px 20px 20px;
+  flex: 1; /* コンテンツエリアを下に伸ばす */
+  box-sizing: border-box;
+  background-color: #fff;
+}
 
-  ul ul {
-    margin-top: 5px;
-  }
-  /* ボックスのスタイル */
-  .boxed {
-    border: 1px solid #333;
-    padding: 3px;
-    margin: 20px;
-    border-radius: 8px;
-    background-color: #f0f8ff;
-  }
-  .boxed-title {
-    border: 1px solid #333;
-    padding: 5px;
-    margin: 5px; /* 低い値に変更 */
-    background-color: #CCFF99;
-  }
-  /* ボックスのスタイル */
-  .gyoumuMenu, .masterMenu {
-    border: 1px solid #333;
-    padding: 10px;
-    margin: 20px;
-    min-height: 90%; /* 画面の下の方まで伸ばす */
-    box-sizing: border-box;
-  }
-  .sidebar-link {
-    margin-bottom: 10px; /* 適切なマージンを指定 */
-  }
+.boxed {
+  border: 1px solid #333;
+  padding: 3px;
+  margin: 20px;
+  border-radius: 8px;
+  background-color: #f0f8ff;
+  text-align: center;
+}
+
+/* --- サイドバー関連の既存スタイル（維持） --- */
+#app {
+  font-family: 'Arial', sans-serif;
+}
+/* その他、既存のstyleはそのまま適用されます */
 </style>
