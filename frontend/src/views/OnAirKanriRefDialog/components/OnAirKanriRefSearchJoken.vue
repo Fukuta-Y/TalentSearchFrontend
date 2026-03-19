@@ -37,34 +37,38 @@
 
     <div v-if="isCount" class="result-container">
       <div class="table-scroll-container">
-        <table align="center" border="1" style="border-collapse: collapse;" class="result-table">
+        <table align="center" border="1" class="result-table">
           <thead>
             <tr>
               <th class="header-cell"></th>
-              <th class="header-cell" style="width:80px;">ID </th>
-              <th class="header-cell" style="width:150px;">オンエア日時</th>
-              <th class="header-cell" style="width:80px;">番組ID</th>
-              <th class="header-cell" style="width:250px;">番組名</th>
-              <th class="header-cell">タレントID</th>
-              <th class="header-cell" style="width:250px;">タレント名</th>
-              <th class="header-cell" style="width:115px;">年月・週</th>
+              <th class="header-cell min-w-80">ID</th>
+              <th class="header-cell min-w-200">オンエア日時</th>
+              <th class="header-cell min-w-80">番組ID</th>
+              <th class="header-cell min-w-200">番組名</th>
+              <th class="header-cell min-w-100">タレントID</th>
+              <th class="header-cell min-w-200">タレント名</th>
+              <th class="header-cell min-w-120">年月・週</th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="(item, key) in paginatedResult" :key="key">
-              <td>
+              <td class="text-center">
                 <button 
                   v-on:click="selectId(item.id, item.onAirDay, item.programId, item.programName, item.talentId, item.talentName, item.nentsuki, item.shu)" 
                   class="rounded-ref-button"
                 >選択</button>
               </td>
-              <td>{{ item.id }} </td>
-              <td>{{ item.onAirDay.toString().substring(0, 16) }} </td>
-              <td><router-link :to="{ name: 'ProgramTorokuKoshin', params: { programId: item.programId } }">{{ item.programId }}</router-link></td>
-              <td class="text-left">{{ item.programName }} </td>
-              <td><router-link :to="{ name: 'TalentTorokuKoshin', params: { talentId: item.talentId } }">{{ item.talentId }}</router-link></td>
-              <td class="text-left">{{ item.talentName }} </td>
-              <td><router-link :to="{ name: 'NetsukiShuKanriTorokuKoshin', params: { nentsuki: item.nentsuki, shu: item.shu } }">{{ `${String(item.nentsuki).substring(0, 4)}/${String(item.nentsuki).substring(4, 6)} ${item.shu}週` }}</router-link></td>
+              <td class="text-center">{{ item.id }}</td>
+              <td class="text-center">{{ item.onAirDay.toString().substring(0, 16) }}</td>
+              <td class="text-center"><router-link :to="{ name: 'ProgramTorokuKoshin', params: { programId: item.programId } }">{{ item.programId }}</router-link></td>
+              <td class="text-left">{{ item.programName }}</td>
+              <td class="text-center"><router-link :to="{ name: 'TalentTorokuKoshin', params: { talentId: item.talentId } }">{{ item.talentId }}</router-link></td>
+              <td class="text-left">{{ item.talentName }}</td>
+              <td class="text-center">
+                <router-link :to="{ name: 'NetsukiShuKanriTorokuKoshin', params: { nentsuki: item.nentsuki, shu: item.shu } }">
+                  {{ `${String(item.nentsuki).substring(0, 4)}/${String(item.nentsuki).substring(4, 6)} ${item.shu}週` }}
+                </router-link>
+              </td>
             </tr>
           </tbody>
         </table>
@@ -125,18 +129,26 @@ export default {
           return;
         }
         if (this.onAirDay) {
-          this.onAirDay = format(new Date(this.onAirDay), 'yyyy-MM-dd HH:mm');
+          try {
+            this.onAirDay = format(new Date(this.onAirDay), 'yyyy-MM-dd HH:mm');
+          } catch (e) {
+            console.error("Date format error", e);
+          }
         }
       }
       this.url = ON_AIR_KANRI_REF_URL.replace('{1}', this.id || '').replace('{2}', this.onAirDay || '');
-      const response = await axios.get(this.url);
-      this.result = response.data.tOnAirKanriRef || [];
-      this.isCount = this.result.length > 0;
-      if (this.isCount) {
-        this.totalPages = Math.ceil(this.result.length / this.pageSize);
-        this.$emit('on-message', "");
-      } else {
-        this.$emit('on-message', msgList['INFO001']);
+      try {
+        const response = await axios.get(this.url);
+        this.result = response.data.tOnAirKanriRef || [];
+        this.isCount = this.result.length > 0;
+        if (this.isCount) {
+          this.totalPages = Math.ceil(this.result.length / this.pageSize);
+          this.$emit('on-message', "");
+        } else {
+          this.$emit('on-message', msgList['INFO001']);
+        }
+      } catch (error) {
+        console.error("Search error", error);
       }
     },
     changePage(p) { this.currentPage = p; },
@@ -151,18 +163,43 @@ export default {
 
 <style scoped>
 .table-scroll-container {
-  max-height: 400px; /* ここで高さを制限してスクロールさせる */
+  max-height: 500px;
   overflow-y: auto;
-  overflow-x: auto;
+  overflow-x: auto; /* 横スクロールを許可 */
   border: 1px solid #ccc;
   margin: 10px 0;
+  background-color: #fff;
 }
+
+.result-table {
+  width: max-content; /* 中身に合わせて横に広がるように設定 */
+  min-width: 100%;
+  border-collapse: collapse;
+  table-layout: auto;
+}
+
 .header-cell {
-  background-color: greenyellow;
+  background-color: #adff2f; /* greenyellow */
   position: sticky;
   top: 0;
   z-index: 2;
+  padding: 8px;
+  border: 1px solid #ccc;
+  white-space: nowrap; /* ヘッダーの改行を防ぐ */
 }
-.result-table { width: 100%; border-collapse: collapse; }
+
+.result-table td {
+  padding: 8px;
+  border: 1px solid #ccc;
+  white-space: nowrap; /* セル内の改行を防ぎ、横に並べる */
+}
+
 .text-left { text-align: left; }
+.text-center { text-align: center; }
+
+/* 各カラムの最小幅を定義して見やすく調整 */
+.min-w-80 { min-width: 80px; }
+.min-w-100 { min-width: 100px; }
+.min-w-120 { min-width: 120px; }
+.min-w-200 { min-width: 200px; }
 </style>
