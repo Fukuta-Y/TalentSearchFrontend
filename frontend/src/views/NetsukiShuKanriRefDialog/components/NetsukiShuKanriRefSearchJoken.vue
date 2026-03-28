@@ -54,18 +54,24 @@
     </table>
     <br>
     <div>
-      <button v-on:click="btnSearch()" class="rounded-ref-button">
+      <button v-on:click="btnSearch()" class="rounded-ref-button" :disabled="isLoading">
         検索
       </button>
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      <button v-on:click="btnClear()" class="rounded-ref-button">
+      <button v-on:click="btnClear()" class="rounded-ref-button" :disabled="isLoading">
         クリア
       </button>
     </div>
+
+    <div v-if="isLoading" class="loading-area">
+      <div class="loader"></div>
+      <p>データを取得しています...</p>
+    </div>
+
     <br>
     <br>
-    <div style="overflow-y: auto;">
-      <table align="center" border="1" style="border-collapse: collapse;" class="result-table" v-if="isCount">
+    <div style="overflow-y: auto;" v-if="isCount && !isLoading">
+      <table align="center" border="1" style="border-collapse: collapse;" class="result-table">
         <tr>
           <td style="background-color: greenyellow;"></td>
           <td style="background-color: greenyellow; width:150px;">年月・週</td>
@@ -84,7 +90,7 @@
           <td v-if="isNentsukiShu">{{ item.shuTo }} </td>
         </tr>
       </table>
-      <div v-if="isCount">
+      <div>
         <DataGridViewPaging
           :currentPage="currentPage"
           :totalPages="totalPages"
@@ -96,6 +102,7 @@
     <br>
   </div>
 </template>
+
 <script>
 import { Field, ErrorMessage } from 'vee-validate'
 import { NENTSUKI_SHU_KANRI_REF_URL } from '../../../router/constList';
@@ -108,13 +115,8 @@ import '../../../router/styles/common.css';
 export default {
   name: 'NetsukiShuKanriRefSearchJoken',
   props: {
-    propNentsukiShu: {
-      type: String,
-    },
-    isNentsukiShu: {
-      type: Boolean,
-      required: true,
-    },
+    propNentsukiShu: { type: String },
+    isNentsukiShu: { type: Boolean, required: true },
   },
   components: {
     Field,
@@ -131,7 +133,8 @@ export default {
       msg: '',
       url: '',
       isCount: false,
-      result: {},
+      isLoading: false,
+      result: [], 
       currentPage: 1,
       pageSize: 10,
       totalPages: 0,
@@ -139,109 +142,101 @@ export default {
     }
   },
   async created() {
-    // 初期化
-    this.btnClear();
+    this.init();
     if(this.propNentsukiShu) {
-      this.nen = this.propNentsukiShu.toString().substring(0, 4);
-      this.tsuki = this.propNentsukiShu.toString().substring(4, 6);
-      this.shu = this.propNentsukiShu.toString().substring(6, 7);
-      this.fetchData(false)
+      const p = this.propNentsukiShu.toString();
+      this.nen = p.substring(0, 4);
+      this.tsuki = p.substring(4, 6);
+      this.shu = p.substring(6, 7);
+      await this.fetchData(false);
     }
   },
   computed: {
     paginatedResult() {
-      // ページングされた結果を返すように変更
+      if (!this.result || !Array.isArray(this.result)) return [];
       const startIndex = (this.currentPage - 1) * this.pageSize;
       const endIndex = startIndex + this.pageSize;
       return this.result.slice(startIndex, endIndex);
     },
     totalPageLinks() {
       const currentGroup = Math.ceil(this.currentPage / this.maxPageLinks);
-      const startPage = (currentGroup - 1) * this. maxPageLinks + 1;
+      const startPage = (currentGroup - 1) * this.maxPageLinks + 1;
       const endPage = Math.min(currentGroup * this.maxPageLinks, this.totalPages);
       return Array.from({ length: endPage - startPage + 1 }, (_, index) => startPage + index);
     },
   },
   methods: {
-     btnSearch() {
-      this.fetchData(true);
+    async btnSearch() {
+      await this.fetchData(true);
     },
     async fetchData(isValidate) {
-      // バリデーションチェックが必要な場合
       if (isValidate) {
-        // ① 年が入力されている場合は、月と必須で入力であること。
-        if (this.nen.trim() !== '') {
-          if (this.tsuki.trim() === '') {
-            this.msg = msgList['MSG002'].replace('{0}', "年と月");
-            this.$emit('on-message', this.msg);
-            return;
-          }
+        if (this.nen.trim() !== '' && this.tsuki.trim() === '') {
+          this.$emit('on-message', msgList['MSG002'].replace('{0}', "年と月"));
+          return;
         }
-        // ② 月が入力されている場合は、年と必須で入力であること。
-        if (this.tsuki.trim() !== '') {
-          if (this.nen.trim() === '') {
-            this.msg = msgList['MSG002'].replace('{0}', "年と月");
-            this.$emit('on-message', this.msg);
-            return;
-          }
+        if (this.tsuki.trim() !== '' && this.nen.trim() === '') {
+          this.$emit('on-message', msgList['MSG002'].replace('{0}', "年と月"));
+          return;
         }
-        // ③ 年月がYYYYMM形式であること。
-        // ④ 年月がYYYY/MM/01で有効な日付であること。
         if (this.nen.trim() !== '' && this.tsuki.trim() !== '' && !commonUtils.isValidateDate(this.nen + this.tsuki + "01")) {
-          this.msg = msgList['MSG003'].replace('{0}', "年月");
-          this.msg = this.msg.replace('{1}', "有効な日付の年月（YYYYMM)");
+          this.msg = msgList['MSG003'].replace('{0}', "年月").replace('{1}', "有効な日付の年月（YYYYMM)");
           this.$emit('on-message', this.msg);
           return;
         }
-        // ⑤ 週が数値であること。
         if (this.shu.toString().trim() !== '' && !commonUtils.isValidNumber(Number(this.shu))) {
-          this.msg = msgList['MSG003'].replace('{0}', "週");
-          this.msg = this.msg.replace('{1}', "数値");
+          this.msg = msgList['MSG003'].replace('{0}', "週").replace('{1}', "数値");
           this.$emit('on-message', this.msg);
           return;
         }
-        // ⑥ 週が1～5の数値のいずれかであること。
         if (this.shu.toString().trim() !== '' && !commonUtils.isValidRange(Number(this.shu), 1, 5)) {
-          this.msg = msgList['MSG004'].replace('{0}', "週");
-          this.msg = this.msg.replace('{1}', "1");
-          this.msg = this.msg.replace('{2}', "5");
+          this.msg = msgList['MSG004'].replace('{0}', "週").replace('{1}', "1").replace('{2}', "5");
           this.$emit('on-message', this.msg);
           return;
         }
       }
-      // 年月を0埋め形式へ変換
-      if (this.tsuki.trim() !== '') {
-        this.nentsuki = this.nen + this.tsuki.padStart(2, '0');
-      }
-      // 取得処理を開始
-      this.url = NENTSUKI_SHU_KANRI_REF_URL;
-      this.url = this.url.replace('{1}', this.nentsuki);
-      this.url = this.url.replace('{2}', this.shu);
-      this.result = await axios.get(this.url).then(response => (response.data.mNentsukiShuKanri));
-      if (this.result.length !== 0) {
-        this.isCount = true;
-        this.$emit('on-message', "");
-        this.resultCount = this.result.length; // 件数を更新
-        this.totalPages = Math.ceil(this.result.length / this.pageSize);
-        this.resultCount = this.result.length;
-      } else {
-        this.msg = msgList['INFO001'];
-        this.$emit('on-message', this.msg);
-        this.isCount = false;
+
+      this.isLoading = true;
+      this.$emit('on-message', "");
+
+      try {
+        if (this.tsuki.trim() !== '') {
+          this.nentsuki = this.nen + this.tsuki.padStart(2, '0');
+        } else {
+          this.nentsuki = '';
+        }
+
+        this.url = NENTSUKI_SHU_KANRI_REF_URL;
+        this.url = this.url.replace('{1}', this.nentsuki).replace('{2}', this.shu);
+        
+        const response = await axios.get(this.url);
+        this.result = response.data.mNentsukiShuKanri || [];
+
+        if (this.result.length !== 0) {
+          this.isCount = true;
+          this.totalPages = Math.ceil(this.result.length / this.pageSize);
+        } else {
+          this.isCount = false;
+          this.result = [];
+          this.$emit('on-message', msgList['INFO001']);
+        }
+      } catch (error) {
+        console.error(error);
+        this.$emit('on-message', "通信エラーが発生しました。");
+      } finally {
+        this.isLoading = false;
       }
     },
     changePage(pageNumber) {
       this.currentPage = pageNumber;
-      this.fetchData(); // ページ変更時にデータを再取得するなどの処理を追加
+      this.fetchData(false);
     },
     selectNentsukiShu(nentsuki, shu, shuFrom, shuTo) {
-      // 「選択」ボタンがクリックされたときに呼ばれるメソッド
-      // nentsukiとshuとshuFromとshuToを親コンポーネントに渡す
       this.$emit('on-select-nentsuki-shu', { nentsuki, shu, shuFrom, shuTo });
     },
     btnClear() {
       this.init();
-      this.$emit('on-message', this.msg);
+      this.$emit('on-message', '');
     },
     init(){
       this.nentsuki = '';
@@ -249,11 +244,42 @@ export default {
       this.tsuki = '';
       this.shu = '';
       this.isCount = false;
+      this.isLoading = false;
       this.msg = '';
-      this.result = {};
+      this.result = [];
+      this.currentPage = 1;
     },
   },
 }
 </script>
+
 <style scoped>
+.loading-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.loader {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #3498db;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  animation: spin 1s linear infinite;
+  margin-bottom: 10px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.rounded-ref-button:disabled {
+  background-color: #cccccc !important;
+  color: #666666 !important;
+  cursor: not-allowed;
+}
 </style>

@@ -46,18 +46,24 @@
       </tr>
     </table>
     <br>
-    <div>
-      <button v-on:click="btnSearch()" class="rounded-ref-button">
+    <div class="button-group">
+      <button v-on:click="btnSearch()" class="rounded-ref-button" :disabled="isLoading">
         検索
       </button>
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      <button v-on:click="btnClear()" class="rounded-ref-button">
+      <button v-on:click="btnClear()" class="rounded-ref-button" :disabled="isLoading">
         クリア
       </button>
     </div>
+
+    <div v-if="isLoading" class="loading-area">
+      <div class="loader"></div>
+      <p>データを取得しています...</p>
+    </div>
+
     <br>
-    <div style="overflow-y: auto;">
-      <table align="center" border="1" style="border-collapse: collapse;" class="result-table" v-if="isCount">
+    <div style="overflow-y: auto;" v-if="isCount && !isLoading">
+      <table align="center" border="1" style="border-collapse: collapse;" class="result-table">
         <tr>
           <td style="background-color: greenyellow;"></td>
           <td style="background-color: greenyellow;">タレントID </td>
@@ -76,7 +82,7 @@
           <td v-if="isTalentToroku">{{ item.genreId }} </td>
         </tr>
       </table>
-      <div v-if="isCount">
+      <div>
         <DataGridViewPaging
           :currentPage="currentPage"
           :totalPages="totalPages"
@@ -101,16 +107,9 @@ import '../../../router/styles/common.css';
 export default {
   name: 'TalentRefSearchJoken',
   props: {
-    propTalentId: {
-      type: String,
-    },
-    propTalentName: {
-      type: String,
-    },
-    isTalentToroku: {
-      type: Boolean,
-      required: true,
-    },
+    propTalentId: { type: String },
+    propTalentName: { type: String },
+    isTalentToroku: { type: Boolean, required: true },
   },
   components: {
     Field,
@@ -125,7 +124,8 @@ export default {
       msg: '',
       url: '',
       isCount: false,
-      result: {},
+      isLoading: false, 
+      result: [],       
       currentPage: 1,
       pageSize: 10,
       totalPages: 0,
@@ -133,17 +133,17 @@ export default {
     }
   },
   async created() {
-    // 初期化
-    this.btnClear();
+    this.init();
     if(this.propTalentId && this.propTalentName) {
       this.talentId = this.propTalentId;
       this.talentName = this.propTalentName;
-      this.fetchData(false);
+      // 第1引数(isValidate)にfalseを渡して初期検索
+      await this.fetchData(false);
     }
   },
   computed: {
     paginatedResult() {
-      // ページングされた結果を返すように変更
+      if (!this.result || !Array.isArray(this.result)) return [];
       const startIndex = (this.currentPage - 1) * this.pageSize;
       const endIndex = startIndex + this.pageSize;
       return this.result.slice(startIndex, endIndex);
@@ -156,65 +156,104 @@ export default {
     },
   },
   methods: {
-    btnSearch() {
-      this.fetchData(true);
+    async btnSearch() {
+      await this.fetchData(true);
     },
     async fetchData(isValidate) {
-       // バリデーションチェックが必要な場合
       if (isValidate) {
-        // ① タレントIDが入力されている場合は、タレントIDが8桁以内であること。
         if (this.talentId.trim() !== '' && !commonUtils.isValidMaxLength(this.talentId, 8)) {
-          this.msg = msgList['MSG005'].replace('{0}', "タレントID");
-          this.msg = this.msg.replace('{1}', "8文字");
+          this.msg = msgList['MSG005'].replace('{0}', "タレントID").replace('{1}', "8文字");
           this.$emit('on-message', this.msg);
           return;
         }
-        // ② タレント名が入力されている場合は、タレント名が30桁以内であること。
         if (this.talentName.trim() !== '' && !commonUtils.isValidMaxLength(this.talentName, 30)) {
-          this.msg = msgList['MSG005'].replace('{0}', "タレント名");
-          this.msg = this.msg.replace('{1}', "30文字");
+          this.msg = msgList['MSG005'].replace('{0}', "タレント名").replace('{1}', "30文字");
           this.$emit('on-message', this.msg);
           return;
         }
       }
-      // 取得処理を開始
-      this.url = TALENT_REF_URL;
-      this.url = this.url.replace('{1}', this.talentId);
-      this.url = this.url.replace('{2}', this.talentName);
-      this.result = await axios.get(this.url).then(response => (response.data.mTalent));
-      if (this.result.length !== 0) {
-        this.isCount = true;
-        this.$emit('on-message', "");
-        this.resultCount = this.result.length; // 件数を更新
-        this.totalPages = Math.ceil(this.result.length / this.pageSize);
-      } else {
-        this.msg = msgList['INFO001'];
-        this.$emit('on-message', this.msg)
-        this.isCount = false
+
+      // ★通信開始
+      this.isLoading = true;
+      this.$emit('on-message', "");
+
+      try {
+        this.url = TALENT_REF_URL;
+        this.url = this.url.replace('{1}', this.talentId);
+        this.url = this.url.replace('{2}', this.talentName);
+        
+        const response = await axios.get(this.url);
+        this.result = response.data.mTalent || [];
+
+        if (this.result.length !== 0) {
+          this.isCount = true;
+          this.totalPages = Math.ceil(this.result.length / this.pageSize);
+        } else {
+          this.isCount = false;
+          this.result = [];
+          this.$emit('on-message', msgList['INFO001']);
+        }
+      } catch (error) {
+        console.error(error);
+        this.$emit('on-message', "通信エラーが発生しました。");
+      } finally {
+        // ★通信終了
+        this.isLoading = false;
       }
     },
     changePage(pageNumber) {
       this.currentPage = pageNumber;
-      this.fetchData(); // ページ変更時にデータを再取得するなどの処理を追加
+      this.fetchData(false); 
     },
     selectTalent(talentId, talentName, genreId) {
-      // 「選択」ボタンがクリックされたときに呼ばれるメソッド
-      // talentIdとtalentNameとgenreIdを親コンポーネントに渡す
       this.$emit('on-select-talent', { talentId, talentName, genreId });
     },
     btnClear() {
       this.init();
-      this.$emit('on-message', this.msg);
+      this.$emit('on-message', '');
     },
     init(){
       this.talentId = '';
       this.talentName = '';
       this.isCount = false;
+      this.isLoading = false;
       this.msg = '';
-      this.result = {};
+      this.result = [];
+      this.currentPage = 1;
     },
   },
 }
 </script>
+
 <style scoped>
+/* スピナー（ぐるぐる）のデザイン */
+.loading-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.loader {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #3498db;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  animation: spin 1s linear infinite;
+  margin-bottom: 10px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* 非活性時のボタン */
+.rounded-ref-button:disabled {
+  background-color: #cccccc !important;
+  color: #666666 !important;
+  cursor: not-allowed;
+}
 </style>

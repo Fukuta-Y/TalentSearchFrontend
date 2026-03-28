@@ -47,20 +47,24 @@
     </table>
     <br>
     <div>
-      <button v-on:click="btnSearch()" class="rounded-ref-button">
+      <button v-on:click="btnSearch()" class="rounded-ref-button" :disabled="isLoading">
         検索
       </button>
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      <button 
-        v-on:click="btnClear()" class="rounded-ref-button">
+      <button v-on:click="btnClear()" class="rounded-ref-button" :disabled="isLoading">
         クリア
       </button>
     </div>
+
+    <div v-if="isLoading" class="loading-area">
+      <div class="loader"></div>
+      <p>データを取得しています...</p>
+    </div>
+
     <br>
     <br>
-    <div style="overflow-y: auto;">
-      <table align="center" border="1" style="border-collapse: collapse;" class="result-table" v-if="isCount">
-        <!-- テーブルのヘッダー部分 -->
+    <div style="overflow-y: auto;" v-if="isCount && !isLoading">
+      <table align="center" border="1" style="border-collapse: collapse;" class="result-table">
         <tr>
           <td style="background-color: greenyellow;"></td>
           <td style="background-color: greenyellow;">番組ID </td>
@@ -68,7 +72,6 @@
           <td style="background-color: greenyellow;" v-if="isProgramToroku">チャンネル局ID</td>
           <td style="background-color: greenyellow;" v-if="isProgramToroku">ジャンルID </td>
         </tr>
-        <!-- ページごとに表示されるアイテムを反復処理 -->
         <tr v-for="(item, key) in paginatedResult" :key="key">
           <td><button v-on:click="selectProgram(item.programId, item.programName, item.channelKyokuId, item.genreId)" class="rounded-ref-button">選択</button></td>
           <td v-if="isProgramToroku">
@@ -82,7 +85,7 @@
           <td v-if="isProgramToroku">{{ item.genreId }} </td>
         </tr>
       </table>
-      <div v-if="isCount">
+      <div>
         <DataGridViewPaging
           :currentPage="currentPage"
           :totalPages="totalPages"
@@ -102,19 +105,14 @@ import { commonUtils } from '../../../router/utils/sysCom/VeeValidateSettings';
 import DataGridViewPaging from '../../common/DataGridViewPaging.vue';
 import axios from 'axios'
 import msgList from '../../../router/msgList';
+import '../../../router/styles/common.css';
 
 export default {
   name: 'ProgramRefSearchJoken',
   props: {
-    propProgramId: {
-      type: String,
-    },
-    propProgramName: {
-      type: String,
-    },
-    isProgramToroku: {
-      type: Boolean,
-    },
+    propProgramId: { type: String },
+    propProgramName: { type: String },
+    isProgramToroku: { type: Boolean },
   },
   components: {
     Field,
@@ -128,26 +126,27 @@ export default {
       programName: '',
       msg: '',
       isCount: false,
+      isLoading: false, 
       result: [],
       url: '',
       currentPage: 1,
-      pageSize: 10, // 1ページあたりのアイテム数
+      pageSize: 10,
       totalPages: 0,
       maxPageLinks: 10,
     }
   },
   async created() {
-    // 初期化
-    this.btnClear();
+    this.init();
     if(this.propProgramId && this.propProgramName) {
       this.programId = this.propProgramId
       this.programName = this.propProgramName
-      this.fetchData(false)
+      // 初期検索時はバリデーションスキップ
+      await this.fetchData(false)
     }
   },
   computed: {
     paginatedResult() {
-      // ページングされた結果を返すように変更
+      if (!this.result || !Array.isArray(this.result)) return [];
       const startIndex = (this.currentPage - 1) * this.pageSize;
       const endIndex = startIndex + this.pageSize;
       return this.result.slice(startIndex, endIndex);
@@ -161,64 +160,103 @@ export default {
   },
   methods: {
     async btnSearch() {
-      this.fetchData(true);
+      await this.fetchData(true);
     },
     async fetchData(isValidate) {
-      // バリデーションチェックが必要な場合
       if(isValidate) {
-        // ① 番組IDが入力されている場合は、番組IDが8桁以内であること。
         if (this.programId.trim() !== '' && !commonUtils.isValidMaxLength(this.programId, 8)) {
-          this.msg = msgList['MSG005'].replace('{0}', "番組ID");
-          this.msg = this.msg.replace('{1}', "8文字");
+          this.msg = msgList['MSG005'].replace('{0}', "番組ID").replace('{1}', "8文字");
           this.$emit('on-message', this.msg);
           return;
         }
-        // ② 番組名が入力されている場合は、番組名が30桁以内であること。
         if (this.programName.trim() !== '' && !commonUtils.isValidMaxLength(this.programName, 30)) {
-          this.msg = msgList['MSG005'].replace('{0}', "番組名");
-          this.msg = this.msg.replace('{1}', "30文字");
+          this.msg = msgList['MSG005'].replace('{0}', "番組名").replace('{1}', "30文字");
           this.$emit('on-message', this.msg);
           return;
         }
       }
-      // 取得処理を開始
-      this.url = PROGRAM_REF_URL;
-      this.url = this.url.replace('{1}', this.programId);
-      this.url = this.url.replace('{2}', this.programName);
-      this.result = await axios.get(this.url).then(response => (response.data.programInfoRef));
-      if (this.result != null && this.result[0].programId !== null) {
-        this.isCount = true;
-        this.$emit('on-message', "");
-        this.totalPages = Math.ceil(this.result.length / this.pageSize);
-        this.resultCount = this.result.length;
-      } else {
-        this.msg = msgList['INFO001'];
-        this.$emit('on-message', this.msg);
-        this.isCount = false;
+
+      // ★通信開始
+      this.isLoading = true;
+      this.$emit('on-message', "");
+
+      try {
+        this.url = PROGRAM_REF_URL;
+        this.url = this.url.replace('{1}', this.programId);
+        this.url = this.url.replace('{2}', this.programName);
+        
+        const response = await axios.get(this.url);
+        this.result = response.data.programInfoRef || [];
+
+        if (this.result.length > 0 && this.result[0].programId !== null) {
+          this.isCount = true;
+          this.totalPages = Math.ceil(this.result.length / this.pageSize);
+        } else {
+          this.isCount = false;
+          this.result = [];
+          this.$emit('on-message', msgList['INFO001']);
+        }
+      } catch (error) {
+        console.error(error);
+        this.$emit('on-message', "通信エラーが発生しました。");
+      } finally {
+        // ★通信終了
+        this.isLoading = false;
       }
     },
     changePage(pageNumber) {
       this.currentPage = pageNumber;
-      this.fetchData(); // ページ変更時にデータを再取得するなどの処理を追加
+      this.fetchData(false); 
     },
     selectProgram(programId, programName, channelKyokuId, genreId) {
-      // 「選択」ボタンがクリックされたときに呼ばれるメソッド
-      // programId と programName と channelKyokuId と genreId  を親コンポーネントに渡す
       this.$emit('on-select-program', { programId, programName, channelKyokuId, genreId });
     },
     btnClear() {
       this.init();
-      this.$emit('on-message', this.msg);
+      this.$emit('on-message', '');
     },
     init(){
       this.programId = '';
       this.programName = '';
       this.isCount = false;
+      this.isLoading = false;
       this.msg = '';
       this.result = [];
+      this.currentPage = 1;
     },
   },
 }
 </script>
+
 <style scoped>
+/* スピナー（ぐるぐる）のデザイン */
+.loading-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.loader {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #3498db;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  animation: spin 1s linear infinite;
+  margin-bottom: 10px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* 非活性時のボタン */
+.rounded-ref-button:disabled {
+  background-color: #cccccc !important;
+  color: #666666 !important;
+  cursor: not-allowed;
+}
 </style>

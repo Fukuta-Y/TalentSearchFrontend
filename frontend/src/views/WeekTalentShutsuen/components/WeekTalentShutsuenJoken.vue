@@ -1,5 +1,12 @@
 <template>
   <div>
+    <div v-if="isLoading" class="loading-overlay">
+      <div class="loading-content">
+        <div class="loader-overlay"></div>
+        <p>データを取得しています...</p>
+      </div>
+    </div>
+
     <table align="center">
       <tr>
         <td>年月： </td>
@@ -61,50 +68,55 @@
       </tr>
     </table>
     <br>
+    
     <div>
-      <button v-on:click="btnSearch()" class="rounded-button">
+      <button v-on:click="btnSearch()" class="rounded-button" :disabled="isLoading">
         検索
       </button>
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      <button v-on:click="btnClear()" class="rounded-button">
+      <button v-on:click="btnClear()" class="rounded-button" :disabled="isLoading">
         クリア
       </button>
     </div>
+
     <br>
-    <table align="center" v-if="isCount">
-      <tr>
-        <td style="text-align: left;">【年月・週】：{{ `${String(this.labelNentsuki).substring(0, 4)}/${String(this.labelNentsuki).substring(4, 6)} ${this.labelShu}週目` }}</td>
-        <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
-        <td style="text-align: left;">【週・日付】：   {{ this.result[0].shuFrom }}  ー   {{ this.result[0].shuTo }}</td>
-      </tr>
-    </table>
-    <div style="overflow-y: auto;">
-      <table class="result-table" align="center" border="1" style="border-collapse: collapse;" v-if="isCount">
+    <div v-if="isCount && !isLoading">
+      <table align="center">
         <tr>
-          <td style="background-color: greenyellow;">タレント名 </td>
-          <td style="background-color: greenyellow;">週間出演番組本数 </td>
-          <td style="background-color: greenyellow;">出演番組（直近） </td>
-          <td style="background-color: greenyellow;">オンエア日時（直近） </td>
-        </tr>
-       <tr v-for="(item, key) in paginatedResult" :key="key">
-          <td><router-link :to="{ name: 'TalentDetail', params: { nentsuki: this.labelNentsuki, shu: this.labelShu, talentId: item.talentId } }">{{ item.talentName }}</router-link></td>
-          <td>{{ item.shukanShutsuenProgramHonsu + "本"}} </td>
-          <td><router-link :to="{ name: 'ProgramDetail', params: { programId: item.shutsuenProgramIdChokin, onAirDay: getOnAirDayFormat(item.onAirDayChokin), nentsuki: this.labelNentsuki, shu: this.labelShu } }">{{ item.shutsuenProgramChokin  }}</router-link></td>
-          <td>{{ getOnAirDayFormat(item.onAirDayChokin)}} </td>
+          <td style="text-align: left;">【年月・週】：{{ `${String(this.labelNentsuki).substring(0, 4)}/${String(this.labelNentsuki).substring(4, 6)} ${this.labelShu}週目` }}</td>
+          <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+          <td style="text-align: left;">【週・日付】：   {{ this.result[0].shuFrom }}  ー   {{ this.result[0].shuTo }}</td>
         </tr>
       </table>
-      <div v-if="isCount">
-        <DataGridViewPaging
-          :currentPage="currentPage"
-          :totalPages="totalPages"
-          :totalPageLinks="totalPageLinks"
-          :changePage="changePage"
-        />
+      <div style="overflow-y: auto;">
+        <table class="result-table" align="center" border="1" style="border-collapse: collapse;">
+          <tr>
+            <td style="background-color: greenyellow;">タレント名 </td>
+            <td style="background-color: greenyellow;">週間出演番組本数 </td>
+            <td style="background-color: greenyellow;">出演番組（直近） </td>
+            <td style="background-color: greenyellow;">オンエア日時（直近） </td>
+          </tr>
+        <tr v-for="(item, key) in paginatedResult" :key="key">
+            <td><router-link :to="{ name: 'TalentDetail', params: { nentsuki: this.labelNentsuki, shu: this.labelShu, talentId: item.talentId } }">{{ item.talentName }}</router-link></td>
+            <td>{{ item.shukanShutsuenProgramHonsu + "本"}} </td>
+            <td><router-link :to="{ name: 'ProgramDetail', params: { programId: item.shutsuenProgramIdChokin, onAirDay: getOnAirDayFormat(item.onAirDayChokin), nentsuki: this.labelNentsuki, shu: this.labelShu } }">{{ item.shutsuenProgramChokin  }}</router-link></td>
+            <td>{{ getOnAirDayFormat(item.onAirDayChokin)}} </td>
+          </tr>
+        </table>
+        <div>
+          <DataGridViewPaging
+            :currentPage="currentPage"
+            :totalPages="totalPages"
+            :totalPageLinks="totalPageLinks"
+            :changePage="changePage"
+          />
+        </div>
       </div>
     </div>
     <br>
   </div>
 </template>
+
 <script>
 import { Field, ErrorMessage } from 'vee-validate'
 import { commonUtils } from '../../../router/utils/sysCom/VeeValidateSettings';
@@ -117,8 +129,6 @@ import '../../../router/styles/common.css';
 
 export default {
   name: 'WeekTalentShutsuenJoken',
-  props: {
-  },
   components: {
     Field,
     ErrorMessage,
@@ -136,21 +146,21 @@ export default {
       shuTo: '',
       msg: '',
       isCount: false,
-      result: {},
+      isLoading: false, 
+      result: [],
       currentPage: 1,
       maxPageLinks: 100,
-      pageSize: 10, // 1ページあたりのアイテム数
+      pageSize: 10, 
       totalPages: 0,
       url: '',
     }
   },
   async created() {
-    // 初期化
     this.btnClear();
   },
   computed: {
     paginatedResult() {
-      // ページングされた結果を返すように変更
+      if (!this.result || !Array.isArray(this.result)) return [];
       const startIndex = (this.currentPage - 1) * this.pageSize;
       const endIndex = startIndex + this.pageSize;
       return this.result.slice(startIndex, endIndex);
@@ -164,31 +174,27 @@ export default {
   },
   methods: {
     async btnSearch() {
-      this.fetchData();
+      await this.fetchData();
     },
     async fetchData() {
-      // ① 年月、週が必須で入力されていること。
+      // バリデーションチェック
       if (this.nentsuki.trim() === '' || this.shu.toString().trim() === '') {
         this.msg = msgList['MSG002'].replace('{0}', "年月と週");
         this.$emit('on-message', this.msg);
         return;
       }
-      // ② 年月がYYYYMM形式であること。
-      // ③ 年月がYYYY/MM/01で有効な日付であること。
       if (!commonUtils.isValidateDate(this.nentsuki + "01")) {
         this.msg = msgList['MSG003'].replace('{0}', "年月");
         this.msg = this.msg.replace('{1}', "有効な日付の年月（YYYYMM)");
         this.$emit('on-message', this.msg);
         return;
       }
-      // ④ 週が数値であること。
       if(!commonUtils.isValidNumber(Number(this.shu))){
         this.msg = msgList['MSG003'].replace('{0}', "週");
         this.msg = this.msg.replace('{1}', "数値");
         this.$emit('on-message', this.msg);
         return;
       }
-      // ⑤ 週が1～5の数値のいずれかであること。
       if (!commonUtils.isValidRange(Number(this.shu), 1, 5)) {
         this.msg = msgList['MSG004'].replace('{0}', "週");
         this.msg = this.msg.replace('{1}', "1");
@@ -196,38 +202,49 @@ export default {
         this.$emit('on-message', this.msg);
         return;
       }
-      // ⑥ タレント名が設定されている場合は、30桁以内であること。
       if (this.talentName !== '' && !commonUtils.isValidMaxLength(this.talentName, 30)){
         this.msg = msgList['MSG005'].replace('{0}', "タレント名");
         this.msg = this.msg.replace('{1}', "30文字");
         this.$emit('on-message', this.msg);
         return;
       }
-      // 取得処理を開始
-      this.url = SHUKAN_TALENT_JOHO_URL;
-      this.url = this.url.replace('{1}', this.nentsuki);
-      this.url = this.url.replace('{2}', this.shu);
-      this.url = this.url.replace('{3}', this.talentName);
-      this.result = await axios.get(this.url).then(response => (response.data.shukanTalent))
-      if (this.result[0].talentId != null) {
-        this.isCount = true;
-        this.$emit('on-message', "");
-        this.totalPages = Math.ceil(this.result.length / this.pageSize);
-        // ここで currentPage の制約を追加
-        this.currentPage = Math.min(this.currentPage, this.totalPages);
-        this.resultCount = this.result.length;
-      } else {
-        this.isCount = false;
-        this.msg = msgList['INFO001'];
-        this.$emit('on-message', this.msg);
+
+      // ★通信開始：オーバーレイを表示
+      this.isLoading = true;
+      this.$emit('on-message', "");
+
+      try {
+        this.url = SHUKAN_TALENT_JOHO_URL;
+        this.url = this.url.replace('{1}', this.nentsuki);
+        this.url = this.url.replace('{2}', this.shu);
+        this.url = this.url.replace('{3}', this.talentName);
+        
+        const response = await axios.get(this.url);
+        const fetchedData = response.data.shukanTalent;
+
+        if (fetchedData && fetchedData.length > 0 && fetchedData[0].talentId != null) {
+          this.result = fetchedData;
+          this.isCount = true;
+          this.totalPages = Math.ceil(this.result.length / this.pageSize);
+          this.currentPage = 1;
+          this.labelNentsuki = this.nentsuki;
+          this.labelShu = this.shu;
+        } else {
+          this.isCount = false;
+          this.result = [];
+          this.msg = msgList['INFO001'];
+          this.$emit('on-message', this.msg);
+        }
+      } catch (error) {
+        console.error("Fetch Error:", error);
+        this.$emit('on-message', "通信エラーが発生しました。");
+      } finally {
+        // ★通信終了：オーバーレイを消す
+        this.isLoading = false;
       }
-      // 検索結果のラベルの内容に設定
-      this.labelNentsuki = this.nentsuki;
-      this.labelShu = this.shu;
     },
     changePage(pageNumber) {
       this.currentPage = pageNumber;
-      this.fetchData(false); // ページ変更時にデータを再取得するなどの処理を追加
     },
     getOnAirDayFormat(onAirDay) {
       return moment(onAirDay).format('YYYY-MM-DD HH:mm');
@@ -243,11 +260,57 @@ export default {
       this.shuFrom = '';
       this.shuTo = '';
       this.isCount = false;
+      this.isLoading = false;
       this.msg = '';
-      this.result = {};
+      this.result = [];
+      this.currentPage = 1;
     },
   },
 }
 </script>
+
 <style scoped>
+/* ★登録画面等と共通のオーバーレイ設定 */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.4); /* 半透明背景 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.loading-content {
+  background-color: white;
+  padding: 30px 50px;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.loader-overlay {
+  border: 6px solid #f3f3f3;
+  border-top: 6px solid #3498db;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 15px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* 非活性時のボタン */
+.rounded-button:disabled {
+  background-color: #cccccc !important;
+  color: #666666 !important;
+  cursor: not-allowed;
+}
 </style>

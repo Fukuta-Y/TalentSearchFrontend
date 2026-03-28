@@ -1,5 +1,12 @@
 <template>
   <div class="search-joken-wrapper">
+    <div v-if="isLoading" class="loading-overlay">
+      <div class="loading-content">
+        <div class="loader-overlay"></div>
+        <p>データを取得しています...</p>
+      </div>
+    </div>
+
     <table align="center" class="search-form-table">
       <tr>
         <td>ID： </td>
@@ -19,6 +26,7 @@
           <Datepicker 
             v-model="onAirDay" @input="updateFormattedDate" :style="{ width: '250px' }"  
             language="ja" class="rounded-datepicker" placeholder="例：2023-04-18 11:50"
+            :disabled="isLoading"
           ></Datepicker>
         </td>
       </tr>
@@ -29,13 +37,13 @@
 
     <br>
     <div class="button-group">
-      <button v-on:click="btnSearch()" class="rounded-ref-button">検索</button>
+      <button v-on:click="btnSearch()" class="rounded-ref-button" :disabled="isLoading">検索</button>
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      <button v-on:click="btnClear()" class="rounded-ref-button">クリア</button>
+      <button v-on:click="btnClear()" class="rounded-ref-button" :disabled="isLoading">クリア</button>
     </div>
     <br>
 
-    <div v-if="isCount" class="result-container">
+    <div v-if="isCount && !isLoading" class="result-container">
       <div class="table-scroll-container">
         <table align="center" border="1" class="result-table">
           <thead>
@@ -104,8 +112,26 @@ export default {
   emits: ['on-message', 'on-select-id'],
   data() {
     return {
-      id: '', onAirDay: '', msg: '', url: '', isCount: false,
-      result: [], currentPage: 1, pageSize: 10, totalPages: 0, maxPageLinks: 10,
+      id: '', 
+      onAirDay: '', 
+      msg: '', 
+      url: '', 
+      isCount: false,
+      isLoading: false, 
+      result: [], 
+      currentPage: 1, 
+      pageSize: 10, 
+      totalPages: 0, 
+      maxPageLinks: 10,
+    }
+  },
+  async created() {
+    this.init();
+    // propsがある場合の初期表示時検索
+    if (this.propId || this.propOnAirDay) {
+      this.id = this.propId || '';
+      this.onAirDay = this.propOnAirDay || '';
+      await this.fetchData(false);
     }
   },
   computed: {
@@ -121,83 +147,144 @@ export default {
     },
   },
   methods: {
-    async btnSearch() { this.currentPage = 1; this.fetchData(true); },
+    async btnSearch() { 
+      this.currentPage = 1; 
+      await this.fetchData(true); 
+    },
     async fetchData(isValidate) {
       if (isValidate) {
         if (this.id && !commonUtils.isValidMaxLength(this.id, 8)) {
           this.$emit('on-message', msgList['MSG005'].replace('{0}', "ID").replace('{1}', "8文字"));
           return;
         }
-        if (this.onAirDay) {
-          try {
-            this.onAirDay = format(new Date(this.onAirDay), 'yyyy-MM-dd HH:mm');
-          } catch (e) {
-            console.error("Date format error", e);
-          }
-        }
       }
-      this.url = ON_AIR_KANRI_REF_URL.replace('{1}', this.id || '').replace('{2}', this.onAirDay || '');
+
+      // ★通信開始
+      this.isLoading = true;
+      this.$emit('on-message', "");
+
       try {
+        let searchDate = '';
+        if (this.onAirDay) {
+          searchDate = format(new Date(this.onAirDay), 'yyyy-MM-dd HH:mm');
+        }
+
+        this.url = ON_AIR_KANRI_REF_URL.replace('{1}', this.id || '').replace('{2}', searchDate);
+        
         const response = await axios.get(this.url);
         this.result = response.data.tOnAirKanriRef || [];
         this.isCount = this.result.length > 0;
+        
         if (this.isCount) {
           this.totalPages = Math.ceil(this.result.length / this.pageSize);
-          this.$emit('on-message', "");
         } else {
           this.$emit('on-message', msgList['INFO001']);
         }
       } catch (error) {
         console.error("Search error", error);
+        this.$emit('on-message', "通信エラーが発生しました。");
+      } finally {
+        // ★通信終了
+        this.isLoading = false;
       }
     },
     changePage(p) { this.currentPage = p; },
     selectId(id, onAirDay, programId, programName, talentId, talentName, nentsuki, shu) {
       this.$emit('on-select-id', { id, onAirDay, programId, programName, talentId, talentName, nentsuki, shu });
     },
+    updateFormattedDate() {},
     btnClear() { this.init(); this.$emit('on-message', ""); },
-    init() { this.id = ''; this.onAirDay = ''; this.isCount = false; this.result = []; }
+    init() { 
+      this.id = ''; 
+      this.onAirDay = ''; 
+      this.isCount = false; 
+      this.isLoading = false;
+      this.result = []; 
+      this.currentPage = 1;
+    }
   }
 }
 </script>
 
 <style scoped>
+/* ★共通オーバーレイ設定 */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.loading-content {
+  background-color: white;
+  padding: 30px 50px;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.loader-overlay {
+  border: 6px solid #f3f3f3;
+  border-top: 6px solid #3498db;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 15px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* 非活性ボタン */
+.rounded-ref-button:disabled {
+  background-color: #cccccc !important;
+  color: #666666 !important;
+  cursor: not-allowed;
+}
+
 .table-scroll-container {
   max-height: 500px;
   overflow-y: auto;
-  overflow-x: auto; /* 横スクロールを許可 */
+  overflow-x: auto;
   border: 1px solid #ccc;
   margin: 10px 0;
   background-color: #fff;
 }
 
 .result-table {
-  width: max-content; /* 中身に合わせて横に広がるように設定 */
+  width: max-content;
   min-width: 100%;
   border-collapse: collapse;
-  table-layout: auto;
 }
 
 .header-cell {
-  background-color: #adff2f; /* greenyellow */
+  background-color: #adff2f;
   position: sticky;
   top: 0;
   z-index: 2;
   padding: 8px;
   border: 1px solid #ccc;
-  white-space: nowrap; /* ヘッダーの改行を防ぐ */
+  white-space: nowrap;
 }
 
 .result-table td {
   padding: 8px;
   border: 1px solid #ccc;
-  white-space: nowrap; /* セル内の改行を防ぎ、横に並べる */
+  white-space: nowrap;
 }
 
 .text-left { text-align: left; }
 .text-center { text-align: center; }
 
-/* 各カラムの最小幅を定義して見やすく調整 */
 .min-w-80 { min-width: 80px; }
 .min-w-100 { min-width: 100px; }
 .min-w-120 { min-width: 120px; }
